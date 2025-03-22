@@ -5,11 +5,11 @@ interface Machine {
   Name: string;
 }
 
-interface MachineResponse {
+interface MachinesResponse {
   Machines: Machine[];
 }
 
-async function getMachines(): Promise<MachineResponse> {
+async function getMachines(): Promise<MachinesResponse | null> {
   const jwt = await getJWT();
 
   console.log("Fetching machines...");
@@ -28,7 +28,7 @@ async function getMachines(): Promise<MachineResponse> {
       throw new Error(`Failed to fetch machines: ${res.status}`);
     }
 
-    const data = (await res.json()) as MachineResponse;
+    const data = (await res.json()) as MachinesResponse;
 
     console.log(data);
 
@@ -36,15 +36,15 @@ async function getMachines(): Promise<MachineResponse> {
   } catch (error) {
     console.error(error);
 
-    return { Machines: [] };
+    return null;
   }
 }
 
 export default async function Machines() {
   const data = await getMachines();
 
-  if (!data.Machines.length) {
-    return <p className="text-red-500">No machines found.</p>;
+  if (!data) {
+    return <p className="text-red-500">Unable to fetch machines.</p>;
   }
 
   return (

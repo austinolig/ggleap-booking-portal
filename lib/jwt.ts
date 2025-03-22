@@ -1,4 +1,4 @@
-interface AuthResponse {
+interface JwtResponse {
   Jwt: string;
 }
 
@@ -21,7 +21,7 @@ export default async function getJWT(): Promise<string> {
       throw new Error(`Failed to fetch JWT: ${res.status}`);
     }
 
-    const data = (await res.json()) as AuthResponse;
+    const data = (await res.json()) as JwtResponse;
 
     console.log(`JWT: ${data.Jwt}`);
 
