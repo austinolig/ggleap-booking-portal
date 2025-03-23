@@ -1,28 +1,30 @@
 import { login } from "@/lib/ggLeap";
 
 export async function POST(request: Request) {
-	try {
-		const { username, password } = await request.json();
+  console.log("__/api/auth/login__");
 
-		const userData = await login(username, password);
+  try {
+    const { username, password } = await request.json();
 
-		console.log(userData);
+    const userData = await login(username, password);
 
-		if (!userData) {
-			throw new Error();
-		}
+    console.log("User:", userData);
 
-		return new Response(
-			JSON.stringify({ message: `Logged in as '${userData.User.Username}'` }),
-			{
-				status: 200,
-				headers: { "Content-Type": "application/json" },
-			}
-		);
-	} catch {
-		return new Response(
-			JSON.stringify({ message: "An error occurred during login." }),
-			{ status: 500, headers: { "Content-Type": "application/json" } }
-		);
-	}
+    if (!userData) {
+      throw new Error();
+    }
+
+    return new Response(
+      JSON.stringify({ message: `Logged in as '${userData.User.Username}'` }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch {
+    return new Response(
+      JSON.stringify({ message: "An error occurred during login." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 }

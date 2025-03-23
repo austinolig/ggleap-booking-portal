@@ -1,127 +1,117 @@
-type JwtResponse = {
-	Jwt: string;
-};
+import {
+  JwtResponse,
+  MachinesResponse,
+  UserResponse,
+  LoginRequest,
+} from "./types/ggLeap";
 
 export async function getJWT(): Promise<string> {
-	try {
-		console.log("Fetching JWT...");
+  console.log("__getJWT()__");
 
-		const res = await fetch(
-			"https://api.ggleap.com/production/authorization/public-api/auth",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ AuthToken: process.env.GGLEAP_API_TOKEN }),
-				cache: "force-cache",
-				next: { revalidate: 300 },
-			}
-		);
+  try {
+    console.log("Fetching JWT...");
 
-		if (!res.ok) {
-			throw new Error(`Failed to fetch JWT: ${res.status}`);
-		}
+    const res = await fetch(
+      "https://api.ggleap.com/production/authorization/public-api/auth",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ AuthToken: process.env.GGLEAP_API_TOKEN }),
+        cache: "force-cache",
+        next: { revalidate: 300 },
+      }
+    );
 
-		const data = (await res.json()) as JwtResponse;
+    if (!res.ok) {
+      throw new Error(`Failed to fetch JWT: ${res.status}`);
+    }
 
-		console.log(`JWT: ${data.Jwt}`);
+    const data = (await res.json()) as JwtResponse;
 
-		return data.Jwt;
-	} catch (error) {
-		console.error(error);
+    console.log(`JWT: ${data.Jwt}`);
 
-		return "";
-	}
+    return data.Jwt;
+  } catch (error) {
+    console.error(error);
+
+    return "";
+  }
 }
-
-type Machine = {
-	Uuid: string;
-	Name: string;
-};
-
-type MachinesResponse = {
-	Machines: Machine[];
-};
 
 export async function getMachines(): Promise<MachinesResponse | null> {
-	const jwt = await getJWT();
+  console.log("__getMachines()__");
 
-	console.log("Fetching machines...");
+  const jwt = await getJWT();
 
-	try {
-		const response = await fetch(
-			"https://api.ggleap.com/production/machines/get-all",
-			{
-				headers: {
-					Authorization: `${jwt}`,
-				},
-			}
-		);
+  try {
+    console.log("Fetching machines...");
 
-		if (!response.ok) {
-			throw new Error(`(${response.status}) Failed to fetch machines`);
-		}
+    console.log("getMachines().JWT:", jwt);
 
-		const data = (await response.json()) as MachinesResponse;
+    const response = await fetch(
+      "https://api.ggleap.com/production/machines/get-all",
+      {
+        headers: {
+          Authorization: `${jwt}`,
+        },
+      }
+    );
 
-		console.log(data);
+    const data = (await response.json()) as MachinesResponse;
 
-		return data;
-	} catch (error) {
-		console.error(error);
+    console.log("MachinesResponse:", data);
 
-		return null;
-	}
+    if (!response.ok) {
+      throw new Error(`(${response.status}) Failed to fetch machines`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
 }
 
-type UserProperties = {
-	Email: string;
-	FirstName: string;
-	LastName: string;
-	Username: string;
-	Uuid: string;
-	// 	// GroupUuid:  "998e51c1-577e-4845-b469-473c60f63bff" (player group?)
-};
-
-type User = {
-	User: UserProperties;
-};
-
 export async function login(
-	username: string,
-	password: string
-): Promise<User | null> {
-	try {
-		console.log(`Logging in '${username}'...`);
+  username: string,
+  password: string
+): Promise<UserResponse | null> {
+  console.log("__login()__");
 
-		const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
+  try {
+    console.log(`Logging in '${username}'...`);
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/authorization/user/login",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"x-gg-client": "DynamicCenterPagesWeb 0.1",
-				},
-				body: JSON.stringify({
-					Username: username,
-					Password: password,
-					CenterUuid: centerUuid,
-				}),
-			}
-		);
+    const payload: LoginRequest = {
+      Username: username,
+      Password: password,
+      CenterUuid: "50dd0be4-13eb-4db3-94b3-09e3062fa2d9",
+    };
 
-		const data = await response.json();
+    const response = await fetch(
+      "https://api.ggleap.com/production/authorization/user/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-gg-client": "DynamicCenterPagesWeb 0.1",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
-		console.log(data);
+    const data = await response.json();
 
-		if (!response.ok) {
-			throw new Error(`(${response.status}) Failed to login`);
-		}
+    console.log("Response:", data);
 
-		return data;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
+    if (!response.ok) {
+      throw new Error(`(${response.status}) Failed to login`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
 }

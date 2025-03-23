@@ -1,7 +1,9 @@
 import { getJWT } from "@/lib/ggLeap";
 
 export async function GET() {
-	const jwt = await getJWT();
+  console.log("__/api/auth/__");
 
-	return Response.json({ jwt });
+  const jwt = await getJWT();
+
+  return Response.json({ jwt });
 }
