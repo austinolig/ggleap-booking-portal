@@ -1,16 +1,17 @@
-import Booking from "@/components/booking";
-import CreateBooking from "@/components/create-booking";
-import Login from "@/components/login";
-import Machines from "@/components/machines";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Home() {
-	return (
-		<main className="flex flex-col p-4 gap-4">
-			<h1>ggLeap Booking Portal</h1>
-			<Machines />
-			<Login />
-			<Booking />
-			<CreateBooking />
-		</main>
-	);
+  return (
+    <main className="p-4">
+      <div className="flex-1">
+        <Button asChild>
+          <Link href="/login">Login</Link>
+        </Button>
+        <Button asChild variant={"outline"}>
+          <Link href="/create-account">Create Account</Link>
+        </Button>
+      </div>
+    </main>
+  );
 }
