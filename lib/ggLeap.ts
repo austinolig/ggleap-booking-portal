@@ -1,3 +1,4 @@
+import { differenceInMinutes, set } from "date-fns";
 import {
   JwtResponse,
   MachinesResponse,
@@ -115,13 +116,34 @@ export async function login(
   }
 }
 
-export async function getAvailableMachines(): Promise<MachinesResponse | null> {
+export async function getAvailableMachines(
+  bookingTime: string
+): Promise<MachinesResponse | null> {
   console.log("__getAvailableMachines()__");
 
   const jwt = await getJWT();
 
   try {
     console.log("Fetching available machines...");
+
+    const bookingDate = new Date(bookingTime);
+
+    const cutoffHour = 16;
+
+    const cutoffDate = set(new Date(bookingTime), {
+      hours: cutoffHour,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    const cutoffDifference = differenceInMinutes(cutoffDate, bookingDate);
+
+    let duration = 90;
+
+    if (cutoffDifference < 90) {
+      duration = cutoffDifference;
+    }
 
     const response = await fetch(
       "https://api.ggleap.com/production/bookings/get-available-machines",
@@ -132,8 +154,8 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
           Authorization: jwt,
         },
         body: JSON.stringify({
-          Start: "2025-03-24T14:00:00Z",
-          Duration: 90,
+          Start: bookingTime,
+          Duration: duration,
         }),
       }
     );
@@ -157,7 +179,7 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
 }
 
 export async function createBooking(
-  start: string
+  bookingTime: string
 ): Promise<{ BookingUuid: string } | null> {
   console.log("__createBooking()__");
 
@@ -165,6 +187,25 @@ export async function createBooking(
 
   try {
     console.log("Creating booking...");
+
+    const bookingDate = new Date(bookingTime);
+
+    const cutoffHour = 16;
+
+    const cutoffDate = set(new Date(bookingTime), {
+      hours: cutoffHour,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    const cutoffDifference = differenceInMinutes(cutoffDate, bookingDate);
+
+    let duration = 90;
+
+    if (cutoffDifference < 90) {
+      duration = cutoffDifference;
+    }
 
     const response = await fetch(
       "https://api.ggleap.com/production/bookings/create",
@@ -176,8 +217,8 @@ export async function createBooking(
         },
         body: JSON.stringify({
           Booking: {
-            Start: start,
-            Duration: 90,
+            Start: bookingTime,
+            Duration: duration,
             Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
             Name: "soSic",
             BookerEmail: "austinoligario@gmail.com",

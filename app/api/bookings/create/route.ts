@@ -4,11 +4,13 @@ export async function POST(request: Request) {
   console.log("__/api/bookings/create/__");
 
   try {
-    const { start } = await request.json();
+    const { bookingTime } = await request.json();
 
-    const bookingData = await createBooking(start);
+    console.log("Booking Time:", bookingTime);
 
-    console.log("User:", bookingData);
+    const bookingData = await createBooking(bookingTime);
+
+    console.log("bookingData:", bookingData);
 
     if (!bookingData) {
       throw new Error();
