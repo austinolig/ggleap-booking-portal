@@ -125,6 +125,10 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
 	const jwt = await getJWT();
 
 	try {
+		console.log("Fetching available machines...");
+
+		console.log("getAvailableMachines().JWT:", jwt);
+
 		const response = await fetch(
 			"https://api.ggleap.com/production/bookings/get-available-machines",
 			{
@@ -159,58 +163,87 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
 }
 
 export async function createBooking(): Promise<any> {
-	// machineUuid: string,
-	// start: string,
-	// duration: number
 	console.log("__createBooking()__");
 
-	const jwt = await getJWT();
+	// const jwt = await getJWT();
 
-	// const options = {
-	// 	method: 'POST',
-	// 	headers: {'Content-Type': 'application/json'},
-	// 	body: '{"Booking":{"GamePassCoupons":{"Quantity":0,"OfferUuid":"string","GamePassName":"string","TotalSeconds":0,"CouponStartDate":"2019-08-24T14:15:22Z","CouponExpirationDate":"2019-08-24T14:15:22Z","EligibleDateFrom":"2019-08-24T14:15:22Z","EligibleDateTo":"2019-08-24T14:15:22Z"},"Name":"string","Start":"string","Duration":1,"Machines":["string"],"UserUuid":"string","GuestName":"string","BookerEmail":"user@example.com","BookerPhone":"string","Color":"#aabbcc","AdditionalInfo":"string","Otp":"string","ShouldLockPc":true,"TaxesIncludedInPrices":true,"Metadata":{"property1":"string","property2":"string"}}}'
-	//   };
+	// {
+	// 	"Booking":{
+	// 		"GamePassCoupons":{
+	// 			"Quantity":0,
+	// 			"OfferUuid":"string",
+	// 			"GamePassName":"string",
+	// 			"TotalSeconds":0,
+	// 			"CouponStartDate":"2019-08-24T14:15:22Z",
+	// 			"CouponExpirationDate":"2019-08-24T14:15:22Z",
+	// 			"EligibleDateFrom":"2019-08-24T14:15:22Z",
+	// 			"EligibleDateTo":"2019-08-24T14:15:22Z"
+	// 		},
+	// 		"Name":"string",
+	// 		"Start":"string",
+	// 		"Duration":1,
+	// 		"Machines":["string"],
+	// 		"UserUuid":"string",
+	// 		"GuestName":"string",
+	// 		"BookerEmail":"user@example.com",
+	// 		"BookerPhone":"string",
+	// 		"Color":"#aabbcc",
+	// 		"AdditionalInfo":"string",
+	//		"Otp":"string",
+	//		"ShouldLockPc":true,
+	// 		"TaxesIncludedInPrices":true,
+	// 		"Metadata":{
+	// 			"property1":"string",
+	// 			"property2":"string"
+	//		}
+	// 	}
+	// 	}
 
-	//   fetch('https://api.ggleap.com/beta/bookings/create', options)
-	// 	.then(response => response.json())
-	// 	.then(response => console.log(response))
-	// 	.catch(err => console.error(err));
+	// try {
+	// 	const Username = "soSic";
+	// 	const dateTime = "2025-03-24T14:00:00Z";
+	// 	const duration = 90;
+	// 	const machineUuid = "e0833473-359f-4c65-9b6a-1f7f22375a71";
+	// 	const Uuid = "abed00e7-f2fa-464e-9467-2788673be40b";
+	// 	const Email = "austinoligario@gmail.com";
+	// 	const OTP = "1234";
 
-	try {
-		const response = await fetch(
-			"https://api.ggleap.com/production/bookings/create",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `${jwt}`,
-					"X-Correlation-Id": `abed00e7-f2fa-464e-9467-2788673be40b`,
-				},
-				body: JSON.stringify({
-					Booking: {
-						Name: "soSic",
-						Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
-						Start: "2025-03-24T14:00:00Z",
-						Duration: "90",
-						OTP: "1234",
-					},
-				}),
-			}
-		);
+	// 	const response = await fetch(
+	// 		"https://api.ggleap.com/production/bookings/create",
+	// 		{
+	// 			method: "POST",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 				Authorization: `${jwt}`,
+	// 				// "X-Correlation-Id": `abed00e7-f2fa-464e-9467-2788673be40b`,
+	// 			},
+	// 			body: `{"Booking":{"Name":"${Username}","Start":"${dateTime}","Duration":${duration},"Machines":["${machineUuid}"],"UserUuid":"${Uuid}","GuestName":null,"BookerEmail":"${Email}","BookerPhone":null,"Color":"#aabbcc","AdditionalInfo":null,"Otp":"${OTP}","ShouldLockPc":true,"TaxesIncludedInPrices":true}}`,
+	// 			// body: JSON.stringify({
+	// 			// 	Booking: {
+	// 			// 		Name: "soSic",
+	// 			// 		Start: "2025-03-24T14:00:00Z",
+	// 			// 		Duration: 90,
+	// 			// 		Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
+	// 			// 		UserUuid: "abed00e7-f2fa-464e-9467-2788673be40b",
+	// 			// 		BookerEmail: "austinoligario@gmail.com",
+	// 			// 		OTP: "1234",
+	// 			// 	},
+	// 			// }),
+	// 		}
+	// 	);
 
-		const data = await response.text();
+	// 	const data = await response.text();
 
-		console.log("BookingResponse:", data);
+	// 	console.log("BookingResponse:", data);
 
-		if (!response.ok) {
-			throw new Error(`(${response.status}) Failed to create booking`);
-		}
+	// 	if (!response.ok) {
+	// 		throw new Error(`(${response.status}) Failed to create booking`);
+	// 	}
 
-		return data;
-	} catch (error) {
-		console.error(error);
+	// 	return data;
+	// } catch (error) {
+	// 	console.error(error);
 
-		return null;
-	}
+	// 	return null;
+	// }
 }
