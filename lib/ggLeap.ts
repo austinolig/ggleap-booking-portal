@@ -156,7 +156,9 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
   }
 }
 
-export async function createBooking(start: string): Promise<null> {
+export async function createBooking(
+  start: string
+): Promise<{ BookingUuid: string } | null> {
   console.log("__createBooking()__");
 
   const jwt = await getJWT();
@@ -193,7 +195,7 @@ export async function createBooking(start: string): Promise<null> {
       throw new Error(`(${response.status}) Failed to create booking`);
     }
 
-    return null;
+    return data;
   } catch (error) {
     console.error(error);
 

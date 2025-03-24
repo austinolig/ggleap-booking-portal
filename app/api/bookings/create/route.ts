@@ -15,7 +15,9 @@ export async function POST(request: Request) {
     }
 
     return new Response(
-      JSON.stringify({ message: `Booking created: '${bookingData}'` }),
+      JSON.stringify({
+        message: `Booking created: '${bookingData.BookingUuid}'`,
+      }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
