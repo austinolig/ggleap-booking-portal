@@ -10,7 +10,7 @@ export async function GET() {
       status: 204,
     });
   } catch (error) {
-    console.error("JWT refresh error:", error);
+    console.error("Failed to get JWT:", error);
 
     return new Response(null, {
       status: 204,
