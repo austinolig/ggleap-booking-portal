@@ -9,7 +9,7 @@ export default async function Machines() {
 
 	return (
 		<div className="p-4 border-1">
-			<p className="font-bold">All Machines</p>
+			<p className="font-bold">All Machines ({data.Machines.length})</p>
 			{data.Machines.map((machine) => (
 				<div key={machine.Uuid}>
 					<p>
