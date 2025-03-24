@@ -19,7 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+      <body className={`${inter.variable} antialiased`}>
+        <header className="p-4">
+          <h1 className="text-3xl font-bold text-center">
+            ggLeap Booking Portal
+          </h1>
+        </header>
+        {children}
+      </body>
     </html>
   );
 }
