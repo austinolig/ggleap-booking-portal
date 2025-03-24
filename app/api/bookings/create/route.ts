@@ -4,9 +4,9 @@ export async function POST(request: Request) {
   console.log("__/api/bookings/create/__");
 
   try {
-    // const { username, password } = await request.json();
+    const { start } = await request.json();
 
-    const bookingData = await createBooking();
+    const bookingData = await createBooking(start);
 
     console.log("User:", bookingData);
 

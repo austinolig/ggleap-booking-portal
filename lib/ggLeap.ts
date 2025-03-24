@@ -156,7 +156,7 @@ export async function getAvailableMachines(): Promise<MachinesResponse | null> {
   }
 }
 
-export async function createBooking(): Promise<any> {
+export async function createBooking(start: string): Promise<any> {
   console.log("__createBooking()__");
 
   const jwt = await getJWT();
@@ -174,7 +174,7 @@ export async function createBooking(): Promise<any> {
         },
         body: JSON.stringify({
           Booking: {
-            Start: "2025-03-26T14:00:00Z",
+            Start: start,
             Duration: 90,
             Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
             Name: "soSic",
