@@ -3,7 +3,17 @@ import { getJWT } from "@/lib/ggLeap";
 export async function GET() {
   console.log("__/api/auth/__");
 
-  const jwt = await getJWT();
+  try {
+    await getJWT();
 
-  return Response.json({ jwt });
+    return new Response(null, {
+      status: 204,
+    });
+  } catch (error) {
+    console.error("JWT refresh error:", error);
+
+    return new Response(null, {
+      status: 204,
+    });
+  }
 }
