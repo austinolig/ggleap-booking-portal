@@ -2,149 +2,153 @@
 
 import { useEffect, useState } from "react";
 import {
-	addDays,
-	addMinutes,
-	format,
-	getHours,
-	isSameDay,
-	set,
+  addDays,
+  addMinutes,
+  compareAsc,
+  format,
+  getHours,
+  isSameDay,
+  set,
 } from "date-fns";
 import { MachinesResponse } from "@/lib/types/ggLeap";
 
 export default function BookingForm() {
-	const currentDateTime = new Date();
-	const [selectedDate, setSelectedDate] = useState(currentDateTime);
-	const [selectedTime, setSelectedTime] = useState<Date | null>(null);
-	const [availableMachines, setAvailableMachines] = useState<MachinesResponse>({
-		Machines: [],
-	});
+  const currentDate = new Date();
+  const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
+  const [availableMachines, setAvailableMachines] = useState<MachinesResponse>({
+    Machines: [],
+  });
 
-	const totalBookingDates = 2;
-	const initalBookingHour = 10;
-	const finalBookingHour = 15;
-	const initialBookingDate = set(currentDateTime, {
-		hours: initalBookingHour,
-		minutes: 0,
-		seconds: 0,
-		milliseconds: 0,
-	});
+  const numberOfBookingDates = 2;
+  const firstHour = 10;
+  const lastHour = 15;
 
-	const bookingDates: Date[] = [];
-	const bookingTimes: Date[] = [];
+  const allBookingDates: Date[] = [];
+  const allBookingDateTimes: Date[] = [];
 
-	for (let i = 0; i < totalBookingDates; i++) {
-		let newBookingTime = addDays(initialBookingDate, i);
+  const firstBookingDateTime = set(currentDate, {
+    hours: firstHour,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
 
-		bookingTimes.push(newBookingTime);
-		bookingDates.push(newBookingTime);
+  for (let i = 0; i < numberOfBookingDates; i++) {
+    let newBookingDateTime = addDays(firstBookingDateTime, i);
 
-		while (getHours(newBookingTime) < finalBookingHour) {
-			newBookingTime = addMinutes(newBookingTime, 15);
+    allBookingDates.push(newBookingDateTime);
 
-			bookingTimes.push(newBookingTime);
-		}
-	}
+    allBookingDateTimes.push(newBookingDateTime);
 
-	useEffect(() => {
-		console.log("Selected Date:\n\t", selectedDate);
-	}, [selectedDate]);
+    while (getHours(newBookingDateTime) < lastHour) {
+      newBookingDateTime = addMinutes(newBookingDateTime, 15);
 
-	useEffect(() => {
-		console.log("Selected Time:\n\t", selectedTime);
-	}, [selectedTime]);
+      allBookingDateTimes.push(newBookingDateTime);
+    }
+  }
 
-	const handleCheck = async () => {
-		if (!selectedTime) {
-			console.log("No time selected");
-			return;
-		}
+  const checkAvailabilty = async (dateTime: Date) => {
+    try {
+      const bookingDateTime = dateTime.toISOString();
 
-		try {
-			const bookingTime = selectedTime.toISOString();
+      console.log(bookingDateTime);
 
-			console.log(bookingTime);
+      const response = await fetch("/api/machines/check-availability/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingTime: bookingDateTime,
+        }),
+      });
 
-			const response = await fetch("/api/machines/check-availability/", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					bookingTime: bookingTime,
-				}),
-			});
+      const data = await response.json();
 
-			const data = await response.json();
+      console.log(data);
 
-			console.log(data);
-			setAvailableMachines(data.availableMachines);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+      setAvailableMachines(data.availableMachines);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-	const handleBook = async (machineUuid: string) => {
-		if (!selectedTime) {
-			console.log("No time selected");
-			return;
-		}
+  const handleBook = async (machineUuid: string) => {
+    return null;
 
-		try {
-			const bookingTime = selectedTime.toISOString();
+    if (!selectedTime) {
+      console.log("No time selected");
+      return;
+    }
 
-			const response = await fetch("/api/bookings/create/", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					bookingTime: bookingTime,
-					machineUuid: machineUuid,
-				}),
-			});
+    try {
+      const bookingTime = selectedTime.toISOString();
 
-			const data = await response.json();
+      const response = await fetch("/api/bookings/create/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingTime: bookingTime,
+          machineUuid: machineUuid,
+        }),
+      });
 
-			console.log(data);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+      const data = await response.json();
 
-	return (
-		<div>
-			<p>Book Session</p>
-			<div>
-				{bookingDates.map((date, index) => (
-					<button key={index} onClick={() => setSelectedDate(date)}>
-						{format(date, "EEEE, MMMM dd, yyyy")}
-					</button>
-				))}
-			</div>
-			<div>
-				{bookingTimes
-					.filter((time) => isSameDay(time, selectedDate))
-					.map((time, index) => (
-						<button key={index} onClick={() => setSelectedTime(time)}>
-							{format(time, "h:mm a")}
-						</button>
-					))}
-			</div>
-			<button
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <p>Book Session</p>
+      <br />
+      <div>
+        {allBookingDates.map((date, index) => (
+          <button key={index} onClick={() => setSelectedDate(date)}>
+            {format(date, "EEEE, MMMM dd, yyyy")}
+          </button>
+        ))}
+      </div>
+      <div>
+        {allBookingDateTimes
+          .filter((dateTime) => isSameDay(dateTime, selectedDate))
+          .map((dateTime, index) => (
+            <button
+              key={index}
+              className={`${
+                compareAsc(dateTime, currentDate) === -1
+                  ? "text-muted"
+                  : "text-primary"
+              }`}
+              // onClick={() => setSelectedDateTime(dateTime)}
+              onClick={() => checkAvailabilty(dateTime)}
+            >
+              {format(dateTime, "h:mm a")}
+            </button>
+          ))}
+      </div>
+      {/* <button
 				onClick={handleCheck}
 				className="border-1 p-4 cursor-pointer w-full"
 				disabled={!selectedTime}
 			>
 				Check Available Machines
 			</button>
-			{availableMachines.Machines.length > 0 && (
-				<div>
-					<p>Available Machines:</p>
-					<ul>
-						{availableMachines.Machines.map((machine, index) => (
-							<button key={index} onClick={() => handleBook(machine.Uuid)}>
-								Book {machine.Name}
-							</button>
-						))}
-					</ul>
-				</div>
-			)}
-		</div>
-	);
+			 */}
+      {availableMachines.Machines.length > 0 && (
+        <div>
+          <p>Available Machines:</p>
+          <ul>
+            {availableMachines.Machines.map((machine, index) => (
+              <button key={index} onClick={() => handleBook(machine.Uuid)}>
+                Book {machine.Name}
+              </button>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
