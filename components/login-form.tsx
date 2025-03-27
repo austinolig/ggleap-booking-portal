@@ -8,15 +8,15 @@ export default function LoginForm() {
 				await signIn("credentials", formData);
 			}}
 		>
-			<label htmlFor="username">
+			<label>
 				Username
-				<input name="username" type="username" />
+				<input name="username" type="text" />
 			</label>
-			<label htmlFor="password">
+			<label>
 				Password
 				<input name="password" type="password" />
 			</label>
-			<button>Sign In</button>
+			<button type="submit">Sign In</button>
 		</form>
 	);
 }
