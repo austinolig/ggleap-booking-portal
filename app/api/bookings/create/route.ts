@@ -1,34 +1,35 @@
 import { createBooking } from "@/lib/ggLeap";
 
 export async function POST(request: Request) {
-  console.log("__/api/bookings/create/__");
+	console.log("__/api/bookings/create/__");
 
-  try {
-    const { bookingTime, machineUuid } = await request.json();
+	try {
+		const { bookingDateTime, machineUuid } = await request.json();
 
-    console.log("Booking Time:", bookingTime);
+		console.log("bookingDateTime:", bookingDateTime);
 
-    const bookingData = await createBooking(bookingTime, machineUuid);
+		const bookingUuid = await createBooking(bookingDateTime, machineUuid);
 
-    console.log("bookingData:", bookingData);
+		console.log("bookingUuid:", bookingUuid);
 
-    if (!bookingData) {
-      throw new Error();
-    }
+		if (!bookingUuid) {
+			throw new Error();
+		}
 
-    return new Response(
-      JSON.stringify({
-        message: `Booking created: '${bookingData.BookingUuid}'`,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch {
-    return new Response(
-      JSON.stringify({ message: "An error occurred while booking." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
+		return new Response(
+			JSON.stringify({
+				message: `Booking created`,
+				bookingUuid: bookingUuid,
+			}),
+			{
+				status: 200,
+				headers: { "Content-Type": "application/json" },
+			}
+		);
+	} catch {
+		return new Response(
+			JSON.stringify({ message: "An error occurred while booking." }),
+			{ status: 500, headers: { "Content-Type": "application/json" } }
+		);
+	}
 }

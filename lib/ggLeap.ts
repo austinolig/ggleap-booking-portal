@@ -1,9 +1,9 @@
 import { differenceInMinutes, set } from "date-fns";
-import { MachinesResponse } from "./types/ggLeap";
+import { BookingUuid, JWT, Machine } from "./types/ggLeap";
 import { auth } from "@/auth";
 import { User } from "next-auth";
 
-export async function getJWT(): Promise<string | null> {
+export async function getJWT(): Promise<JWT | null> {
 	console.log("__getJWT()__");
 
 	try {
@@ -73,6 +73,7 @@ export async function login(
 
 		if (!data.User || !response.ok) {
 			console.log("data:", data);
+
 			throw new Error(`(${response.status}) Failed to login`);
 		}
 
@@ -86,10 +87,14 @@ export async function login(
 	}
 }
 
-export async function getMachines(): Promise<MachinesResponse | null> {
-	console.log("__getMachines()__");
+export async function getAllMachines(): Promise<Machine[] | null> {
+	console.log("__getAllMachines()__");
 
 	const jwt = await getJWT();
+
+	if (!jwt) {
+		return null;
+	}
 
 	try {
 		console.log("Fetching machines...");
@@ -106,13 +111,15 @@ export async function getMachines(): Promise<MachinesResponse | null> {
 
 		const data = await response.json();
 
-		console.log("MachinesResponse:", data);
+		if (!data.Machines || !response.ok) {
+			console.log("data:", data);
 
-		if (!response.ok) {
 			throw new Error(`(${response.status}) Failed to fetch machines`);
 		}
 
-		return data;
+		console.log("Machines:", data.Machines);
+
+		return data.Machines;
 	} catch (error) {
 		console.error(error);
 
@@ -121,20 +128,24 @@ export async function getMachines(): Promise<MachinesResponse | null> {
 }
 
 export async function getAvailableMachines(
-	bookingTime: string
-): Promise<MachinesResponse | null> {
+	bookingDateTime: string
+): Promise<Machine[] | null> {
 	console.log("__getAvailableMachines()__");
 
 	const jwt = await getJWT();
 
+	if (!jwt) {
+		return null;
+	}
+
 	try {
 		console.log("Fetching available machines...");
 
-		const bookingDate = new Date(bookingTime);
+		const bookingDate = new Date(bookingDateTime);
 
 		const cutoffHour = 16;
 
-		const cutoffDate = set(new Date(bookingTime), {
+		const cutoffDate = set(new Date(bookingDateTime), {
 			hours: cutoffHour,
 			minutes: 0,
 			seconds: 0,
@@ -158,7 +169,7 @@ export async function getAvailableMachines(
 					Authorization: jwt,
 				},
 				body: JSON.stringify({
-					Start: bookingTime,
+					Start: bookingDateTime,
 					Duration: duration,
 				}),
 			}
@@ -166,15 +177,17 @@ export async function getAvailableMachines(
 
 		const data = await response.json();
 
-		console.log("MachinesResponse:", data);
+		if (!data.Machines || !response.ok) {
+			console.log("data:", data);
 
-		if (!response.ok) {
 			throw new Error(
 				`(${response.status}) Failed to fetch available machines`
 			);
 		}
 
-		return data;
+		console.log("Machines:", data.Machines);
+
+		return data.Machines;
 	} catch (error) {
 		console.error(error);
 
@@ -183,41 +196,27 @@ export async function getAvailableMachines(
 }
 
 export async function createBooking(
-	bookingTime: string,
+	bookingDateTime: string,
 	machineUuid: string
-): Promise<{ BookingUuid: string } | null> {
+): Promise<BookingUuid | null> {
 	console.log("__createBooking()__");
 
 	const jwt = await getJWT();
 
+	if (!jwt) {
+		return null;
+	}
+
 	const session = await auth();
 
 	if (!session?.user) {
-		console.error("Failed to authenticate user");
 		return null;
 	}
 
 	try {
 		console.log("Creating booking...");
 
-		const bookingDate = new Date(bookingTime);
-
-		const cutoffHour = 16;
-
-		const cutoffDate = set(new Date(bookingTime), {
-			hours: cutoffHour,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0,
-		});
-
-		const cutoffDifference = differenceInMinutes(cutoffDate, bookingDate);
-
-		let duration = 90;
-
-		if (cutoffDifference < 90) {
-			duration = cutoffDifference;
-		}
+		const duration = calculateBookingDuration(bookingDateTime);
 
 		const response = await fetch(
 			"https://api.ggleap.com/production/bookings/create",
@@ -229,7 +228,7 @@ export async function createBooking(
 				},
 				body: JSON.stringify({
 					Booking: {
-						Start: bookingTime,
+						Start: bookingDateTime,
 						Duration: duration,
 						Machines: [machineUuid],
 						Name: session.user.Username,
@@ -242,16 +241,41 @@ export async function createBooking(
 
 		const data = await response.json();
 
-		console.log("BookingResponse:", data);
+		if (!data.BookingUuid || !response.ok) {
+			console.log("data:", data);
 
-		if (!response.ok) {
-			throw new Error(`(${response.status}) Failed to create booking`);
+			throw new Error(`(${response.status}) Failed to fetch create booking`);
 		}
 
-		return data;
+		console.log("BookingUuid:", data.BookingUuid);
+
+		return data.BookingUuid;
 	} catch (error) {
 		console.error(error);
 
 		return null;
 	}
+}
+
+function calculateBookingDuration(bookingDateTime: string): number {
+	const bookingDateTimeObj = new Date(bookingDateTime);
+
+	const cutoffHour = 16;
+
+	const cutoffDate = set(bookingDateTimeObj, {
+		hours: cutoffHour,
+		minutes: 0,
+		seconds: 0,
+		milliseconds: 0,
+	});
+
+	const cutoffDifference = differenceInMinutes(cutoffDate, bookingDateTimeObj);
+
+	let duration = 90;
+
+	if (cutoffDifference < 90) {
+		duration = cutoffDifference;
+	}
+
+	return duration;
 }
