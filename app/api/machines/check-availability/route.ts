@@ -4,15 +4,18 @@ export async function POST(request: Request) {
 	console.log("__/api/machines/check-availability/__");
 
 	try {
-		const { bookingDateTime } = await request.json();
+		const { bookingDateTime, duration } = await request.json();
 
-		const availableMachines = await getAvailableMachines(bookingDateTime);
-
-		console.log("Available Machines:", availableMachines);
+		const availableMachines = await getAvailableMachines(
+			bookingDateTime,
+			duration
+		);
 
 		if (!availableMachines) {
 			throw new Error();
 		}
+
+		console.log("Available Machines:", availableMachines);
 
 		return new Response(
 			JSON.stringify({
