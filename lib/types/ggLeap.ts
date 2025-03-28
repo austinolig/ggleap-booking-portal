@@ -6,3 +6,9 @@ export type Machine = {
 export type JWT = string;
 
 export type BookingUuid = string;
+
+export type Booking = {
+	Start: string;
+	Duration: number;
+	Machines: string[];
+};

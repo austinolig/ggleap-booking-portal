@@ -1,5 +1,5 @@
 import { differenceInMinutes, set } from "date-fns";
-import { BookingUuid, JWT, Machine } from "./types/ggLeap";
+import { Booking, BookingUuid, JWT, Machine } from "./types/ggLeap";
 import { auth } from "@/auth";
 import { User } from "next-auth";
 
@@ -128,7 +128,8 @@ export async function getAllMachines(): Promise<Machine[] | null> {
 }
 
 export async function getAvailableMachines(
-	bookingDateTime: string
+	bookingDateTime: string,
+	duration: number
 ): Promise<Machine[] | null> {
 	console.log("__getAvailableMachines()__");
 
@@ -141,7 +142,7 @@ export async function getAvailableMachines(
 	try {
 		console.log("Fetching available machines...");
 
-		const duration = calculateBookingDuration(bookingDateTime);
+		// const duration = calculateBookingDuration(bookingDateTime);
 
 		const response = await fetch(
 			"https://api.ggleap.com/production/bookings/get-available-machines",
@@ -261,4 +262,48 @@ function calculateBookingDuration(bookingDateTime: string): number {
 	}
 
 	return duration;
+}
+
+export async function getBookings(
+	bookingDate: string
+): Promise<Booking[] | null> {
+	console.log("__getBookings()__");
+
+	const jwt = await getJWT();
+
+	if (!jwt) {
+		return null;
+	}
+
+	try {
+		console.log("Fetching bookings...");
+
+		const dateQuery = bookingDate.split("T")[0];
+
+		const response = await fetch(
+			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: jwt,
+				},
+			}
+		);
+
+		const data = await response.json();
+
+		if (!data.Bookings || !response.ok) {
+			console.log("data:", data);
+
+			throw new Error(`(${response.status}) Failed to fetch bookings`);
+		}
+
+		// console.log("Bookings:", data.Bookings);
+
+		return data.Bookings;
+	} catch (error) {
+		console.error(error);
+
+		return null;
+	}
 }
