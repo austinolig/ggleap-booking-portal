@@ -10,11 +10,11 @@ export async function POST(request: Request) {
 
 		const bookingUuid = await createBooking(bookingDateTime, machineUuid);
 
-		console.log("bookingUuid:", bookingUuid);
-
 		if (!bookingUuid) {
 			throw new Error();
 		}
+
+		console.log("bookingUuid:", bookingUuid);
 
 		return new Response(
 			JSON.stringify({
