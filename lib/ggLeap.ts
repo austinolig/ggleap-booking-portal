@@ -141,24 +141,7 @@ export async function getAvailableMachines(
 	try {
 		console.log("Fetching available machines...");
 
-		const bookingDate = new Date(bookingDateTime);
-
-		const cutoffHour = 16;
-
-		const cutoffDate = set(new Date(bookingDateTime), {
-			hours: cutoffHour,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0,
-		});
-
-		const cutoffDifference = differenceInMinutes(cutoffDate, bookingDate);
-
-		let duration = 90;
-
-		if (cutoffDifference < 90) {
-			duration = cutoffDifference;
-		}
+		const duration = calculateBookingDuration(bookingDateTime);
 
 		const response = await fetch(
 			"https://api.ggleap.com/production/bookings/get-available-machines",
