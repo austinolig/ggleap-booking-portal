@@ -281,7 +281,7 @@ export async function getBookings(
 		const dateQuery = bookingDate.split("T")[0];
 
 		const response = await fetch(
-			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}`,
+			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
 			{
 				headers: {
 					"Content-Type": "application/json",
