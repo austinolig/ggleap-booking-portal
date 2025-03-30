@@ -386,7 +386,7 @@ export default function BookingForm2() {
 			<div>
 				<p className="font-bold mb-2">PCs</p>
 				{selectedTimeSlotDate && !isNaN(selectedTimeSlotDate.getTime()) ? (
-					<div className="grid grid-cols-5 gap-2">
+					<div className="grid grid-cols-2 gap-2">
 						{machinesOnSelectedDate.map((machine) => (
 							<button
 								key={machine.Uuid}

@@ -1,6 +1,7 @@
 import { auth, signOut } from "@/auth";
-// import BookingForm from "@/components/booking-form";
+import BookingForm from "@/components/booking-form";
 import BookingForm2 from "@/components/booking-form-2";
+import BookingForm3 from "@/components/booking-form-3";
 import LoginForm from "@/components/login-form";
 
 export default async function Home() {
@@ -13,7 +14,7 @@ export default async function Home() {
 	console.log(session);
 
 	return (
-		<main className="p-4">
+		<main className="p-4 space-y-6">
 			<form
 				action={async () => {
 					"use server";
@@ -23,11 +24,13 @@ export default async function Home() {
 				<button type="submit">Log Out</button>
 			</form>
 			<hr />
-			<p>Username: {session.user.Username}</p>
-			{/* <hr /> */}
-			{/* <BookingForm /> */}
+			<p>{session.user.Username}</p>
+			<hr />
+			<BookingForm />
 			<hr />
 			<BookingForm2 />
+			<hr />
+			<BookingForm3 />
 		</main>
 	);
 }
