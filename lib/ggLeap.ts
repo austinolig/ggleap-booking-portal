@@ -1,4 +1,3 @@
-import { differenceInMinutes, set } from "date-fns";
 import { Booking, BookingUuid, JWT, Machine } from "./types/ggLeap";
 import { auth } from "@/auth";
 import { User } from "next-auth";

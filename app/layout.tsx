@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+// import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,6 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* <head>
+        <Script
+          crossOrigin="anonymous"
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+        />
+      </head> */}
       <body className={`${inter.variable} antialiased`}>
         <header className="p-4">
           <h1 className="text-3xl font-bold text-center">
