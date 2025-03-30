@@ -8,7 +8,6 @@ import {
 	getDate,
 	getHours,
 	isSameDay,
-	isSameMinute,
 	set,
 } from "date-fns";
 import { Booking, Machine } from "@/lib/types/ggLeap";
@@ -35,15 +34,15 @@ const allMachines: Machine[] = [
 
 const currentDate = new Date("March 27, 2025");
 
+// BREAK UP COMPONENTS IN TO SEPARATE FILES (e.g. DateSelector, TimeSelector, MachineSelector)
+
 export default function BookingForm() {
 	const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
 	const [bookings, setBookings] = useState<Booking[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	// const [duration, setDuration] = useState<number>(90);
+	const [duration, setDuration] = useState<number>(90);
 
 	const { bookingDates, timeSlots } = useMemo(() => {
-		console.log("heree");
-
 		const numberOfBookingDates = 2;
 		const firstHour = 10;
 		const lastHour = 15;
@@ -59,46 +58,45 @@ export default function BookingForm() {
 		});
 
 		for (let i = 0; i < numberOfBookingDates; i++) {
-			let newTimeSlotDate = addDays(firstTimeSlotDate, i);
-
-			let availableMachines = bookings.reduce(
-				(count, booking) =>
-					isSameMinute(new Date(booking.Start), newTimeSlotDate)
-						? count - 1
-						: count,
-				allMachines.length
-			);
-
-			let newTimeSlot = {
-				date: newTimeSlotDate,
-				availableMachines: availableMachines,
-			};
+			const newTimeSlotDate = addDays(firstTimeSlotDate, i);
 
 			bookingDates.push(newTimeSlotDate);
-			timeSlots.push(newTimeSlot);
 
-			while (getHours(newTimeSlotDate) < lastHour) {
-				newTimeSlotDate = addMinutes(newTimeSlotDate, 15);
+			let currentTimeSlot = newTimeSlotDate;
 
-				availableMachines = bookings.reduce(
-					(count, booking) =>
-						isSameMinute(new Date(booking.Start), newTimeSlotDate)
-							? count - 1
-							: count,
-					allMachines.length
-				);
+			while (getHours(currentTimeSlot) < lastHour) {
+				const currentTimeSlotStart = currentTimeSlot;
+				const currentTimeSlotEnd = addMinutes(currentTimeSlot, duration);
 
-				newTimeSlot = {
-					date: newTimeSlotDate,
-					availableMachines: availableMachines,
-				};
+				const unavailableMachines: Set<string> = new Set();
 
-				timeSlots.push(newTimeSlot);
+				for (const booking of bookings) {
+					const bookingStart = new Date(booking.Start);
+					const bookingEnd = addMinutes(bookingStart, booking.Duration);
+
+					if (
+						(currentTimeSlotStart >= bookingStart &&
+							currentTimeSlotStart < bookingEnd) ||
+						(currentTimeSlotEnd > bookingStart &&
+							currentTimeSlotEnd <= bookingEnd) ||
+						(bookingStart >= currentTimeSlotStart &&
+							bookingStart < currentTimeSlotEnd)
+					) {
+						unavailableMachines.add(booking.Machines[0]);
+					}
+				}
+
+				timeSlots.push({
+					date: currentTimeSlot,
+					availableMachines: allMachines.length - unavailableMachines.size,
+				});
+
+				currentTimeSlot = addMinutes(currentTimeSlot, 15);
 			}
 		}
 
 		return { bookingDates, timeSlots };
-	}, [bookings]);
+	}, [bookings, duration]);
 
 	const [selectedTimeSlotDate, setSelectedTimeSlotDate] = useState<Date>(
 		timeSlots[0].date
@@ -108,21 +106,24 @@ export default function BookingForm() {
 		isSameDay(timeSlot.date, selectedDate)
 	);
 
-	function changeSelectedDate(date: Date) {
-		const newselectedTimeSlotDate = set(selectedTimeSlotDate, {
-			date: getDate(date),
-		});
-
-		setSelectedTimeSlotDate(newselectedTimeSlotDate);
-		setSelectedDate(date);
-	}
-
 	const machinesOnSelectedDate = allMachines.map((machine) => {
-		const isAvailable = !bookings.find(
-			(booking) =>
-				isSameMinute(new Date(booking.Start), selectedTimeSlotDate) &&
+		const selectedTimeSlotStart = selectedTimeSlotDate;
+		const selectedTimeSlotEnd = addMinutes(selectedTimeSlotDate, duration);
+
+		const isAvailable = !bookings.some((booking) => {
+			const bookingStart = new Date(booking.Start);
+			const bookingEnd = addMinutes(bookingStart, booking.Duration);
+
+			return (
+				((selectedTimeSlotStart >= bookingStart &&
+					selectedTimeSlotStart < bookingEnd) ||
+					(selectedTimeSlotEnd > bookingStart &&
+						selectedTimeSlotEnd <= bookingEnd) ||
+					(bookingStart >= selectedTimeSlotStart &&
+						bookingStart < selectedTimeSlotEnd)) &&
 				booking.Machines[0] === machine.Uuid
-		);
+			);
+		});
 
 		return {
 			...machine,
@@ -130,8 +131,17 @@ export default function BookingForm() {
 		};
 	});
 
+	function changeSelectedDate(date: Date) {
+		const newSelectedTimeSlotDate = set(selectedTimeSlotDate, {
+			date: getDate(date),
+		});
+
+		setSelectedTimeSlotDate(newSelectedTimeSlotDate);
+		setSelectedDate(date);
+	}
+
 	useEffect(() => {
-		const checkAvailabilty = async () => {
+		const getBookings = async () => {
 			setLoading(true);
 
 			const bookingDate = currentDate.toISOString();
@@ -153,7 +163,7 @@ export default function BookingForm() {
 			setLoading(false);
 		};
 
-		checkAvailabilty();
+		getBookings();
 	}, []);
 
 	// const handleBook = async (machineUuid: string) => {
@@ -210,11 +220,22 @@ export default function BookingForm() {
 				))}
 			</div>
 			<br />
-			{/* <div>
-				<button onClick={() => setDuration(90)}>90 mins</button>
-				<button onClick={() => setDuration(60)}>60 mins</button>
+			<p>Duration</p>
+			<div className="grid grid-cols-2 gap-4">
+				<button
+					className={duration === 90 ? "text-blue-500" : ""}
+					onClick={() => setDuration(90)}
+				>
+					90 mins
+				</button>
+				<button
+					className={duration === 60 ? "text-blue-500" : ""}
+					onClick={() => setDuration(60)}
+				>
+					60 mins
+				</button>
 			</div>
-			<br /> */}
+			<br />
 			<p>Times</p>
 			<div className="grid grid-cols-3 gap-2">
 				{filteredTimeSlots.map((timeSlot, index) => (
@@ -256,6 +277,33 @@ export default function BookingForm() {
 					</button>
 				))}
 			</div>
+			{/* <br />
+			<hr />
+			<br />
+			<div>
+				<button
+					onClick={async () => {
+						const date = new Date("March 28, 2025 1:30 PM");
+						const response = await fetch("/api/machines/check-availability/", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({
+								bookingDateTime: date.toISOString(),
+								duration: 60,
+							}),
+						});
+						const data = await response.json();
+						if (!data.availableMachines || !response.ok) {
+							console.log("data:", data);
+							return;
+						}
+						console.log("Available Machines:", data.availableMachines);
+					}}
+					className="p-4 bg-red-800 cursor-pointer hover:bg-red-950"
+				>
+					get booking
+				</button>
+			</div> */}
 		</div>
 	);
 }
