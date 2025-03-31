@@ -1,11 +1,11 @@
-import { getJWT } from "@/lib/ggLeap";
+import { getJWT } from "@/lib/api/ggLeap";
 
 export async function GET() {
-	console.log("__/api/auth/jwt/__");
+  console.log("__/api/auth/jwt/__");
 
-	await getJWT();
+  await getJWT();
 
-	return new Response(null, {
-		status: 204,
-	});
+  return new Response(null, {
+    status: 204,
+  });
 }

@@ -1,4 +1,4 @@
-import { getCenterInfo } from "@/lib/ggLeap";
+import { getCenterInfo } from "@/lib/api/ggLeap";
 
 export async function GET() {
   try {

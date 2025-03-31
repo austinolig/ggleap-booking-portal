@@ -1,4 +1,4 @@
-import { getAvailableMachines } from "@/lib/ggLeap";
+import { getAvailableMachines } from "@/lib/api/ggLeap";
 
 export async function POST(request: Request) {
   console.log("__/api/machines/check-availability/__");
