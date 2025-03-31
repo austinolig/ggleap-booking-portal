@@ -2,341 +2,341 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import {
-	addDays,
-	addMinutes,
-	format,
-	getDate,
-	getHours,
-	isSameDay,
-	set,
+  addDays,
+  addMinutes,
+  format,
+  getDate,
+  getHours,
+  isSameDay,
+  set,
 } from "date-fns";
-import { Machine } from "@/lib/types/ggLeap";
+import { Machine } from "@/types";
 import { LoaderCircle } from "lucide-react";
 
 // HARDCODED MACHINE DATA - eventually fetch this from API
 const allMachines: Machine[] = [
-	{ Uuid: "e0833473-359f-4c65-9b6a-1f7f22375a71", Name: "PC1" },
-	{ Uuid: "012965ab-3e68-461d-83a9-625ccd636369", Name: "PC2" },
-	{ Uuid: "dfcd4bdc-7c57-475d-b486-b842dcf0a9ba", Name: "PC3" },
-	{ Uuid: "535126d8-8cce-4cb4-a4bd-37055f2fbd4b", Name: "PC4" },
-	{ Uuid: "53ae2066-0e22-467f-a9fe-38c7d6aa3a74", Name: "PC5" },
-	{ Uuid: "32e486b1-4dc1-4462-940f-79415750eeb8", Name: "PC6" },
-	{ Uuid: "2047347d-f2c6-4307-9881-1de6f32527ec", Name: "PC7" },
-	{ Uuid: "68bc1314-17d4-4039-ac63-a5b4b198de7c", Name: "PC8" },
-	{ Uuid: "21116719-3c0b-45f9-bc6c-12f70a245851", Name: "PC9" },
-	{ Uuid: "931e35e4-e28a-4ca3-b5b6-fc87625d346e", Name: "PC10" },
+  { Uuid: "e0833473-359f-4c65-9b6a-1f7f22375a71", Name: "PC1" },
+  { Uuid: "012965ab-3e68-461d-83a9-625ccd636369", Name: "PC2" },
+  { Uuid: "dfcd4bdc-7c57-475d-b486-b842dcf0a9ba", Name: "PC3" },
+  { Uuid: "535126d8-8cce-4cb4-a4bd-37055f2fbd4b", Name: "PC4" },
+  { Uuid: "53ae2066-0e22-467f-a9fe-38c7d6aa3a74", Name: "PC5" },
+  { Uuid: "32e486b1-4dc1-4462-940f-79415750eeb8", Name: "PC6" },
+  { Uuid: "2047347d-f2c6-4307-9881-1de6f32527ec", Name: "PC7" },
+  { Uuid: "68bc1314-17d4-4039-ac63-a5b4b198de7c", Name: "PC8" },
+  { Uuid: "21116719-3c0b-45f9-bc6c-12f70a245851", Name: "PC9" },
+  { Uuid: "931e35e4-e28a-4ca3-b5b6-fc87625d346e", Name: "PC10" },
 ];
 
 const currentDate = new Date("March 27, 2025");
 
 export default function BookingForm3() {
-	const [loading, setLoading] = useState<boolean>(false);
-	const [selectedDuration, setSelectedDuration] = useState<number>(90);
-	const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
-	const [availableMachines, setAvailableMachines] = useState<Machine[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedDuration, setSelectedDuration] = useState<number>(90);
+  const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
+  const [availableMachines, setAvailableMachines] = useState<Machine[]>([]);
 
-	const { bookingDates, timeSlots } = useMemo(() => {
-		const numberOfBookingDates = 2;
-		const firstHour = 10;
-		const lastHour = 15;
-		const timeSlotIncrement = 15;
+  const { bookingDates, timeSlots } = useMemo(() => {
+    const numberOfBookingDates = 2;
+    const firstHour = 10;
+    const lastHour = 15;
+    const timeSlotIncrement = 15;
 
-		const bookingDates: Date[] = [];
-		const timeSlots: Date[] = [];
+    const bookingDates: Date[] = [];
+    const timeSlots: Date[] = [];
 
-		const firstTimeSlotDate = set(currentDate, {
-			hours: firstHour,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0,
-		});
+    const firstTimeSlotDate = set(currentDate, {
+      hours: firstHour,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
 
-		for (let i = 0; i < numberOfBookingDates; i++) {
-			let currentTimeSlot = addDays(firstTimeSlotDate, i);
+    for (let i = 0; i < numberOfBookingDates; i++) {
+      let currentTimeSlot = addDays(firstTimeSlotDate, i);
 
-			bookingDates.push(currentTimeSlot);
-			timeSlots.push(currentTimeSlot);
+      bookingDates.push(currentTimeSlot);
+      timeSlots.push(currentTimeSlot);
 
-			while (getHours(currentTimeSlot) < lastHour) {
-				currentTimeSlot = addMinutes(currentTimeSlot, timeSlotIncrement);
+      while (getHours(currentTimeSlot) < lastHour) {
+        currentTimeSlot = addMinutes(currentTimeSlot, timeSlotIncrement);
 
-				timeSlots.push(currentTimeSlot);
-			}
-		}
+        timeSlots.push(currentTimeSlot);
+      }
+    }
 
-		return {
-			bookingDates,
-			timeSlots,
-		};
-	}, []);
+    return {
+      bookingDates,
+      timeSlots,
+    };
+  }, []);
 
-	const [selectedTimeSlotDate, setSelectedTimeSlotDate] = useState<Date>(
-		timeSlots[0]
-	);
+  const [selectedTimeSlotDate, setSelectedTimeSlotDate] = useState<Date>(
+    timeSlots[0]
+  );
 
-	const filteredTimeSlots = useMemo(
-		() => timeSlots.filter((timeSlot) => isSameDay(selectedDate, timeSlot)),
-		[selectedDate, timeSlots]
-	);
+  const filteredTimeSlots = useMemo(
+    () => timeSlots.filter((timeSlot) => isSameDay(selectedDate, timeSlot)),
+    [selectedDate, timeSlots]
+  );
 
-	const processedMachines = useMemo(
-		() =>
-			allMachines.map((machine) => {
-				const isAvailable = availableMachines.some(
-					(machineAvailable) => machineAvailable.Uuid === machine.Uuid
-				);
+  const processedMachines = useMemo(
+    () =>
+      allMachines.map((machine) => {
+        const isAvailable = availableMachines.some(
+          (machineAvailable) => machineAvailable.Uuid === machine.Uuid
+        );
 
-				return {
-					...machine,
-					isAvailable,
-				};
-			}),
-		[availableMachines]
-	);
+        return {
+          ...machine,
+          isAvailable,
+        };
+      }),
+    [availableMachines]
+  );
 
-	const handleDateSelect = useCallback(
-		(date: Date) => {
-			if (isSameDay(selectedDate, date)) {
-				return;
-			}
+  const handleDateSelect = useCallback(
+    (date: Date) => {
+      if (isSameDay(selectedDate, date)) {
+        return;
+      }
 
-			setSelectedDate(date);
+      setSelectedDate(date);
 
-			const newSelectedTimeSlot = set(selectedTimeSlotDate, {
-				date: getDate(date),
-			});
+      const newSelectedTimeSlot = set(selectedTimeSlotDate, {
+        date: getDate(date),
+      });
 
-			setSelectedTimeSlotDate(newSelectedTimeSlot);
-		},
-		[selectedDate, selectedTimeSlotDate, setSelectedTimeSlotDate]
-	);
+      setSelectedTimeSlotDate(newSelectedTimeSlot);
+    },
+    [selectedDate, selectedTimeSlotDate, setSelectedTimeSlotDate]
+  );
 
-	const bookPC = useCallback(
-		async (machine: Machine) => {
-			alert(
-				`Booked ${machine.Name}: ${format(
-					selectedTimeSlotDate,
-					"EEEE, MMMM dd, yyyy 'at' h:mm a"
-				)} (${selectedDuration} mins)`
-			);
-		},
-		[selectedTimeSlotDate, selectedDuration]
-	);
+  const bookPC = useCallback(
+    async (machine: Machine) => {
+      alert(
+        `Booked ${machine.Name}: ${format(
+          selectedTimeSlotDate,
+          "EEEE, MMMM dd, yyyy 'at' h:mm a"
+        )} (${selectedDuration} mins)`
+      );
+    },
+    [selectedTimeSlotDate, selectedDuration]
+  );
 
-	const checkPCAvailability = useCallback(async () => {
-		setLoading(true);
+  const checkPCAvailability = useCallback(async () => {
+    setLoading(true);
 
-		const response = await fetch("/api/machines/check-availability/", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				bookingStart: selectedTimeSlotDate.toISOString(),
-				duration: selectedDuration,
-			}),
-		});
+    const response = await fetch("/api/machines/check-availability/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookingStart: selectedTimeSlotDate.toISOString(),
+        duration: selectedDuration,
+      }),
+    });
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.availableMachines || !response.ok) {
-			console.log("data:", data);
-			setAvailableMachines([]);
-			setLoading(false);
-			return;
-		}
+    if (!data.availableMachines || !response.ok) {
+      console.log("data:", data);
+      setAvailableMachines([]);
+      setLoading(false);
+      return;
+    }
 
-		setAvailableMachines(data.availableMachines);
+    setAvailableMachines(data.availableMachines);
 
-		setLoading(false);
-	}, [selectedTimeSlotDate, selectedDuration]);
+    setLoading(false);
+  }, [selectedTimeSlotDate, selectedDuration]);
 
-	return (
-		<div className="space-y-6">
-			<DateSelect
-				bookingDates={bookingDates}
-				selectedDate={selectedDate}
-				changeSelectedDate={handleDateSelect}
-			/>
-			<TimeSelect
-				filteredTimeSlots={filteredTimeSlots}
-				selectedTimeSlotDate={selectedTimeSlotDate}
-				setSelectedTimeSlotDate={setSelectedTimeSlotDate}
-			/>
-			<DurationSelect
-				selectedDuration={selectedDuration}
-				setSelectedDuration={setSelectedDuration}
-			/>
-			<CheckAvailabilityButton
-				loading={loading}
-				checkPCAvailability={checkPCAvailability}
-			/>
-			<MachineSelect
-				availableMachines={availableMachines}
-				loading={loading}
-				processedMachines={processedMachines}
-				bookPC={bookPC}
-			/>
-		</div>
-	);
+  return (
+    <div className="space-y-6">
+      <DateSelect
+        bookingDates={bookingDates}
+        selectedDate={selectedDate}
+        changeSelectedDate={handleDateSelect}
+      />
+      <TimeSelect
+        filteredTimeSlots={filteredTimeSlots}
+        selectedTimeSlotDate={selectedTimeSlotDate}
+        setSelectedTimeSlotDate={setSelectedTimeSlotDate}
+      />
+      <DurationSelect
+        selectedDuration={selectedDuration}
+        setSelectedDuration={setSelectedDuration}
+      />
+      <CheckAvailabilityButton
+        loading={loading}
+        checkPCAvailability={checkPCAvailability}
+      />
+      <MachineSelect
+        availableMachines={availableMachines}
+        loading={loading}
+        processedMachines={processedMachines}
+        bookPC={bookPC}
+      />
+    </div>
+  );
 }
 
 const DateSelect = memo(function DateSelect({
-	bookingDates,
-	selectedDate,
-	changeSelectedDate,
+  bookingDates,
+  selectedDate,
+  changeSelectedDate,
 }: {
-	bookingDates: Date[];
-	selectedDate: Date;
-	changeSelectedDate: (date: Date) => void;
+  bookingDates: Date[];
+  selectedDate: Date;
+  changeSelectedDate: (date: Date) => void;
 }) {
-	return (
-		<div>
-			<p className="font-bold mb-2">Date</p>
-			<div className="grid grid-cols-2 gap-2">
-				{bookingDates.map((date, index) => (
-					<button
-						key={index}
-						className={`p-2 border rounded cursor-pointer  ${
-							isSameDay(selectedDate, date)
-								? "text-blue-500 border-blue-900"
-								: "hover:text-blue-300"
-						}`}
-						onClick={() => changeSelectedDate(date)}
-					>
-						{format(date, "EEE, MMM dd, yyyy")}
-					</button>
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <p className="font-bold mb-2">Date</p>
+      <div className="grid grid-cols-2 gap-2">
+        {bookingDates.map((date, index) => (
+          <button
+            key={index}
+            className={`p-2 border rounded cursor-pointer  ${
+              isSameDay(selectedDate, date)
+                ? "text-blue-500 border-blue-900"
+                : "hover:text-blue-300"
+            }`}
+            onClick={() => changeSelectedDate(date)}
+          >
+            {format(date, "EEE, MMM dd, yyyy")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 });
 
 const TimeSelect = memo(function TimeSelect({
-	filteredTimeSlots,
-	selectedTimeSlotDate,
-	setSelectedTimeSlotDate,
+  filteredTimeSlots,
+  selectedTimeSlotDate,
+  setSelectedTimeSlotDate,
 }: {
-	filteredTimeSlots: Date[];
-	selectedTimeSlotDate: Date;
-	setSelectedTimeSlotDate: (date: Date) => void;
+  filteredTimeSlots: Date[];
+  selectedTimeSlotDate: Date;
+  setSelectedTimeSlotDate: (date: Date) => void;
 }) {
-	return (
-		<div>
-			<p className="font-bold mb-2">Time</p>
-			<div className="grid grid-cols-3 gap-2">
-				{filteredTimeSlots.map((timeSlot) => (
-					<button
-						key={timeSlot.toISOString()}
-						className={`p-2 border rounded cursor-pointer ${
-							selectedTimeSlotDate.getTime() === timeSlot.getTime()
-								? "text-blue-500 border-blue-900"
-								: "text-white hover:text-blue-300"
-						}`}
-						onClick={() => setSelectedTimeSlotDate(timeSlot)}
-					>
-						{format(timeSlot, "h:mm a")}
-					</button>
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <p className="font-bold mb-2">Time</p>
+      <div className="grid grid-cols-3 gap-2">
+        {filteredTimeSlots.map((timeSlot) => (
+          <button
+            key={timeSlot.toISOString()}
+            className={`p-2 border rounded cursor-pointer ${
+              selectedTimeSlotDate.getTime() === timeSlot.getTime()
+                ? "text-blue-500 border-blue-900"
+                : "text-white hover:text-blue-300"
+            }`}
+            onClick={() => setSelectedTimeSlotDate(timeSlot)}
+          >
+            {format(timeSlot, "h:mm a")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 });
 
 const DurationSelect = memo(function DurationSelect({
-	selectedDuration,
-	setSelectedDuration,
+  selectedDuration,
+  setSelectedDuration,
 }: {
-	selectedDuration: number;
-	setSelectedDuration: (duration: number) => void;
+  selectedDuration: number;
+  setSelectedDuration: (duration: number) => void;
 }) {
-	return (
-		<div>
-			<p className="font-bold mb-2">Duration</p>
-			<div className="grid grid-cols-2 gap-2">
-				{[90, 60].map((duration) => (
-					<button
-						key={duration}
-						className={`p-2 border rounded cursor-pointer ${
-							selectedDuration === duration
-								? "text-blue-500 border-blue-900"
-								: "hover:text-blue-300"
-						}`}
-						onClick={() => setSelectedDuration(duration)}
-					>
-						{duration} mins
-					</button>
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <p className="font-bold mb-2">Duration</p>
+      <div className="grid grid-cols-2 gap-2">
+        {[90, 60].map((duration) => (
+          <button
+            key={duration}
+            className={`p-2 border rounded cursor-pointer ${
+              selectedDuration === duration
+                ? "text-blue-500 border-blue-900"
+                : "hover:text-blue-300"
+            }`}
+            onClick={() => setSelectedDuration(duration)}
+          >
+            {duration} mins
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 });
 
 const CheckAvailabilityButton = memo(function CheckAvailabilityButton({
-	loading,
-	checkPCAvailability,
+  loading,
+  checkPCAvailability,
 }: {
-	loading: boolean;
-	checkPCAvailability: () => void;
+  loading: boolean;
+  checkPCAvailability: () => void;
 }) {
-	return (
-		<div className="mt-12">
-			<button
-				className={`p-2 border rounded cursor-pointer flex items-center gap-2 w-full justify-center ${
-					loading ? "text-blue-500 border-blue-900" : ""
-				}`}
-				onClick={() => checkPCAvailability()}
-				disabled={loading}
-			>
-				{!loading ? (
-					"Check PCs"
-				) : (
-					<>
-						<LoaderCircle className="animate-spin h-4 w-4 text-blue-500" />
-						{"Checking..."}
-					</>
-				)}
-			</button>
-		</div>
-	);
+  return (
+    <div className="mt-12">
+      <button
+        className={`p-2 border rounded cursor-pointer flex items-center gap-2 w-full justify-center ${
+          loading ? "text-blue-500 border-blue-900" : ""
+        }`}
+        onClick={() => checkPCAvailability()}
+        disabled={loading}
+      >
+        {!loading ? (
+          "Check PCs"
+        ) : (
+          <>
+            <LoaderCircle className="animate-spin h-4 w-4 text-blue-500" />
+            {"Checking..."}
+          </>
+        )}
+      </button>
+    </div>
+  );
 });
 
 const MachineSelect = memo(function MachineSelect({
-	availableMachines,
-	loading,
-	processedMachines,
-	bookPC,
+  availableMachines,
+  loading,
+  processedMachines,
+  bookPC,
 }: {
-	availableMachines: Machine[];
-	loading: boolean;
-	processedMachines: { Uuid: string; Name: string; isAvailable: boolean }[];
-	bookPC: (machine: Machine) => void;
+  availableMachines: Machine[];
+  loading: boolean;
+  processedMachines: { Uuid: string; Name: string; isAvailable: boolean }[];
+  bookPC: (machine: Machine) => void;
 }) {
-	return (
-		<div>
-			<p className="font-bold mb-2 flex gap-2 items-center">
-				<span>PCs</span>
-				<span>-</span>
-				{!loading ? (
-					<span>{availableMachines.length} Available</span>
-				) : (
-					<LoaderCircle className="animate-spin h-4 w-4 text-blue-500" />
-				)}
-			</p>
-			<div className="grid grid-cols-2 gap-2">
-				{processedMachines.map((machine) => (
-					<button
-						key={machine.Uuid}
-						className={`p-2 border rounded ${
-							machine.isAvailable && !loading
-								? "cursor-pointer hover:text-blue-300"
-								: "text-muted"
-						}`}
-						onClick={() => bookPC(machine)}
-						disabled={!machine.isAvailable}
-					>
-						{!loading ? machine.Name : "---"}
-					</button>
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <p className="font-bold mb-2 flex gap-2 items-center">
+        <span>PCs</span>
+        <span>-</span>
+        {!loading ? (
+          <span>{availableMachines.length} Available</span>
+        ) : (
+          <LoaderCircle className="animate-spin h-4 w-4 text-blue-500" />
+        )}
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        {processedMachines.map((machine) => (
+          <button
+            key={machine.Uuid}
+            className={`p-2 border rounded ${
+              machine.isAvailable && !loading
+                ? "cursor-pointer hover:text-blue-300"
+                : "text-muted"
+            }`}
+            onClick={() => bookPC(machine)}
+            disabled={!machine.isAvailable}
+          >
+            {!loading ? machine.Name : "---"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 });
