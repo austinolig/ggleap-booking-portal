@@ -2,6 +2,8 @@ import { Booking, BookingUuid, JWT, Machine } from "./types/ggLeap";
 import { auth } from "@/auth";
 import { User } from "next-auth";
 
+const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
+
 export async function getJWT(): Promise<JWT | null> {
   console.log("__getJWT()__");
 
@@ -49,8 +51,6 @@ export async function login(
 
   try {
     console.log(`Logging in '${username}'...`);
-
-    const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
 
     const response = await fetch(
       "https://api.ggleap.com/production/authorization/user/login",
@@ -274,6 +274,37 @@ export async function getBookings(
     console.log("Bookings:", data.Bookings);
 
     return data.Bookings;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
+}
+
+export async function getCenterInfo(): Promise<{ CenterName: string } | null> {
+  console.log("__getCenterInfo()__");
+
+  try {
+    console.log("Fetching center info...");
+
+    const response = await fetch(
+      `https://api.ggleap.com/production/public_center_info?CenterUuid=${centerUuid}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data || !response.ok) {
+      throw new Error(`(${response.status}) Failed to fetch center info`);
+    }
+
+    console.log("data:", data);
+
+    return data;
   } catch (error) {
     console.error(error);
 
