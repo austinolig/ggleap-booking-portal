@@ -1,4 +1,6 @@
-import { Booking, BookingUuid, JWT, Machine } from "./types/ggLeap";
+"use server";
+
+import { Booking, BookingUuid, JWT, Machine } from "@/types";
 import { auth } from "@/auth";
 import { User } from "next-auth";
 
