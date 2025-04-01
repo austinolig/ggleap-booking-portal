@@ -1,18 +1,18 @@
-import { getCenterInfo } from "@/lib/api/ggLeap";
+import { getCenterHours } from "@/lib/api/ggLeap";
 
 export async function GET() {
   try {
-    const centerInfo = await getCenterInfo();
+    const centerHours = await getCenterHours();
 
-    if (!centerInfo) {
+    if (!centerHours) {
       throw new Error();
     }
 
-    console.log("centerInfo:", centerInfo);
+    console.log("centerHours:", centerHours);
 
     return new Response(
       JSON.stringify({
-        ...centerInfo,
+        ...centerHours,
       }),
       {
         status: 200,
