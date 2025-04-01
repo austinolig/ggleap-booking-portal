@@ -1,315 +1,315 @@
 "use server";
 
-import { Booking, BookingUuid, JWT, Machine } from "@/types";
+import { Booking, BookingUuid, CenterHours, JWT, Machine } from "@/types";
 import { auth } from "@/auth";
 import { User } from "next-auth";
 
 const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
 
 export async function getJWT(): Promise<JWT | null> {
-	console.log("__getJWT()__");
+  console.log("__getJWT()__");
 
-	try {
-		console.log("Fetching JWT...");
+  try {
+    console.log("Fetching JWT...");
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/authorization/public-api/auth",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ AuthToken: process.env.GGLEAP_API_TOKEN }),
-				cache: "force-cache",
-				next: { revalidate: 300 },
-			}
-		);
+    const response = await fetch(
+      "https://api.ggleap.com/production/authorization/public-api/auth",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ AuthToken: process.env.GGLEAP_API_TOKEN }),
+        cache: "force-cache",
+        next: { revalidate: 300 },
+      }
+    );
 
-		if (!response.ok) {
-			throw new Error(`(${response.status}) Failed to fetch JWT`);
-		}
+    if (!response.ok) {
+      throw new Error(`(${response.status}) Failed to fetch JWT`);
+    }
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.Jwt) {
-			throw new Error("Missing JWT in response");
-		}
+    if (!data.Jwt) {
+      throw new Error("Missing JWT in response");
+    }
 
-		const jwt = data.Jwt;
+    const jwt = data.Jwt;
 
-		console.log("JWT:", jwt);
+    console.log("JWT:", jwt);
 
-		return jwt;
-	} catch (error) {
-		console.error(error);
+    return jwt;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
 export async function login(
-	username: string,
-	password: string
+  username: string,
+  password: string
 ): Promise<User | null> {
-	console.log("__login()__");
+  console.log("__login()__");
 
-	try {
-		console.log(`Logging in '${username}'...`);
+  try {
+    console.log(`Logging in '${username}'...`);
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/authorization/user/login",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"x-gg-client": "DynamicCenterPagesWeb 0.1",
-				},
-				body: JSON.stringify({
-					Username: username,
-					Password: password,
-					CenterUuid: centerUuid,
-				}),
-			}
-		);
+    const response = await fetch(
+      "https://api.ggleap.com/production/authorization/user/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-gg-client": "DynamicCenterPagesWeb 0.1",
+        },
+        body: JSON.stringify({
+          Username: username,
+          Password: password,
+          CenterUuid: centerUuid,
+        }),
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.User || !response.ok) {
-			console.log("data:", data);
+    if (!data.User || !response.ok) {
+      console.log("data:", data);
 
-			throw new Error(`(${response.status}) Failed to login`);
-		}
+      throw new Error(`(${response.status}) Failed to login`);
+    }
 
-		console.log("User:", data.User);
+    console.log("User:", data.User);
 
-		return data.User;
-	} catch (error) {
-		console.error(error);
+    return data.User;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
 export async function getAllMachines(): Promise<Machine[] | null> {
-	console.log("__getAllMachines()__");
+  console.log("__getAllMachines()__");
 
-	const jwt = await getJWT();
+  const jwt = await getJWT();
 
-	if (!jwt) {
-		return null;
-	}
+  if (!jwt) {
+    return null;
+  }
 
-	try {
-		console.log("Fetching machines...");
+  try {
+    console.log("Fetching machines...");
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/machines/get-all",
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: jwt,
-				},
-			}
-		);
+    const response = await fetch(
+      "https://api.ggleap.com/production/machines/get-all",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: jwt,
+        },
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.Machines || !response.ok) {
-			console.log("data:", data);
+    if (!data.Machines || !response.ok) {
+      console.log("data:", data);
 
-			throw new Error(`(${response.status}) Failed to fetch machines`);
-		}
+      throw new Error(`(${response.status}) Failed to fetch machines`);
+    }
 
-		console.log("Machines:", data.Machines);
+    console.log("Machines:", data.Machines);
 
-		return data.Machines;
-	} catch (error) {
-		console.error(error);
+    return data.Machines;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
 export async function getAvailableMachines(
-	bookingStart: string,
-	duration: number
+  bookingStart: string,
+  duration: number
 ): Promise<Machine[] | null> {
-	console.log("__getAvailableMachines()__");
+  console.log("__getAvailableMachines()__");
 
-	const jwt = await getJWT();
+  const jwt = await getJWT();
 
-	if (!jwt) {
-		return null;
-	}
+  if (!jwt) {
+    return null;
+  }
 
-	try {
-		console.log("Fetching available machines...");
+  try {
+    console.log("Fetching available machines...");
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/bookings/get-available-machines",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: jwt,
-				},
-				body: JSON.stringify({
-					Start: bookingStart,
-					Duration: duration,
-				}),
-			}
-		);
+    const response = await fetch(
+      "https://api.ggleap.com/production/bookings/get-available-machines",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: jwt,
+        },
+        body: JSON.stringify({
+          Start: bookingStart,
+          Duration: duration,
+        }),
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.Machines || !response.ok) {
-			console.log("data:", data);
+    if (!data.Machines || !response.ok) {
+      console.log("data:", data);
 
-			throw new Error(
-				`(${response.status}) Failed to fetch available machines`
-			);
-		}
+      throw new Error(
+        `(${response.status}) Failed to fetch available machines`
+      );
+    }
 
-		console.log("Machines:", data.Machines);
+    console.log("Machines:", data.Machines);
 
-		return data.Machines;
-	} catch (error) {
-		console.error(error);
+    return data.Machines;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
 export async function createBooking(
-	bookingStart: string,
-	duration: number,
-	machineUuid: string
+  bookingStart: string,
+  duration: number,
+  machineUuid: string
 ): Promise<BookingUuid | null> {
-	console.log("__createBooking()__");
+  console.log("__createBooking()__");
 
-	const jwt = await getJWT();
+  const jwt = await getJWT();
 
-	if (!jwt) {
-		return null;
-	}
+  if (!jwt) {
+    return null;
+  }
 
-	const session = await auth();
+  const session = await auth();
 
-	if (!session?.user) {
-		return null;
-	}
+  if (!session?.user) {
+    return null;
+  }
 
-	try {
-		console.log("Creating booking...");
+  try {
+    console.log("Creating booking...");
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/bookings/create",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: jwt,
-				},
-				body: JSON.stringify({
-					Booking: {
-						Start: bookingStart,
-						Duration: duration,
-						Machines: [machineUuid],
-						Name: session.user.Username,
-						BookerEmail: session.user.Email,
-						UserUuid: session.user.Uuid,
-					},
-				}),
-			}
-		);
+    const response = await fetch(
+      "https://api.ggleap.com/production/bookings/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: jwt,
+        },
+        body: JSON.stringify({
+          Booking: {
+            Start: bookingStart,
+            Duration: duration,
+            Machines: [machineUuid],
+            Name: session.user.Username,
+            BookerEmail: session.user.Email,
+            UserUuid: session.user.Uuid,
+          },
+        }),
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.BookingUuid || !response.ok) {
-			console.log("data:", data);
+    if (!data.BookingUuid || !response.ok) {
+      console.log("data:", data);
 
-			throw new Error(`(${response.status}) Failed to fetch create booking`);
-		}
+      throw new Error(`(${response.status}) Failed to fetch create booking`);
+    }
 
-		console.log("BookingUuid:", data.BookingUuid);
+    console.log("BookingUuid:", data.BookingUuid);
 
-		return data.BookingUuid;
-	} catch (error) {
-		console.error(error);
+    return data.BookingUuid;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
 export async function getBookings(
-	bookingDate: string
+  bookingDate: string
 ): Promise<Booking[] | null> {
-	console.log("__getBookings()__");
+  console.log("__getBookings()__");
 
-	const jwt = await getJWT();
+  const jwt = await getJWT();
 
-	if (!jwt) {
-		return null;
-	}
+  if (!jwt) {
+    return null;
+  }
 
-	try {
-		console.log("Fetching bookings...");
+  try {
+    console.log("Fetching bookings...");
 
-		const dateQuery = bookingDate.split("T")[0];
+    const dateQuery = bookingDate.split("T")[0];
 
-		const response = await fetch(
-			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: jwt,
-				},
-			}
-		);
+    const response = await fetch(
+      `https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: jwt,
+        },
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data.Bookings || !response.ok) {
-			console.log("data:", data);
+    if (!data.Bookings || !response.ok) {
+      console.log("data:", data);
 
-			throw new Error(`(${response.status}) Failed to fetch bookings`);
-		}
+      throw new Error(`(${response.status}) Failed to fetch bookings`);
+    }
 
-		// console.log("Bookings:", data.Bookings);
+    console.log("Bookings:", data.Bookings);
 
-		return data.Bookings;
-	} catch (error) {
-		console.error(error);
+    return data.Bookings;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }
 
-export async function getCenterInfo(): Promise<{ CenterName: string } | null> {
-	console.log("__getCenterInfo()__");
+export async function getCenterHours(): Promise<CenterHours | null> {
+  console.log("__getCenterHours()__");
 
-	try {
-		console.log("Fetching center info...");
+  try {
+    console.log("Fetching center hours...");
 
-		const response = await fetch(
-			`https://api.ggleap.com/production/public_center_info?CenterUuid=${centerUuid}`,
-			{
-				headers: {
-					"Content-Type": "application/json",
-				},
-			}
-		);
+    const response = await fetch(
+      `https://api.ggleap.com/production/public_center_info?CenterUuid=${centerUuid}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-		const data = await response.json();
+    const data = await response.json();
 
-		if (!data || !response.ok) {
-			throw new Error(`(${response.status}) Failed to fetch center info`);
-		}
+    if (!data.CenterOpeningHours || !response.ok) {
+      throw new Error(`(${response.status}) Failed to fetch center info`);
+    }
 
-		console.log("data:", data);
+    console.log("CenterHours:", data.CenterOpeningHours);
 
-		return data;
-	} catch (error) {
-		console.error(error);
+    return data.CenterOpeningHours;
+  } catch (error) {
+    console.error(error);
 
-		return null;
-	}
+    return null;
+  }
 }

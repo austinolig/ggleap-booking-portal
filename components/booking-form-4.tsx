@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelectedStore } from "@/stores";
-import { Booking, Machine } from "@/types";
+import { Booking, CenterHours, Machine } from "@/types";
 import {
   addDays,
   addMinutes,
@@ -34,34 +34,6 @@ const currentDate = new Date("March 27, 2025");
 const dates = [currentDate, addDays(currentDate, 1)];
 const durations = [90, 60];
 
-const calculateTimes = () => {
-  const startHour = 10;
-  const endHour = 15;
-  const minuteInterval = 15;
-
-  const times: Date[] = [];
-
-  let firstTime = set(currentDate, {
-    hours: startHour,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  times.push(firstTime);
-
-  for (let hour = startHour; hour < endHour; hour++) {
-    for (let minute = 15; minute <= 60; minute += minuteInterval) {
-      firstTime = setMinutes(firstTime, minute);
-      times.push(firstTime);
-    }
-  }
-
-  return times;
-};
-
-const times = calculateTimes();
-
 const hasOverlap = (potentialBooking: Booking, existingBooking: Booking) => {
   const potentialStart = new Date(potentialBooking.Start);
   const potentialEnd = addMinutes(potentialStart, potentialBooking.Duration);
@@ -74,10 +46,44 @@ const hasOverlap = (potentialBooking: Booking, existingBooking: Booking) => {
   );
 };
 
-export default function BookingForm4({ bookings }: { bookings: Booking[] }) {
+export default function BookingForm4({
+  bookings,
+  centerHours,
+}: {
+  bookings: Booking[];
+  centerHours: CenterHours;
+}) {
   const selectedTime = useSelectedStore((state) => state.selectedTime);
   const selectedDate = useSelectedStore((state) => state.selectedDate);
   const selectedDuration = useSelectedStore((state) => state.selectedDuration);
+
+  const calculateTimes = () => {
+    const startHour = 10;
+    const endHour = 15;
+    const minuteInterval = 15;
+
+    const times: Date[] = [];
+
+    let firstTime = set(currentDate, {
+      hours: startHour,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    times.push(firstTime);
+
+    for (let hour = startHour; hour < endHour; hour++) {
+      for (let minute = 15; minute <= 60; minute += minuteInterval) {
+        firstTime = setMinutes(firstTime, minute);
+        times.push(firstTime);
+      }
+    }
+
+    return times;
+  };
+
+  const times = calculateTimes();
 
   const machinesAndBookings = useMemo(() => {
     const machinesAndBookings: Map<string, Booking[]> = new Map();
@@ -103,6 +109,31 @@ export default function BookingForm4({ bookings }: { bookings: Booking[] }) {
   }, [bookings]);
 
   const processedTimes = useMemo(() => {
+    const specialHours =
+      centerHours.Special[selectedDate.toISOString().split("T")[0]];
+
+    let specialOpenDate: Date;
+    let specialCloseDate: Date;
+
+    if (specialHours) {
+      const specialOpen = specialHours[0].Open.split(":");
+      const specialClose = specialHours[0].Close.split(":");
+
+      specialOpenDate = set(selectedDate, {
+        hours: parseInt(specialOpen[0]),
+        minutes: parseInt(specialOpen[1]),
+        seconds: 0,
+        milliseconds: 0,
+      });
+
+      specialCloseDate = set(selectedDate, {
+        hours: parseInt(specialClose[0]) - 1,
+        minutes: parseInt(specialClose[1]),
+        seconds: 0,
+        milliseconds: 0,
+      });
+    }
+
     return times.map((time) => {
       let availableMachines = 0;
 
@@ -112,6 +143,18 @@ export default function BookingForm4({ bookings }: { bookings: Booking[] }) {
         seconds: 0,
         milliseconds: 0,
       });
+
+      // handle duration change
+      if (
+        specialHours &&
+        (isAfter(timeToProcess, specialCloseDate) ||
+          isBefore(timeToProcess, specialOpenDate))
+      ) {
+        return {
+          time,
+          availableMachines: 0,
+        };
+      }
 
       for (const machine of allMachines) {
         const machineBookings = machinesAndBookings.get(machine.Uuid);
@@ -144,7 +187,13 @@ export default function BookingForm4({ bookings }: { bookings: Booking[] }) {
         availableMachines: availableMachines,
       };
     });
-  }, [machinesAndBookings, selectedDate, selectedDuration]);
+  }, [
+    machinesAndBookings,
+    selectedDate,
+    selectedDuration,
+    times,
+    centerHours.Special,
+  ]);
 
   const processedMachines = useMemo(() => {
     return allMachines.map((machine) => {

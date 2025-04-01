@@ -4,18 +4,18 @@ import { auth, signOut } from "@/auth";
 // import BookingForm3 from "@/components/booking-form-3";
 import BookingForm4 from "@/components/booking-form-4";
 import LoginForm from "@/components/login-form";
-import { getBookings } from "@/lib/api/ggLeap";
+import { getBookings, getCenterHours } from "@/lib/api/ggLeap";
 
 export default async function Home() {
   const session = await auth();
   const bookings = await getBookings(new Date("March 27, 2025").toISOString());
+  const centerHours = await getCenterHours();
 
-  if (!session?.user || !bookings) {
+  if (!session?.user || !bookings || !centerHours) {
     return <LoginForm />;
   }
 
   console.log(session);
-  // console.log(bookings);
 
   return (
     <main className="p-4 space-y-6">
@@ -36,7 +36,7 @@ export default async function Home() {
       {/* <hr />
       <BookingForm2 /> */}
       <hr />
-      <BookingForm4 bookings={bookings} />
+      <BookingForm4 bookings={bookings} centerHours={centerHours} />
     </main>
   );
 }
