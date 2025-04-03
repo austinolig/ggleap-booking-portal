@@ -30,7 +30,7 @@ const allMachines = [
   { Uuid: "931e35e4-e28a-4ca3-b5b6-fc87625d346e", Name: "PC10" },
 ];
 
-const currentDate = new Date("March 27, 2025");
+const currentDate = new Date();
 const dates = [currentDate, addDays(currentDate, 1)];
 const durations = [90, 60];
 
@@ -150,6 +150,10 @@ export default function BookingForm4({
         (isAfter(timeToProcess, specialCloseDate) ||
           isBefore(timeToProcess, specialOpenDate))
       ) {
+        console.log("__OVERLAP DETECTED__");
+        console.log("timetoprocess:", timeToProcess);
+        console.log("special hours:", specialOpenDate, specialCloseDate);
+
         return {
           time,
           availableMachines: 0,
