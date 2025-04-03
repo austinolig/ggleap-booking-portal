@@ -118,9 +118,14 @@ export async function getAllMachines(): Promise<Machine[] | null> {
       throw new Error(`(${response.status}) Failed to fetch machines`);
     }
 
-    console.log("Machines:", data.Machines);
+    const machines = data.Machines.map((machine: Machine) => ({
+      uuid: machine.Uuid,
+      name: machine.Name,
+    }));
 
-    return data.Machines;
+    console.log("machines:", machines);
+
+    return machines;
   } catch (error) {
     console.error(error);
 
