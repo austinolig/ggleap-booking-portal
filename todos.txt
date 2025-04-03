@@ -1,0 +1,8 @@
+user
+- get API for change password action
+- admin mode based on user role
+
+bookings
+- wipe hours from account upon new booking
+- prompt for confirmation (Date/Time, Terms of Service)
+
