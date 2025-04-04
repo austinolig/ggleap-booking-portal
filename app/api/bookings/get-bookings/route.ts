@@ -1,6 +1,6 @@
 import { getBookings } from "@/lib/api/ggLeap";
 
-export async function POST(request: Request) {
+export async function POST() {
 	console.log("__/api/bookings/get-bookings/__");
 
 	try {
