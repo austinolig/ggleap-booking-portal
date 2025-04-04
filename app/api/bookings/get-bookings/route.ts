@@ -4,8 +4,6 @@ export async function POST(request: Request) {
 	console.log("__/api/bookings/get-bookings/__");
 
 	try {
-		const { bookingDate } = await request.json();
-
 		const bookings = await getBookings();
 
 		if (!bookings) {
