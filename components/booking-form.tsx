@@ -1,32 +1,39 @@
-import { getAllMachines } from "@/lib/api/ggLeap";
+import { getAllMachines, getBookings, getCenterHours } from "@/lib/api/ggLeap";
 import DateSelect from "./date-select";
+import DurationSelect from "./duration-select";
+import TimeSelect from "./time-select";
 
 export default async function BookingForm() {
-  // initialize all machines as Machine[]: fetch from ggLeap
-  const allMachines = await getAllMachines();
+	// initialize all machines as Machine[]: fetch from ggLeap
+	const allMachines = await getAllMachines();
+	// fetch center (special) hours from ggLeap
+	const centerHours = await getCenterHours();
+	// fetch existing bookings from ggLeap
+	const bookings = await getBookings();
 
-  // fetch existing bookings from ggLeap
+	if (!allMachines || !centerHours || !bookings) {
+		return <div>Error fetching data</div>;
+	}
 
-  // fetch center (special) hours from ggLeap
+	// initialize selectedDate as Date: initial booking date
 
-  // initialize available durations as number[]: 90, 60
+	// initialize selectedTime as Date: initial time slot
 
-  // initialize available time slots as Date[]: between center (special) hours with 15 mininute intervals
-  // generate available machines based on existing bookings
+	// initialize selectedDuration as number: initial duration
 
-  // initialize selectedDate as Date: initial booking date
+	// show available machines for selected time
 
-  // initialize selectedTime as Date: initial time slot
+	// book selected machine for selected date, time, and duration
 
-  // initialize selectedDuration as number: initial duration
-
-  // show available machines for selected time
-
-  // book selected machine for selected date, time, and duration
-
-  return (
-    <div>
-      <DateSelect />
-    </div>
-  );
+	return (
+		<div>
+			<DateSelect />
+			<DurationSelect />
+			<TimeSelect
+				centerHours={centerHours}
+				bookings={bookings}
+				allMachines={allMachines}
+			/>
+		</div>
+	);
 }
