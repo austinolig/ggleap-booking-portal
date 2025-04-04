@@ -11,7 +11,7 @@ type SelectedStore = {
 	bookPC: (machine: Machine) => void;
 };
 
-const initialDate = new Date("March 27, 2025 10:00 AM");
+const initialDate = new Date();
 
 export const useSelectedStore = create<SelectedStore>()((set, get) => ({
 	selectedDate: initialDate,
