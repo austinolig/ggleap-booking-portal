@@ -1,51 +1,51 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { login } from "./lib/api/ggLeap";
+import { login } from "./lib/ggLeap";
 
 type LoginCredentials = {
-  username: string;
-  password: string;
+	username: string;
+	password: string;
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    Credentials({
-      authorize: async (credentials) => {
-        const { username, password } = credentials as LoginCredentials;
+	providers: [
+		Credentials({
+			authorize: async (credentials) => {
+				const { username, password } = credentials as LoginCredentials;
 
-        const userData = await login(username, password);
+				const userData = await login(username, password);
 
-        if (!userData) {
-          return null;
-        }
+				if (!userData) {
+					return null;
+				}
 
-        const user = {
-          Uuid: userData.Uuid,
-          Username: userData.Username,
-          Email: userData.Email,
-          FirstName: userData.FirstName,
-          LastName: userData.LastName,
-        };
+				const user = {
+					Uuid: userData.Uuid,
+					Username: userData.Username,
+					Email: userData.Email,
+					FirstName: userData.FirstName,
+					LastName: userData.LastName,
+				};
 
-        return user;
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.user = user;
-      }
+				return user;
+			},
+		}),
+	],
+	session: {
+		strategy: "jwt",
+	},
+	callbacks: {
+		async jwt({ token, user }) {
+			if (user) {
+				token.user = user;
+			}
 
-      return token;
-    },
-    async session({ session, token }) {
-      session.user = token.user;
+			return token;
+		},
+		async session({ session, token }) {
+			session.user = token.user;
 
-      return session;
-    },
-  },
+			return session;
+		},
+	},
 });

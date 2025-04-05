@@ -1,4 +1,4 @@
-import { getBookings } from "@/lib/api/ggLeap";
+import { getBookings } from "@/lib/ggLeap";
 
 export async function POST() {
 	console.log("__/api/bookings/get-bookings/__");
