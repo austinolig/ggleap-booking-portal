@@ -1,58 +1,40 @@
-import { useSelectedStore } from "@/stores";
 import { clsx, type ClassValue } from "clsx";
 import { addMinutes, format, isAfter, isBefore, set } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import { getAllMachines, getBookings, getCenterHours } from "./ggLeap";
-import { TimeAndAvailableMachines } from "@/types";
+import {
+	Booking,
+	CenterHours,
+	Machine,
+	TimeAndAvailableMachines,
+} from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export async function calculateTimes(): Promise<
-	TimeAndAvailableMachines[] | null
-> {
-	const centerHours = await getCenterHours();
-	const allMachines = await getAllMachines();
-	const bookings = await getBookings();
+export function calculateTimes(
+	centerHours: CenterHours,
+	allMachines: Machine[],
+	bookings: Booking[],
+	selectedDate: Date,
+	selectedDuration: number
+): TimeAndAvailableMachines[] | null {
+	const dayOfWeek = format(selectedDate, "EEEE");
+	const dateString = format(selectedDate, "yyyy-MM-dd");
 
-	if (!centerHours || !allMachines || !bookings) {
+	// check if center is open on selected date
+	if (!centerHours.Regular[dayOfWeek][0]?.Open) {
 		return null;
 	}
 
-	const selectedDuration = useSelectedStore((state) => state.selectedDuration);
-	const selectedDate = useSelectedStore((state) => state.selectedDate);
-	const dayOfWeek = format(selectedDate, "EEEE");
+	const regularHours = {
+		openTime: centerHours.Regular[dayOfWeek][0].Open,
+		closeTime: centerHours.Regular[dayOfWeek][0].Close,
+	};
 
-	// check if center is open on selected date
-	// if (!centerHours.Regular[dayOfWeek][0]?.Open) {
-	//   return <div>Center is closed on {dayOfWeek}.</div>;
-	// }
-
-	// check center regular hours
-	// split "HH:mm" value into [HH, mm]
-	const [regularOpenHour, regularOpenMinute] =
-		centerHours.Regular[dayOfWeek][0].Open.split(":");
-	const [regularClosingHour, regularClosingMinute] =
-		centerHours.Regular[dayOfWeek][0].Close.split(":");
-
-	let [specialOpenHour, specialOpenMinute] = [
-		regularOpenHour,
-		regularOpenMinute,
-	];
-	let [specialClosingHour, specialClosingMinute] = [
-		regularClosingHour,
-		regularClosingMinute,
-	];
-
-	// check center special hours
-	const dateString = format(selectedDate, "yyyy-MM-dd");
-	if (centerHours.Special[dateString]) {
-		[specialOpenHour, specialOpenMinute] =
-			centerHours.Special[dateString][0].Open.split(":");
-		[specialClosingHour, specialClosingMinute] =
-			centerHours.Special[dateString][0].Close.split(":");
-	}
+	const [regularOpenHour, regularOpenMinute] = regularHours.openTime.split(":");
+	const [regularCloseHour, regularCloseMinute] =
+		regularHours.closeTime.split(":");
 
 	const regularStartTime = set(selectedDate, {
 		hours: parseInt(regularOpenHour),
@@ -60,10 +42,24 @@ export async function calculateTimes(): Promise<
 		seconds: 0,
 		milliseconds: 0,
 	});
-	const regularEndTime = set(regularStartTime, {
-		hours: parseInt(regularClosingHour),
-		minutes: parseInt(regularClosingMinute) - 60, // subtract shorted possible duration (60) from closing time
+
+	const regularEndTime = set(selectedDate, {
+		hours: parseInt(regularCloseHour),
+		minutes: parseInt(regularCloseMinute) - 60, // subtract shortest possible duration (60) from closing time
+		seconds: 0,
+		milliseconds: 0,
 	});
+
+	let specialHours = regularHours;
+	if (centerHours.Special[dateString]) {
+		specialHours = {
+			openTime: centerHours.Special[dateString][0].Open,
+			closeTime: centerHours.Special[dateString][0].Close,
+		};
+	}
+	const [specialOpenHour, specialOpenMinute] = specialHours.openTime.split(":");
+	const [specialCloseHour, specialCloseMinute] =
+		specialHours.closeTime.split(":");
 
 	const specialStartTime = set(selectedDate, {
 		hours: parseInt(specialOpenHour),
@@ -71,94 +67,88 @@ export async function calculateTimes(): Promise<
 		seconds: 0,
 		milliseconds: 0,
 	});
-	const specialEndTime = set(specialStartTime, {
-		hours: parseInt(specialClosingHour),
-		minutes: parseInt(specialClosingMinute) - selectedDuration,
+
+	const specialEndTime = set(selectedDate, {
+		hours: parseInt(specialCloseHour),
+		minutes: parseInt(specialCloseMinute) - selectedDuration,
+		seconds: 0,
+		milliseconds: 0,
 	});
 
-	let potentialBookingStart = regularStartTime;
-	let potentialBookingEnd = addMinutes(potentialBookingStart, selectedDuration);
-	const occupiedMachinesByTime = new Map<string, Set<string>>();
+	const times = [];
+	const slotInterval = 15; // minutes
 	const totalMachines = allMachines.length;
-	let totalOccupiedMachines = 0;
 
-	if (isBefore(potentialBookingStart, specialStartTime)) {
-		totalOccupiedMachines = totalMachines;
-	}
+	let slotStartTime = regularStartTime;
+	const slotEndTime = addMinutes(slotStartTime, selectedDuration);
 
-	for (const booking of bookings) {
-		const bookingStartTime = new Date(booking.Start);
-		const bookingEndTime = addMinutes(bookingStartTime, booking.Duration);
-		if (
-			isBefore(potentialBookingStart, bookingEndTime) &&
-			isAfter(potentialBookingEnd, bookingStartTime)
-		) {
-			if (!occupiedMachinesByTime.has(potentialBookingStart.toISOString())) {
-				occupiedMachinesByTime.set(
-					potentialBookingStart.toISOString(),
-					new Set()
-				);
-			}
+	const totalOccupiedMachines = getTotalOccupiedMachines(
+		slotStartTime,
+		slotEndTime,
+		specialStartTime,
+		specialEndTime,
+		bookings,
+		totalMachines
+	);
 
-			occupiedMachinesByTime
-				.get(potentialBookingStart.toISOString())
-				?.add(booking.Machines[0]);
-		}
-	}
+	times.push({
+		time: slotStartTime,
+		availableMachines: totalMachines - totalOccupiedMachines,
+	});
 
-	totalOccupiedMachines =
-		occupiedMachinesByTime.get(potentialBookingStart.toISOString())?.size ?? 0;
-	// memoize times
-	const times = [
-		{
-			time: potentialBookingStart,
-			availableMachines: totalMachines - totalOccupiedMachines,
-		},
-	];
+	while (isBefore(slotStartTime, regularEndTime)) {
+		slotStartTime = addMinutes(slotStartTime, slotInterval);
+		const slotEndTime = addMinutes(slotStartTime, selectedDuration);
 
-	const bookingInterval = 15; // minutes
-	while (isBefore(potentialBookingStart, regularEndTime)) {
-		potentialBookingStart = addMinutes(potentialBookingStart, bookingInterval);
-		potentialBookingEnd = addMinutes(potentialBookingStart, selectedDuration);
-		totalOccupiedMachines = 0;
-
-		if (
-			isBefore(potentialBookingStart, specialStartTime) ||
-			isAfter(potentialBookingStart, specialEndTime)
-		) {
-			totalOccupiedMachines = totalMachines;
-		} else {
-			for (const booking of bookings) {
-				const bookingStartTime = new Date(booking.Start);
-				const bookingEndTime = addMinutes(bookingStartTime, booking.Duration);
-				if (
-					isBefore(potentialBookingStart, bookingEndTime) &&
-					isAfter(potentialBookingEnd, bookingStartTime)
-				) {
-					if (
-						!occupiedMachinesByTime.has(potentialBookingStart.toISOString())
-					) {
-						occupiedMachinesByTime.set(
-							potentialBookingStart.toISOString(),
-							new Set()
-						);
-					}
-
-					occupiedMachinesByTime
-						.get(potentialBookingStart.toISOString())
-						?.add(booking.Machines[0]);
-				}
-			}
-			totalOccupiedMachines =
-				occupiedMachinesByTime.get(potentialBookingStart.toISOString())?.size ??
-				0;
-		}
+		const totalOccupiedMachines = getTotalOccupiedMachines(
+			slotStartTime,
+			slotEndTime,
+			specialStartTime,
+			specialEndTime,
+			bookings,
+			totalMachines
+		);
 
 		times.push({
-			time: potentialBookingStart,
+			time: slotStartTime,
 			availableMachines: totalMachines - totalOccupiedMachines,
 		});
 	}
 
 	return times;
+}
+
+function getTotalOccupiedMachines(
+	slotStartTime: Date,
+	slotEndTime: Date,
+	specialStartTime: Date,
+	specialEndTime: Date,
+	bookings: Booking[],
+	totalMachines: number
+): number {
+	let totalOccupiedMachines = 0;
+
+	const occupiedMachines = new Set();
+
+	if (
+		isBefore(slotStartTime, specialStartTime) ||
+		isAfter(slotStartTime, specialEndTime)
+	) {
+		totalOccupiedMachines = totalMachines;
+	} else {
+		for (const booking of bookings) {
+			const bookingStartTime = new Date(booking.Start);
+			const bookingEndTime = addMinutes(bookingStartTime, booking.Duration);
+
+			if (
+				isBefore(slotStartTime, bookingEndTime) &&
+				isAfter(slotEndTime, bookingStartTime)
+			) {
+				occupiedMachines.add(booking.Machines[0]);
+			}
+		}
+
+		totalOccupiedMachines = occupiedMachines.size;
+	}
+	return totalOccupiedMachines;
 }
