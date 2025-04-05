@@ -1,11 +1,10 @@
 "use client";
 
-import { useSelectedStore } from "@/stores";
+import { useSelectionStore } from "@/stores";
 
 export default function DurationSelect() {
-	// initialize available durations as number[]: 90, 60
-	const selectedDuration = useSelectedStore((state) => state.selectedDuration);
-	const setSelectedDuration = useSelectedStore(
+	const selectedDuration = useSelectionStore((state) => state.selectedDuration);
+	const setSelectedDuration = useSelectionStore(
 		(state) => state.setSelectedDuration
 	);
 	const durations = [90, 60];

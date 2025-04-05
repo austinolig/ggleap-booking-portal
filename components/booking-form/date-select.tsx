@@ -1,13 +1,13 @@
 "use client";
 
-import { useSelectedStore } from "@/stores";
+import { useSelectionStore } from "@/stores";
 import { addDays, format, isSameDay } from "date-fns";
 
 export default function DateSelect() {
-	const selectedDate = useSelectedStore((state) => state.selectedDate);
-	const setSelectedDate = useSelectedStore((state) => state.setSelectedDate);
+	const selectedDate = useSelectionStore((state) => state.selectedDate);
+	const setSelectedDate = useSelectionStore((state) => state.setSelectedDate);
 
-	const currentDate = new Date();
+	const currentDate = new Date("April 3 2025");
 	const dates = [currentDate, addDays(currentDate, 1)];
 
 	return (

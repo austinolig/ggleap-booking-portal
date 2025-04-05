@@ -1,7 +1,12 @@
 "use server";
 
-import { Booking, BookingUuid, CenterHours, JWT, Machine } from "@/types";
-import { auth } from "@/auth";
+import {
+	Booking,
+	// BookingUuid,
+	CenterHours,
+	JWT,
+	Machine,
+} from "@/types";
 import { User } from "next-auth";
 import { format } from "date-fns";
 
@@ -166,60 +171,60 @@ export async function getAvailableMachines(
 	}
 }
 
-export async function createBooking(
-	bookingStart: string,
-	duration: number,
-	machineUuid: string
-): Promise<BookingUuid | null> {
-	console.log("__createBooking()__");
+// export async function createBooking(
+// 	bookingStart: string,
+// 	duration: number,
+// 	machineUuid: string
+// ): Promise<BookingUuid | null> {
+// 	console.log("__createBooking()__");
 
-	const jwt = await getJWT();
-	if (!jwt) {
-		return null;
-	}
+// 	const jwt = await getJWT();
+// 	if (!jwt) {
+// 		return null;
+// 	}
 
-	const session = await auth();
-	if (!session?.user) {
-		return null;
-	}
+// 	const session = await auth();
+// 	if (!session?.user) {
+// 		return null;
+// 	}
 
-	try {
-		console.log("Creating booking...");
+// 	try {
+// 		console.log("Creating booking...");
 
-		const response = await fetch(
-			"https://api.ggleap.com/production/bookings/create",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: jwt,
-				},
-				body: JSON.stringify({
-					Booking: {
-						Start: bookingStart,
-						Duration: duration,
-						Machines: [machineUuid],
-						Name: session.user.Username,
-						BookerEmail: session.user.Email,
-						UserUuid: session.user.Uuid,
-					},
-				}),
-			}
-		);
+// 		const response = await fetch(
+// 			"https://api.ggleap.com/production/bookings/create",
+// 			{
+// 				method: "POST",
+// 				headers: {
+// 					"Content-Type": "application/json",
+// 					Authorization: jwt,
+// 				},
+// 				body: JSON.stringify({
+// 					Booking: {
+// 						Start: bookingStart,
+// 						Duration: duration,
+// 						Machines: [machineUuid],
+// 						Name: session.user.Username,
+// 						BookerEmail: session.user.Email,
+// 						UserUuid: session.user.Uuid,
+// 					},
+// 				}),
+// 			}
+// 		);
 
-		const data = await response.json();
-		if (!data.BookingUuid || !response.ok) {
-			console.log("data:", data);
-			throw new Error(`(${response.status}) Failed to fetch create booking`);
-		}
+// 		const data = await response.json();
+// 		if (!data.BookingUuid || !response.ok) {
+// 			console.log("data:", data);
+// 			throw new Error(`(${response.status}) Failed to fetch create booking`);
+// 		}
 
-		console.log("BookingUuid:", data.BookingUuid);
-		return data.BookingUuid;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
-}
+// 		console.log("BookingUuid:", data.BookingUuid);
+// 		return data.BookingUuid;
+// 	} catch (error) {
+// 		console.error(error);
+// 		return null;
+// 	}
+// }
 
 export async function getBookings(): Promise<Booking[] | null> {
 	console.log("__getBookings()__");
@@ -232,7 +237,7 @@ export async function getBookings(): Promise<Booking[] | null> {
 	try {
 		console.log("Fetching bookings...");
 
-		const dateQuery = format(new Date(), "yyyy-MM-dd");
+		const dateQuery = format(new Date("April 3 2025"), "yyyy-MM-dd");
 
 		const response = await fetch(
 			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
