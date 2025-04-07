@@ -1,181 +1,96 @@
 import { clsx, type ClassValue } from "clsx";
-import { addMinutes, format, isAfter, isBefore, set } from "date-fns";
+import { format, addMinutes, subMinutes, isAfter, isBefore } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import { Booking, CenterInfo, TimeAndAvailableMachines } from "@/types";
+import { CenterInfo, Machine, ProcessedTimeSlots } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function calculateTimesAndMachines(
+export function calculateTimeSlots(
   centerInfo: CenterInfo,
-  selectedDate: Date,
+  selectedDate: string,
   selectedDuration: number
-):
-  | {
-      time: Date;
-      machineList: Map<string, { name: string; available: boolean }>;
-    }[]
-  | null {
+): ProcessedTimeSlots | null {
   const { hours, bookings, machines } = centerInfo;
 
-  if (!hours || !bookings || !machines) {
-    return null;
-  }
-
+  // keys for accessing regular and special hours
   const dayOfWeek = format(selectedDate, "EEEE");
   const dateString = format(selectedDate, "yyyy-MM-dd");
 
-  // check if center is open on selected date
+  // ensure center is open on selected date
   if (!hours.Regular[dayOfWeek][0]?.Open) {
     return null;
   }
 
-  const regularHours = {
-    openTime: hours.Regular[dayOfWeek][0].Open,
-    closeTime: hours.Regular[dayOfWeek][0].Close,
-  };
-
-  const [regularOpenHour, regularOpenMinute] = regularHours.openTime.split(":");
-  const [regularCloseHour, regularCloseMinute] =
-    regularHours.closeTime.split(":");
-
-  const regularStartTime = set(selectedDate, {
-    hours: parseInt(regularOpenHour),
-    minutes: parseInt(regularOpenMinute),
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  const regularEndTime = set(selectedDate, {
-    hours: parseInt(regularCloseHour),
-    minutes: parseInt(regularCloseMinute) - 60, // subtract shortest possible duration (60) from closing time
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  let specialHours = regularHours;
-  if (hours.Special[dateString]) {
-    specialHours = {
-      openTime: hours.Special[dateString][0].Open,
-      closeTime: hours.Special[dateString][0].Close,
-    };
-  }
-  const [specialOpenHour, specialOpenMinute] = specialHours.openTime.split(":");
-  const [specialCloseHour, specialCloseMinute] =
-    specialHours.closeTime.split(":");
-
-  const specialStartTime = set(selectedDate, {
-    hours: parseInt(specialOpenHour),
-    minutes: parseInt(specialOpenMinute),
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  const specialEndTime = set(selectedDate, {
-    hours: parseInt(specialCloseHour),
-    minutes: parseInt(specialCloseMinute) - selectedDuration,
-    seconds: 0,
-    milliseconds: 0,
-  });
-
-  const times = [];
-  const slotInterval = 15; // minutes
-  const totalMachines = machines.length;
-
-  let slotStartTime = regularStartTime;
-  const slotEndTime = addMinutes(slotStartTime, selectedDuration);
-
-  const map = new Map<string, Set<string>>();
-
-  const totalOccupiedMachines = getTotalOccupiedMachines(
-    slotStartTime,
-    slotEndTime,
-    specialStartTime,
-    specialEndTime,
-    bookings
-    // totalMachines
+  // set regular hours
+  const regularOpen = new Date(
+    `${dateString} ${hours.Regular[dayOfWeek][0].Open}`
   );
 
-  const machineList = new Map<string, { name: string; available: boolean }>();
+  const regularClose = subMinutes(
+    new Date(`${dateString} ${hours.Regular[dayOfWeek][0].Close}`),
+    60
+  ); // subtract shortest duration from regular closing time
 
-  centerInfo.machines.forEach((machine) => {
-    machineList.set(machine.Uuid, {
-      name: machine.Name,
-      available: !totalOccupiedMachines.has(machine.Uuid),
-    });
-  });
-
-  map.set(slotStartTime.toISOString(), totalOccupiedMachines);
-
-  times.push({
-    time: slotStartTime,
-    machineList: machineList,
-  });
-
-  while (isBefore(slotStartTime, regularEndTime)) {
-    slotStartTime = addMinutes(slotStartTime, slotInterval);
-    const slotEndTime = addMinutes(slotStartTime, selectedDuration);
-
-    const totalOccupiedMachines = getTotalOccupiedMachines(
-      slotStartTime,
-      slotEndTime,
-      specialStartTime,
-      specialEndTime,
-      bookings
-      //   totalMachines
+  // set special hours if available
+  let specialOpen = regularOpen;
+  let specialClose = regularClose;
+  if (hours.Special[dateString]) {
+    specialOpen = new Date(
+      `${dateString} ${hours.Special[dateString][0].Open}`
     );
-
-    const machineList = new Map<string, { name: string; available: boolean }>();
-
-    centerInfo.machines.forEach((machine) => {
-      machineList.set(machine.Uuid, {
-        name: machine.Name,
-        available: !totalOccupiedMachines.has(machine.Uuid),
-      });
-    });
-
-    map.set(slotStartTime.toISOString(), totalOccupiedMachines);
-
-    times.push({
-      time: slotStartTime,
-      machineList: machineList,
-    });
+    specialClose = subMinutes(
+      new Date(`${dateString} ${hours.Special[dateString][0].Close}`),
+      selectedDuration
+    ); // subtract selected duration from special closing time
   }
 
-  return times;
-}
+  // process time slots from regular open to regular close
+  const processedTimeSlots: ProcessedTimeSlots = {};
+  const slotInterval = 15; // minutes
 
-function getTotalOccupiedMachines(
-  slotStartTime: Date,
-  slotEndTime: Date,
-  specialStartTime: Date,
-  specialEndTime: Date,
-  bookings: Booking[]
-  //   totalMachines: number
-): Set<string> {
-  //   let totalOccupiedMachines = 0;
+  let timeSlotStart = regularOpen;
+  while (timeSlotStart.getTime() <= regularClose.getTime()) {
+    const timeSlotEnd = addMinutes(timeSlotStart, selectedDuration);
 
-  const occupiedMachines = new Set<string>();
+    let availableMachinesCount = 0;
+    let machineList: Machine[] = machines;
+    const occupiedMachines = new Set<string>();
 
-  if (
-    isBefore(slotStartTime, specialStartTime) ||
-    isAfter(slotStartTime, specialEndTime)
-  ) {
-    // totalOccupiedMachines = totalMachines;
-  } else {
-    for (const booking of bookings) {
-      const bookingStartTime = new Date(booking.Start);
-      const bookingEndTime = addMinutes(bookingStartTime, booking.Duration);
+    // if time slot is not outside of special hours
+    if (
+      !(
+        isBefore(timeSlotStart, specialOpen) ||
+        isAfter(timeSlotStart, specialClose)
+      )
+    ) {
+      for (const booking of bookings) {
+        const bookingStart = new Date(booking.Start);
+        const bookingEnd = addMinutes(bookingStart, booking.Duration);
 
-      if (
-        isBefore(slotStartTime, bookingEndTime) &&
-        isAfter(slotEndTime, bookingStartTime)
-      ) {
-        occupiedMachines.add(booking.Machines[0]);
+        // if time slot overlaps with booking time
+        if (
+          isBefore(timeSlotStart, bookingEnd) &&
+          isAfter(timeSlotEnd, bookingStart)
+        ) {
+          occupiedMachines.add(booking.Machines[0]);
+        }
       }
+      availableMachinesCount = machines.length - occupiedMachines.size;
+      machineList = machines.map((machine) => ({
+        ...machine,
+        Available: !occupiedMachines.has(machine.Uuid),
+      }));
     }
+
+    processedTimeSlots[timeSlotStart.toISOString()] = {
+      availableMachinesCount: availableMachinesCount,
+      machineList: machineList,
+    };
+
+    timeSlotStart = addMinutes(timeSlotStart, slotInterval);
   }
 
-  return occupiedMachines;
+  return processedTimeSlots;
 }

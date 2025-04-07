@@ -1,14 +1,9 @@
 "use client";
 
-import { calculateTimesAndMachines } from "@/lib/utils";
+import { calculateTimeSlots } from "@/lib/utils";
 import { useSelectionStore } from "@/stores";
 import { CenterInfo } from "@/types";
-import { format, isSameMinute } from "date-fns";
-
-type ProcessedMachine = {
-  time: Date;
-  availableMachines: number;
-};
+import { format } from "date-fns";
 
 export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
   const selectedDate = useSelectionStore((state) => state.selectedDate);
@@ -16,61 +11,52 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
   const selectedTime = useSelectionStore((state) => state.selectedTime);
   const setSelectedTime = useSelectionStore((state) => state.setSelectedTime);
 
-  const timesAndMachines = calculateTimesAndMachines(
+  const timeSlots = calculateTimeSlots(
     centerInfo,
     selectedDate,
     selectedDuration
   );
 
-  if (!timesAndMachines) {
-    return <div>Error fetching times</div>;
+  if (!timeSlots) {
+    return <div>Error: timeSlots</div>;
   }
 
-  /**
-   * TODO:
-   * - improve data structures
-   */
+  const machines = timeSlots[selectedTime]?.machineList;
 
-  // Map
-  //   - key: time
-  //   - value: machineList
-  //     - machineList: Map<string, { name: string; available: boolean }>
-
-  // processedTimes
-  //   loop through Map and calculate available machines
-  //   then render list
-
-  // processedMachines
-  //   convert this to lookup map key
-  //     ie. Map.get(time) => machineList
-  //   then render list
-  const processedMachines = timesAndMachines.filter((tm) =>
-    isSameMinute(tm.time, selectedTime)
-  )[0]?.machineList;
+  if (!machines) {
+    return <div>Error: machines</div>;
+  }
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {/* {processedTimes.map(({ time, availableMachines }) => (
+      <div className="flex flex-col gap-2">
+        {Object.keys(timeSlots).map((timeSlot) => (
           <button
-            key={time.toISOString()}
-            className={isSameMinute(selectedTime, time) ? "text-blue-500" : ""}
-            onClick={() => setSelectedTime(time)}
+            key={timeSlot}
+            className={`${selectedTime === timeSlot ? "text-blue-500" : ""}
+              ${
+                timeSlots[timeSlot].availableMachinesCount > 0
+                  ? "text-green-500"
+                  : "text-red-500"
+              }
+              `}
+            onClick={() => setSelectedTime(timeSlot)}
           >
-            {format(time, "h:mm aaa")} ({availableMachines} available)
+            {format(new Date(timeSlot), "h:mm aaa")} (
+            {timeSlots[timeSlot].availableMachinesCount} available){" "}
+            {selectedTime === timeSlot && "*"}
           </button>
-        ))} */}
+        ))}
       </div>
-
       <div className="flex flex-wrap gap-2">
-        {/* {processedMachines.map((machine) => (
+        {machines.map((machine) => (
           <button
             key={machine.Uuid}
-            className={machine.available ? "text-green-500" : "text-red-500"}
+            className={machine.Available ? "text-green-500" : "text-red-500"}
           >
             {machine.Name}
           </button>
-        ))} */}
+        ))}
       </div>
     </>
   );
