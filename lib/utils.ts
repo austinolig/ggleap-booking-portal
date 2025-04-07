@@ -11,7 +11,12 @@ export function calculateTimesAndMachines(
   centerInfo: CenterInfo,
   selectedDate: Date,
   selectedDuration: number
-): { times: TimeAndAvailableMachines[]; map: Map<string, Set<string>> } | null {
+):
+  | {
+      time: Date;
+      machineList: Map<string, { name: string; available: boolean }>;
+    }[]
+  | null {
   const { hours, bookings, machines } = centerInfo;
 
   if (!hours || !bookings || !machines) {
@@ -92,12 +97,20 @@ export function calculateTimesAndMachines(
     // totalMachines
   );
 
+  const machineList = new Map<string, { name: string; available: boolean }>();
+
+  centerInfo.machines.forEach((machine) => {
+    machineList.set(machine.Uuid, {
+      name: machine.Name,
+      available: !totalOccupiedMachines.has(machine.Uuid),
+    });
+  });
+
   map.set(slotStartTime.toISOString(), totalOccupiedMachines);
 
   times.push({
     time: slotStartTime,
-    occupiedMachines: totalOccupiedMachines,
-    availableMachines: totalMachines - totalOccupiedMachines.size,
+    machineList: machineList,
   });
 
   while (isBefore(slotStartTime, regularEndTime)) {
@@ -113,16 +126,24 @@ export function calculateTimesAndMachines(
       //   totalMachines
     );
 
+    const machineList = new Map<string, { name: string; available: boolean }>();
+
+    centerInfo.machines.forEach((machine) => {
+      machineList.set(machine.Uuid, {
+        name: machine.Name,
+        available: !totalOccupiedMachines.has(machine.Uuid),
+      });
+    });
+
     map.set(slotStartTime.toISOString(), totalOccupiedMachines);
 
     times.push({
       time: slotStartTime,
-      occupiedMachines: totalOccupiedMachines,
-      availableMachines: totalMachines - totalOccupiedMachines.size,
+      machineList: machineList,
     });
   }
 
-  return { times, map };
+  return times;
 }
 
 function getTotalOccupiedMachines(

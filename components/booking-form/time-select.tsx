@@ -26,31 +26,32 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
     return <div>Error fetching times</div>;
   }
 
-  console.log("timesAndMachines", timesAndMachines);
+  /**
+   * TODO:
+   * - improve data structures
+   */
 
-  const processedMachines = centerInfo.machines.map((machine) => {
-    const available = !timesAndMachines.map
-      .get(selectedTime.toISOString())
-      ?.has(machine.Uuid);
+  // Map
+  //   - key: time
+  //   - value: machineList
+  //     - machineList: Map<string, { name: string; available: boolean }>
 
-    return {
-      ...machine,
-      available,
-    };
-  });
+  // processedTimes
+  //   loop through Map and calculate available machines
+  //   then render list
 
-  const processedTimes: ProcessedMachine[] = [];
-  timesAndMachines.map.forEach((value: Set<string>, key: string) => {
-    processedTimes.push({
-      time: new Date(key),
-      availableMachines: centerInfo.machines.length - value.size,
-    });
-  });
+  // processedMachines
+  //   convert this to lookup map key
+  //     ie. Map.get(time) => machineList
+  //   then render list
+  const processedMachines = timesAndMachines.filter((tm) =>
+    isSameMinute(tm.time, selectedTime)
+  )[0]?.machineList;
 
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {processedTimes.map(({ time, availableMachines }) => (
+        {/* {processedTimes.map(({ time, availableMachines }) => (
           <button
             key={time.toISOString()}
             className={isSameMinute(selectedTime, time) ? "text-blue-500" : ""}
@@ -58,18 +59,18 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
           >
             {format(time, "h:mm aaa")} ({availableMachines} available)
           </button>
-        ))}
+        ))} */}
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {processedMachines.map((machine) => (
+        {/* {processedMachines.map((machine) => (
           <button
             key={machine.Uuid}
             className={machine.available ? "text-green-500" : "text-red-500"}
           >
             {machine.Name}
           </button>
-        ))}
+        ))} */}
       </div>
     </>
   );
