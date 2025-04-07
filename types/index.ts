@@ -35,3 +35,9 @@ export type TimeAndAvailableMachines = {
   time: Date;
   availableMachines: number;
 };
+
+export type CenterInfo = {
+  hours: CenterHours;
+  bookings: Booking[];
+  machines: Machine[];
+};
