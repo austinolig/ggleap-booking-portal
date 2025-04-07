@@ -8,8 +8,11 @@ import { format } from "date-fns";
 export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
   const selectedDate = useSelectionStore((state) => state.selectedDate);
   const selectedDuration = useSelectionStore((state) => state.selectedDuration);
-  const selectedTime = useSelectionStore((state) => state.selectedTime);
-  const setSelectedTime = useSelectionStore((state) => state.setSelectedTime);
+  const selectedTimeSlot = useSelectionStore((state) => state.selectedTimeSlot);
+  const setSelectedTimeSlot = useSelectionStore(
+    (state) => state.setSelectedTimeSlot
+  );
+  const bookMachine = useSelectionStore((state) => state.bookMachine);
 
   const timeSlots = calculateTimeSlots(
     centerInfo,
@@ -21,7 +24,7 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
     return <div>Error: timeSlots</div>;
   }
 
-  const machines = timeSlots[selectedTime]?.machineList;
+  const machines = timeSlots[selectedTimeSlot]?.machineList;
 
   if (!machines) {
     return <div>Error: machines</div>;
@@ -33,18 +36,19 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
         {Object.keys(timeSlots).map((timeSlot) => (
           <button
             key={timeSlot}
-            className={`${selectedTime === timeSlot ? "text-blue-500" : ""}
+            className={`${selectedTimeSlot === timeSlot ? "text-blue-500" : ""}
               ${
                 timeSlots[timeSlot].availableMachinesCount > 0
                   ? "text-green-500"
                   : "text-red-500"
               }
               `}
-            onClick={() => setSelectedTime(timeSlot)}
+            onClick={() => setSelectedTimeSlot(timeSlot)}
+            disabled={timeSlots[timeSlot].availableMachinesCount === 0}
           >
             {format(new Date(timeSlot), "h:mm aaa")} (
             {timeSlots[timeSlot].availableMachinesCount} available){" "}
-            {selectedTime === timeSlot && "*"}
+            {selectedTimeSlot === timeSlot && "*"}
           </button>
         ))}
       </div>
@@ -53,6 +57,8 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
           <button
             key={machine.Uuid}
             className={machine.Available ? "text-green-500" : "text-red-500"}
+            onClick={() => bookMachine(machine.Uuid)}
+            disabled={!machine.Available}
           >
             {machine.Name}
           </button>
