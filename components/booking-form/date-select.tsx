@@ -1,26 +1,31 @@
 "use client";
 
 import { useSelectionStore } from "@/stores";
-import { addDays, format, isSameDay } from "date-fns";
+import { addDays, format, isSameDay, set } from "date-fns";
 
 export default function DateSelect() {
-	const selectedDate = useSelectionStore((state) => state.selectedDate);
-	const setSelectedDate = useSelectionStore((state) => state.setSelectedDate);
+  const selectedDate = useSelectionStore((state) => state.selectedDate);
+  const setSelectedDate = useSelectionStore((state) => state.setSelectedDate);
 
-	const currentDate = new Date("April 3 2025");
-	const dates = [currentDate, addDays(currentDate, 1)];
+  const initialDate = set(new Date(), {
+    hours: 10,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+  const dates = [initialDate, addDays(initialDate, 1)];
 
-	return (
-		<div>
-			{dates.map((date) => (
-				<button
-					key={date.toISOString()}
-					className={isSameDay(selectedDate, date) ? "text-blue-500" : ""}
-					onClick={() => setSelectedDate(date)}
-				>
-					{format(date, "MMM dd, yyyy")}
-				</button>
-			))}
-		</div>
-	);
+  return (
+    <div>
+      {dates.map((date) => (
+        <button
+          key={date.toISOString()}
+          className={isSameDay(selectedDate, date) ? "text-blue-500" : ""}
+          onClick={() => setSelectedDate(date.toISOString())}
+        >
+          {format(date, "MMM dd, yyyy")}
+        </button>
+      ))}
+    </div>
+  );
 }
