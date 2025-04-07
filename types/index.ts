@@ -1,7 +1,16 @@
 export type Machine = {
   Uuid: string;
   Name: string;
+  Available?: boolean;
 };
+
+export type ProcessedTimeSlots = Record<
+  string,
+  {
+    availableMachinesCount: number;
+    machineList: Machine[];
+  }
+>;
 
 export type JWT = string;
 
@@ -29,11 +38,6 @@ type SpecialHours = {
 export type CenterHours = {
   Regular: RegularHours;
   Special: SpecialHours;
-};
-
-export type TimeAndAvailableMachines = {
-  time: Date;
-  availableMachines: number;
 };
 
 export type CenterInfo = {
