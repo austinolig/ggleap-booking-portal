@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { login } from "./lib/ggLeap";
 
@@ -16,7 +16,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				const userData = await login(username, password);
 
 				if (!userData) {
-					return null;
+					throw new CredentialsSignin();
 				}
 
 				const user = {
