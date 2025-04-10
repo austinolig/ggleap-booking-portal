@@ -29,12 +29,16 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className={`${inter.variable} antialiased`}>
-				<header className="p-4">
-					<h1 className="text-3xl font-bold text-center">
-						ggLeap Booking Portal
-					</h1>
-				</header>
-				<Suspense fallback={<Loading />}>{children}</Suspense>
+				<div className="flex min-h-svh w-full justify-center items-center p-6">
+					<div className="w-full max-w-[600px]">
+						<header className="mb-6">
+							<h1 className="text-3xl font-bold text-center">
+								ggLeap Booking Portal
+							</h1>
+						</header>
+						<Suspense fallback={<Loading />}>{children}</Suspense>
+					</div>
+				</div>
 			</body>
 		</html>
 	);
