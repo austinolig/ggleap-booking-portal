@@ -30,64 +30,64 @@ export default function LoginForm({
 
 	return (
 		<main className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card>
-				<CardHeader>
-					<CardTitle>Login</CardTitle>
-					<CardDescription>Enter your ggLeap credentials.</CardDescription>
-					{error && (
-						<CardDescription className="text-red-500">{error}</CardDescription>
-					)}
-				</CardHeader>
-				<CardContent>
-					<form
-						action={async (formData) => {
-							try {
-								await signInWithCredentials(formData);
-							} catch {
-								setError("Invalid username or password. Please try again.");
-							}
-						}}
-					>
-						<div className="flex flex-col gap-6">
-							<div className="grid gap-3">
-								<Label htmlFor="username">Username</Label>
-								<Input id="username" name="username" type="text" required />
-							</div>
-							<div className="grid gap-3">
-								<div className="flex items-center">
-									<Label htmlFor="password">Password</Label>
-									<Dialog>
-										<DialogTrigger className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-											Forgot your password?
-										</DialogTrigger>
-										<DialogContent>
-											<DialogHeader>
-												<DialogTitle>Forgot your password?</DialogTitle>
-												<DialogDescription>
-													Please visit the OTSU front desk to reset your
-													password.
-												</DialogDescription>
-											</DialogHeader>
-										</DialogContent>
-									</Dialog>
-								</div>
-								<Input id="password" name="password" type="password" required />
-							</div>
-							<div className="flex flex-col gap-3">
-								<Button type="submit" className="w-full">
-									Login
-								</Button>
-							</div>
-						</div>
-						<div className="mt-4 text-center text-sm">
-							Don&apos;t have an account?{" "}
-							<a href="#" className="underline underline-offset-4">
-								Register
+			<p>Log in with your ggLeap account</p>
+			<form
+				action={async (formData) => {
+					try {
+						await signInWithCredentials(formData);
+					} catch {
+						setError("Invalid username or password. Please try again.");
+					}
+				}}
+			>
+				<div className="flex flex-col gap-6">
+					{error && <p className="text-red-500 text-sm">{error}</p>}
+					<Input
+						id="username"
+						name="username"
+						type="text"
+						placeholder="Username"
+						required
+					/>
+					<div className="flex flex-col gap-1">
+						<Input
+							id="password"
+							name="password"
+							type="password"
+							placeholder="Password"
+							required
+						/>
+						<Dialog>
+							<DialogTrigger className="block ml-auto text-sm underline-offset-4 underline text-muted-foreground cursor-pointer hover:text-primary">
+								Forgot your password?
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader className="flex flex-col gap-6">
+									<DialogTitle>Forgot your password?</DialogTitle>
+									<DialogDescription>
+										To reset your password, please visit our front desk at the
+										OTSU office (SHA 115).
+									</DialogDescription>
+								</DialogHeader>
+							</DialogContent>
+						</Dialog>
+					</div>
+					<div className="flex flex-col gap-1">
+						<Button type="submit" className="w-full cursor-pointer">
+							Login
+						</Button>
+						<div className="text-center text-sm text-muted-foreground">
+							{"Don't have an account? "}
+							<a
+								href="#"
+								className="underline underline-offset-4 hover:text-primary"
+							>
+								Create Account
 							</a>
 						</div>
-					</form>
-				</CardContent>
-			</Card>
+					</div>
+				</div>
+			</form>
 		</main>
 	);
 }

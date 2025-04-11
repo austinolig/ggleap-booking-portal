@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
 import Loading from "./loading";
+import Image from "next/image";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -30,10 +31,19 @@ export default function RootLayout({
 			</head>
 			<body className={`${inter.variable} antialiased`}>
 				<div className="flex min-h-svh w-full justify-center items-center p-6">
-					<div className="w-full max-w-[600px]">
-						<header className="mb-6">
+					<div className="w-full max-w-[600px] space-y-6">
+						<header className="flex flex-col items-center gap-6">
+							<Image
+								src="/esports-logo-white.webp"
+								alt="OTSU Esports Logo"
+								width={140}
+								height={188}
+								priority
+							/>
 							<h1 className="text-3xl font-bold text-center">
-								ggLeap Booking Portal
+								OTSU Esports
+								<br />
+								Arena Booking Portal
 							</h1>
 						</header>
 						<Suspense fallback={<Loading />}>{children}</Suspense>
