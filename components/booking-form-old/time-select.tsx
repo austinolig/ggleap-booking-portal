@@ -4,6 +4,7 @@ import { calculateTimeSlots } from "@/lib/utils";
 import { useSelectionStore } from "@/stores";
 import { CenterInfo } from "@/types";
 import { format } from "date-fns";
+import OptionButton from "../option-button";
 
 export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
   const selectedDate = useSelectionStore((state) => state.selectedDate);
@@ -32,37 +33,36 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
 
   return (
     <>
-      <div className="flex flex-col gap-2">
-        {Object.keys(timeSlots).map((timeSlot) => (
-          <button
-            key={timeSlot}
-            className={`${selectedTimeSlot === timeSlot ? "text-blue-500" : ""}
-              ${
-                timeSlots[timeSlot].availableMachinesCount > 0
-                  ? "text-green-500"
-                  : "text-red-500"
-              }
-              `}
-            onClick={() => setSelectedTimeSlot(timeSlot)}
-            disabled={timeSlots[timeSlot].availableMachinesCount === 0}
-          >
-            {format(new Date(timeSlot), "h:mm aaa")} (
-            {timeSlots[timeSlot].availableMachinesCount} available){" "}
-            {selectedTimeSlot === timeSlot && "*"}
-          </button>
-        ))}
+      <div className="flex flex-col gap-3">
+        <p>Time</p>
+        <div className="grid grid-cols-2 gap-3">
+          {Object.keys(timeSlots).map((timeSlot) => (
+            <OptionButton
+              key={timeSlot}
+              onClick={() => setSelectedTimeSlot(timeSlot)}
+              selected={selectedTimeSlot === timeSlot}
+              disabled={timeSlots[timeSlot].availableMachinesCount === 0}
+            >
+              {format(new Date(timeSlot), "h:mm aaa")}
+              <br />({timeSlots[timeSlot].availableMachinesCount} available)
+            </OptionButton>
+          ))}
+        </div>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {machines.map((machine) => (
-          <button
-            key={machine.Uuid}
-            className={machine.Available ? "text-green-500" : "text-red-500"}
-            onClick={() => bookMachine(machine.Uuid)}
-            disabled={!machine.Available}
-          >
-            {machine.Name}
-          </button>
-        ))}
+      <div className="flex flex-col gap-3">
+        <p>PC</p>
+        <div className="grid grid-cols-5 gap-3">
+          {machines.map((machine) => (
+            <OptionButton
+              key={machine.Uuid}
+              onClick={() => bookMachine(machine.Uuid)}
+              selected={false}
+              disabled={!machine.Available}
+            >
+              {machine.Name}
+            </OptionButton>
+          ))}
+        </div>
       </div>
     </>
   );

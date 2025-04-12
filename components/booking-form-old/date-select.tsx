@@ -2,6 +2,7 @@
 
 import { useSelectionStore } from "@/stores";
 import { addDays, format, isSameDay, set } from "date-fns";
+import OptionButton from "../option-button";
 
 export default function DateSelect() {
   const selectedDate = useSelectionStore((state) => state.selectedDate);
@@ -16,16 +17,19 @@ export default function DateSelect() {
   const dates = [initialDate, addDays(initialDate, 1)];
 
   return (
-    <div>
-      {dates.map((date) => (
-        <button
-          key={date.toISOString()}
-          className={isSameDay(selectedDate, date) ? "text-blue-500" : ""}
-          onClick={() => setSelectedDate(date.toISOString())}
-        >
-          {format(date, "MMM dd, yyyy")}
-        </button>
-      ))}
+    <div className="flex flex-col gap-3">
+      <p>Date</p>
+      <div className="grid grid-cols-2 gap-3">
+        {dates.map((date) => (
+          <OptionButton
+            key={date.toISOString()}
+            selected={isSameDay(selectedDate, date)}
+            onClick={() => setSelectedDate(date.toISOString())}
+          >
+            {format(date, "MMM dd, yyyy")}
+          </OptionButton>
+        ))}
+      </div>
     </div>
   );
 }
