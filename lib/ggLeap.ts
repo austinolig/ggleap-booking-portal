@@ -237,7 +237,10 @@ export async function getBookings(): Promise<Booking[] | null> {
 	try {
 		console.log("Fetching bookings...");
 
-		const dateQuery = format(new Date("April 10 2025"), "yyyy-MM-dd");
+		const dateQuery = format(new Date(), "yyyy-MM-dd");
+
+		console.log("Current date:", new Date());
+		console.log("dateQuery:", dateQuery);
 
 		const response = await fetch(
 			`https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
