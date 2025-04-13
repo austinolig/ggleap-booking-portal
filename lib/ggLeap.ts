@@ -237,7 +237,7 @@ export async function getBookings(): Promise<Booking[] | null> {
 	try {
 		console.log("Fetching bookings...");
 
-		const dateQuery = format(new Date(), "yyyy-MM-dd");
+		const dateQuery = format(new Date("April 10 2025"), "yyyy-MM-dd");
 
 		console.log("Current date:", new Date());
 		console.log("dateQuery:", dateQuery);
@@ -258,13 +258,13 @@ export async function getBookings(): Promise<Booking[] | null> {
 			throw new Error(`(${response.status}) Failed to fetch bookings`);
 		}
 
+		console.log("Bookings (pre-processing):", data.Bookings);
 		const bookings = data.Bookings.map((booking: Booking) => ({
 			Start: booking.Start,
 			Duration: booking.Duration,
 			Machines: booking.Machines,
 		}));
-
-		console.log("Bookings:", bookings);
+		console.log("Bookings (post-processing):", bookings);
 		return bookings;
 	} catch (error) {
 		console.error(error);
