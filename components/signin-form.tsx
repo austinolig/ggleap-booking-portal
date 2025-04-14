@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { signInWithCredentials } from "@/lib/actions";
 import { useState } from "react";
 import {
@@ -13,33 +12,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import InputWithIcon from "./input-with-icon";
-import { KeyRound, User } from "lucide-react";
+import { KeyRound, LoaderCircle, User } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import Link from "next/link";
+import FormInput from "./form-input";
 
-export default function LoginForm({
+export default function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [error, setError] = useState("");
+  const handleSubmit = async (formData: FormData) => {
+    const error = await signInWithCredentials(formData);
+    if (error) {
+      setError(error);
+    }
+  };
 
   return (
     <main className={cn("flex flex-col gap-6", className)} {...props}>
-      <p>Log in with your ggLeap account</p>
-      <form
-        action={async (formData) => {
-          try {
-            await signInWithCredentials(formData);
-          } catch {
-            setError("Invalid username or password. Please try again.");
-          }
-        }}
-      >
+      <p>Sign in with your ggLeap account</p>
+      <form action={handleSubmit}>
         <div className="flex flex-col gap-6">
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <Label htmlFor="username" className="sr-only">
-            Username
-          </Label>
-          <InputWithIcon
+          <FormInput
             icon={<User />}
             id="username"
             name="username"
@@ -48,10 +44,7 @@ export default function LoginForm({
             required
           />
           <div className="flex flex-col gap-1">
-            <Label htmlFor="password" className="sr-only">
-              Password
-            </Label>
-            <InputWithIcon
+            <FormInput
               icon={<KeyRound />}
               id="password"
               name="password"
@@ -75,21 +68,30 @@ export default function LoginForm({
             </Dialog>
           </div>
           <div className="flex flex-col gap-1">
-            <Button type="submit" className="w-full cursor-pointer">
-              Login
-            </Button>
+            <SignInButton />
             <div className="text-center text-sm text-muted-foreground">
               {"Don't have an account? "}
-              <a
-                href="#"
+              <Link
+                href={"/signup"}
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Create Account
-              </a>
+              </Link>
             </div>
           </div>
         </div>
       </form>
     </main>
+  );
+}
+
+function SignInButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full cursor-pointer" disabled={pending}>
+      {pending && <LoaderCircle className="animate-spin" />}
+      <span>Sign In</span>
+    </Button>
   );
 }
