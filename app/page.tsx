@@ -2,15 +2,16 @@ import { auth, signOut } from "@/auth";
 import BookingForm from "@/components/booking-form-old";
 import { Suspense } from "react";
 import Loading from "./loading";
-import LoginForm from "@/components/login-form";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
 
   if (!session?.user) {
-    return <LoginForm />;
+    redirect("/signin");
   }
 
   console.log(session);
