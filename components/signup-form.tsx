@@ -28,9 +28,9 @@ export default function SignupForm({
   // const [error, setError] = useState("");
   const handleSubmit = async (formData: FormData) => {
     const error = await signUp(formData);
-    // if (error) {
-    //   setError(error);
-    // }
+    if (error) {
+      //   setError(error);
+    }
   };
 
   return (
