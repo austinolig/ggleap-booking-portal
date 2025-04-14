@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { signInWithCredentials, signUp } from "@/lib/actions";
+import { signUp } from "@/lib/actions";
 import { useState } from "react";
 import {
   CalendarIcon,
@@ -25,7 +25,7 @@ export default function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>();
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const handleSubmit = async (formData: FormData) => {
     const error = await signUp(formData);
     // if (error) {
@@ -38,7 +38,7 @@ export default function SignupForm({
       <p>Create a ggLeap account</p>
       <form action={handleSubmit}>
         <div className="flex flex-col gap-6">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
           <FormInput
             icon={<User />}
             id="username"

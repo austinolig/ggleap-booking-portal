@@ -5,7 +5,6 @@ import Loading from "./loading";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
