@@ -1,26 +1,7 @@
-export type Machine = {
-  Uuid: string;
-  Name: string;
-  Available?: boolean;
-};
-
-export type ProcessedTimeSlots = Record<
-  string,
-  {
-    availableMachinesCount: number;
-    machineList: Machine[];
-  }
->;
+// PascalCase type properties to match the API response
+// camelCase type properties for internal use
 
 export type JWT = string;
-
-export type BookingUuid = string;
-
-export type Booking = {
-  Start: string;
-  Duration: number;
-  Machines: string[];
-};
 
 type TimeSlot = {
   Open: string;
@@ -40,8 +21,43 @@ export type CenterHours = {
   Special: SpecialHours;
 };
 
+export type BookingUuid = string;
+
+export type Booking = {
+  Start: string;
+  Duration: number;
+  Machines: string[];
+};
+
+export type Machine = {
+  Uuid: string;
+  Name: string;
+  Available?: boolean;
+};
+
 export type CenterInfo = {
   hours: CenterHours;
   bookings: Booking[];
   machines: Machine[];
+};
+
+export type ProcessedTimeSlots = Record<
+  string,
+  {
+    availableMachinesCount: number;
+    machineList: Machine[];
+  }
+>;
+
+export type UserUuid = string;
+
+export type SignupData = {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  studentNumber: string;
+  studentEmail: string;
+  dateOfBirth: string;
+  discordId: string;
 };
