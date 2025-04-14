@@ -121,4 +121,12 @@
     @apply bg-background text-foreground;
     font-family: var(--font-inter);
   }
+
+  .rdp [aria-hidden="true"] {
+    @apply hidden;
+  }
+
+  .rdp-vhidden {
+    @apply hidden;
+  }
 }
