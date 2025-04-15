@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Teko, Rubik } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -8,8 +8,13 @@ import Image from "next/image";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggleButton } from "@/components/theme-toggle-button";
 
-const inter = Inter({
-	variable: "--font-inter",
+const teko = Teko({
+	variable: "--font-teko",
+	subsets: ["latin"],
+});
+
+const rubik = Rubik({
+	variable: "--font-rubik",
 	subsets: ["latin"],
 });
 
@@ -31,7 +36,7 @@ export default function RootLayout({
 					src="//unpkg.com/react-scan/dist/auto.global.js"
 				/>
 			</head>
-			<body className={`${inter.variable} antialiased`}>
+			<body className={`${teko.variable} ${rubik.variable} antialiased`}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
@@ -48,7 +53,7 @@ export default function RootLayout({
 								height={188}
 								priority
 							/>
-							<h1 className="text-3xl font-bold text-center">
+							<h1 className="text-5xl font-bold text-center">
 								OTSU Esports
 								<br />
 								Arena Booking Portal
