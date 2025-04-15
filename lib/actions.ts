@@ -19,6 +19,10 @@ export async function signInWithCredentials(
 	}
 }
 
+export async function signOut(): Promise<void> {
+	await signOut();
+}
+
 export async function signUp(formData: FormData): Promise<string | void> {
 	const vals = Object.fromEntries(formData.entries()) as SignupData;
 	const userUuid = await createUser(vals);
