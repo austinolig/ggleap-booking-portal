@@ -18,7 +18,7 @@ export default function DateSelect() {
 
 	return (
 		<div className="flex flex-col gap-3">
-			<p>Date</p>
+			<p className="font-bold text-muted-foreground">Date</p>
 			<div className="grid grid-cols-2 gap-3">
 				{dates.map((date) => (
 					<OptionButton

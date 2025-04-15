@@ -90,10 +90,10 @@ export default function SignupForm() {
 								"focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
 								"aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
 								"relative flex items-center cursor-pointer",
-								"pl-10"
+								"pl-11"
 							)}
 						>
-							<div className="absolute left-2 text-muted-foreground">
+							<div className="absolute left-3 text-muted-foreground">
 								<CalendarIcon />
 							</div>
 							{dateOfBirth ? (

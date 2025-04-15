@@ -3,14 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { signInWithCredentials } from "@/lib/actions";
 import { useState } from "react";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "./ui/dialog";
 import { KeyRound, LoaderCircle, User } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import FormInput from "./form-input";
@@ -45,20 +37,6 @@ export default function SigninForm() {
 						placeholder="Password"
 						required
 					/>
-					<Dialog>
-						<DialogTrigger className="block ml-auto text-sm underline-offset-4 underline text-muted-foreground cursor-pointer hover:text-primary">
-							Forgot your password?
-						</DialogTrigger>
-						<DialogContent>
-							<DialogHeader className="flex flex-col gap-6">
-								<DialogTitle>Forgot your password?</DialogTitle>
-								<DialogDescription>
-									To reset your password, please visit our front desk at the
-									OTSU office (SHA 115).
-								</DialogDescription>
-							</DialogHeader>
-						</DialogContent>
-					</Dialog>
 				</div>
 				<SignInButton />
 			</div>
