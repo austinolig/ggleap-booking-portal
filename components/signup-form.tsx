@@ -21,18 +21,18 @@ import { format, getYear, subYears } from "date-fns";
 
 export default function SignupForm() {
 	const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>();
-	// const [error, setError] = useState("");
+	const [error, setError] = useState("");
 	const handleSubmit = async (formData: FormData) => {
 		const error = await signUp(formData);
 		if (error) {
-			//   setError(error);
+			setError(error); // TODO: display error from api response
 		}
 	};
 
 	return (
 		<form action={handleSubmit}>
 			<div className="flex flex-col gap-6">
-				{/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
+				{error && <p className="text-red-500 text-sm">{error}</p>}
 				<FormInput
 					icon={<User />}
 					id="username"
@@ -101,30 +101,42 @@ export default function SignupForm() {
 							) : (
 								<span className="text-muted-foreground">Date of Birth</span>
 							)}
+							<div>
+								<label htmlFor={"dateOfBirth"} className="sr-only">
+									Date of Birth
+								</label>
+								<input
+									className="absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none"
+									id="dateOfBirth"
+									name="dateOfBirth"
+									type="text"
+									value={dateOfBirth ? format(dateOfBirth, "MMM dd, yyyy") : ""}
+									onChange={() => {}}
+									tabIndex={-1}
+									required
+								/>
+							</div>
 						</button>
 					</PopoverTrigger>
-					<PopoverContent className="w-auto p-0" align="start">
+					<PopoverContent
+						onOpenAutoFocus={(e) => {
+							e.preventDefault();
+						}}
+						className="w-auto p-0"
+						align="start"
+					>
 						<Calendar
 							captionLayout="dropdown"
 							fromYear={getYear(subYears(new Date(), 100))}
 							toYear={getYear(new Date())}
 							mode="single"
+							initialFocus
 							selected={dateOfBirth}
 							onSelect={setDateOfBirth}
 							disabled={(date: Date) => date > new Date()}
 						/>
 					</PopoverContent>
 				</Popover>
-				<label htmlFor={"dateOfBirth"} className="sr-only">
-					Date of Birth
-				</label>
-				<input
-					id="dateOfBirth"
-					name="dateOfBirth"
-					type="hidden"
-					value={dateOfBirth ? format(dateOfBirth, "MMM dd, yyyy") : ""}
-					required
-				/>
 				<FormInput
 					icon={<Gamepad2 />}
 					id="discordId"
