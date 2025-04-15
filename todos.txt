@@ -6,3 +6,6 @@ bookings
 - wipe hours from account upon new booking
 - prompt for confirmation (Date/Time, Terms of Service)
 
+sigin/signup form
+- create custom component with latest version of rdp
+- validate input
