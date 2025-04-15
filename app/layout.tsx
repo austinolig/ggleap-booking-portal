@@ -53,10 +53,10 @@ export default function RootLayout({
 								height={188}
 								priority
 							/>
-							<h1 className="text-5xl font-bold text-center">
-								OTSU Esports
+							<h1 className="text-4xl font-bold text-center w-full py-2">
+								<span className="text-primary">OTSU Esports</span>
 								<br />
-								Arena Booking Portal
+								<span>Arena Booking Portal</span>
 							</h1>
 						</header>
 						<Suspense fallback={<Loading />}>{children}</Suspense>

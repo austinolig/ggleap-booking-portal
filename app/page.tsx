@@ -48,7 +48,7 @@ export default async function Home() {
 			</DropdownMenu>
 
 			<main className="space-y-6">
-				<p className="font-bold text-lg text-muted-foreground">Book a PC</p>
+				<p className="font-bold text-lg">Book a PC</p>
 				<Suspense fallback={<Loading />}>
 					<BookingForm />
 				</Suspense>
