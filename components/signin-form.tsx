@@ -20,7 +20,7 @@ export default function SigninForm() {
 	const handleSubmit = async (formData: FormData) => {
 		const error = await signInWithCredentials(formData);
 		if (error) {
-			setError(error);
+			setError(error); // TODO: display error from api response
 		}
 	};
 
