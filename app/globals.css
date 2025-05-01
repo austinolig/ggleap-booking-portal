@@ -94,6 +94,10 @@
 		@apply bg-background text-foreground;
 	}
 
+	.rdp {
+		@apply bg-background rounded-lg;
+	}
+
 	.rdp [aria-hidden="true"] {
 		@apply hidden;
 	}
