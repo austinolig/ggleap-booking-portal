@@ -6,7 +6,6 @@ export default function OptionButton({
 	selected,
 	...props
 }: {
-	key: string;
 	selected: boolean;
 	children: React.ReactNode;
 } & React.ComponentProps<"button">) {

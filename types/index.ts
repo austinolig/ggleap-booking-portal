@@ -3,61 +3,55 @@
 
 export type JWT = string;
 
-type TimeSlot = {
-  Open: string;
-  Close: string;
-};
-
-type RegularHours = {
-  [DayOfWeek: string]: TimeSlot[];
-};
-
-type SpecialHours = {
-  [Date: string]: TimeSlot[];
-};
-
 export type CenterHours = {
-  Regular: RegularHours;
-  Special: SpecialHours;
+	Regular: {
+		[DayOfWeek: string]: {
+			Open: string;
+			Close: string;
+		}[];
+	};
+	Special: {
+		[Date: string]: {
+			Open: string;
+			Close: string;
+		}[];
+	};
 };
 
 export type BookingUuid = string;
 
 export type Booking = {
-  Start: string;
-  Duration: number;
-  Machines: string[];
+	Start: string;
+	Duration: number;
+	Machines: string[];
 };
 
 export type Machine = {
-  Uuid: string;
-  Name: string;
-  Available?: boolean;
+	Uuid: string;
+	Name: string;
+	Available?: boolean;
 };
 
 export type CenterInfo = {
-  hours: CenterHours;
-  bookings: Booking[];
-  machines: Machine[];
+	hours: CenterHours;
+	bookings: Booking[];
+	machines: Machine[];
 };
 
-export type ProcessedTimeSlots = Record<
-  string,
-  {
-    availableMachinesCount: number;
-    machineList: Machine[];
-  }
->;
+export type TimeSlot = {
+	time: Date;
+	availablePCs: number;
+};
 
 export type UserUuid = string;
 
 export type SignupData = {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  studentNumber: string;
-  studentEmail: string;
-  dateOfBirth: string;
-  discordId: string;
+	username: string;
+	password: string;
+	firstName: string;
+	lastName: string;
+	studentNumber: string;
+	studentEmail: string;
+	dateOfBirth: string;
+	discordId: string;
 };

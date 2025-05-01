@@ -1,93 +1,116 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { CenterInfo, Machine } from "@/types";
+import { use, useEffect, useMemo, useState } from "react";
+import { getAvailableMachines, getAvailableTimeSlots } from "@/lib/utils";
+import OptionButton from "./option-button";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { signInWithCredentials } from "@/lib/actions";
-import { useState } from "react";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "./ui/dialog";
+import { format, isEqual } from "date-fns";
 
-export default function LoginForm({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
-	const [error, setError] = useState("");
+export default function BookingForm({
+	centerInfo,
+}: {
+	centerInfo: CenterInfo;
+}) {
+	const dates = [new Date("April 10 2025"), new Date("April 11 2025")];
+	const durations = [90, 60];
+
+	const [selectedDate, setSelectedDate] = useState<Date>(dates[0]);
+	const [selectedDuration, setSelectedDuration] = useState<number>(
+		durations[0]
+	);
+
+	const timeSlots = useMemo(() => {
+		return getAvailableTimeSlots(centerInfo, selectedDate, selectedDuration);
+	}, [centerInfo, selectedDate, selectedDuration]);
+
+	if (!timeSlots) {
+		return (
+			<div>
+				<p>No time slots available</p>
+			</div>
+		);
+	}
+
+	const [selectedTime, setSelectedTime] = useState<Date>(timeSlots[0].time);
+
+	useEffect(() => {
+		setSelectedTime(timeSlots[0].time);
+	}, [timeSlots]);
+
+	const machines = useMemo(() => {
+		return getAvailableMachines(centerInfo, selectedTime, selectedDuration);
+	}, [centerInfo, selectedTime, selectedDuration]);
+
+	if (!machines) {
+		return (
+			<div>
+				<p>No machines available</p>
+			</div>
+		);
+	}
+
+	const [selectedMachine, setSelectedMachine] = useState<Machine | undefined>(
+		machines.find((machine) => machine.Available)
+	);
+
+	useEffect(() => {
+		setSelectedMachine(machines.find((machine) => machine.Available));
+	}, [machines]);
 
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card>
-				<CardHeader>
-					<CardTitle>Login</CardTitle>
-					<CardDescription>Enter your ggLeap credentials.</CardDescription>
-					{error && (
-						<CardDescription className="text-red-500">{error}</CardDescription>
-					)}
-				</CardHeader>
-				<CardContent>
-					<form
-						action={async (formData) => {
-							try {
-								await signInWithCredentials(formData);
-							} catch {
-								setError("Invalid username or password. Please try again.");
-							}
-						}}
+		<div>
+			<p>Date ({format(selectedDate, "MMMM d")})</p>
+			<div>
+				{dates.map((date) => (
+					<OptionButton
+						key={date.toISOString()}
+						onClick={() => setSelectedDate(date)}
+						selected={isEqual(date, selectedDate)}
 					>
-						<div className="flex flex-col gap-6">
-							<div className="grid gap-3">
-								<Label htmlFor="username">Username</Label>
-								<Input id="username" name="username" type="text" required />
-							</div>
-							<div className="grid gap-3">
-								<div className="flex items-center">
-									<Label htmlFor="password">Password</Label>
-									<Dialog>
-										<DialogTrigger className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-											Forgot your password?
-										</DialogTrigger>
-										<DialogContent>
-											<DialogHeader>
-												<DialogTitle>Forgot your password?</DialogTitle>
-												<DialogDescription>
-													Please visit the OTSU front desk to reset your
-													password.
-												</DialogDescription>
-											</DialogHeader>
-										</DialogContent>
-									</Dialog>
-								</div>
-								<Input id="password" name="password" type="password" required />
-							</div>
-							<div className="flex flex-col gap-3">
-								<Button type="submit" className="w-full">
-									Login
-								</Button>
-							</div>
-						</div>
-						<div className="mt-4 text-center text-sm">
-							Don&apos;t have an account?{" "}
-							<a href="#" className="underline underline-offset-4">
-								Register
-							</a>
-						</div>
-					</form>
-				</CardContent>
-			</Card>
+						{format(date, "MMMM d")}
+					</OptionButton>
+				))}
+			</div>
+			<p>Duration ({selectedDuration})</p>
+			<div>
+				{durations.map((duration) => (
+					<OptionButton
+						key={duration}
+						onClick={() => setSelectedDuration(duration)}
+						selected={duration === selectedDuration}
+					>
+						{duration} minutes
+					</OptionButton>
+				))}
+			</div>
+			<p>Time ({format(selectedTime, "h:mm a")})</p>
+			<div>
+				{timeSlots.map((timeSlot) => (
+					<OptionButton
+						key={timeSlot.time.toISOString()}
+						onClick={() => setSelectedTime(timeSlot.time)}
+						selected={isEqual(timeSlot.time, selectedTime)}
+					>
+						{format(timeSlot.time, "h:mm a")} ({timeSlot.availablePCs}{" "}
+						available)
+					</OptionButton>
+				))}
+			</div>
+			<p>PC ({selectedMachine?.Name})</p>
+			<div>
+				{machines.map((machine) => (
+					<OptionButton
+						key={machine.Uuid}
+						onClick={() => setSelectedMachine(machine)}
+						selected={machine.Uuid === selectedMachine?.Uuid}
+						disabled={!machine.Available}
+					>
+						{machine.Name}
+					</OptionButton>
+				))}
+			</div>
+			<Button>Book</Button>
 		</div>
 	);
 }
