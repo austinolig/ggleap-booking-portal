@@ -26,6 +26,7 @@ export default function SignupForm() {
 		const error = await signUp(formData);
 		if (error) {
 			setError(error); // TODO: display error from api response
+			setDateOfBirth(undefined);
 		}
 	};
 
@@ -38,7 +39,8 @@ export default function SignupForm() {
 					id="username"
 					name="username"
 					type="text"
-					placeholder="Username"
+					placeholder="Username*"
+					maxLength={30}
 					required
 				/>
 				<FormInput
@@ -46,7 +48,8 @@ export default function SignupForm() {
 					id="password"
 					name="password"
 					type="password"
-					placeholder="Password"
+					placeholder="Password*"
+					maxLength={30}
 					required
 				/>
 				<FormInput
@@ -54,7 +57,8 @@ export default function SignupForm() {
 					id="firstName"
 					name="firstName"
 					type="text"
-					placeholder="First Name"
+					placeholder="First Name*"
+					maxLength={30}
 					required
 				/>
 				<FormInput
@@ -62,7 +66,8 @@ export default function SignupForm() {
 					id="lastName"
 					name="lastName"
 					type="text"
-					placeholder="Last Name"
+					placeholder="Last Name*"
+					maxLength={30}
 					required
 				/>
 				<FormInput
@@ -70,7 +75,11 @@ export default function SignupForm() {
 					id="studentNumber"
 					name="studentNumber"
 					type="text"
-					placeholder="Student Number"
+					placeholder="Student Number*"
+					maxLength={9}
+					inputMode="numeric"
+					pattern="[0-9]*"
+					title="Must only contain numbers."
 					required
 				/>
 				<FormInput
@@ -78,8 +87,9 @@ export default function SignupForm() {
 					id="studentEmail"
 					name="studentEmail"
 					type="email"
+					placeholder="Student Email*"
 					pattern=".+@ontariotechu\.net"
-					placeholder="Student Email"
+					title="Must use a valid @ontariotechu.net email address."
 					required
 				/>
 				<Popover>
@@ -99,7 +109,7 @@ export default function SignupForm() {
 							{dateOfBirth ? (
 								format(dateOfBirth, "MMM dd, yyyy")
 							) : (
-								<span className="text-muted-foreground">Date of Birth</span>
+								<span className="text-muted-foreground">Date of Birth*</span>
 							)}
 							<div>
 								<label htmlFor={"dateOfBirth"} className="sr-only">
@@ -143,7 +153,7 @@ export default function SignupForm() {
 					name="discordId"
 					type="text"
 					placeholder="Discord ID"
-					required
+					maxLength={30}
 				/>
 				<CreateAccountButton />
 			</div>
