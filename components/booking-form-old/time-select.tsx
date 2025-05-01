@@ -5,6 +5,7 @@ import { useSelectionStore } from "@/stores";
 import { CenterInfo } from "@/types";
 import { format } from "date-fns";
 import OptionButton from "../option-button";
+import { Button } from "../ui/button";
 
 export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
 	const selectedDate = useSelectionStore((state) => state.selectedDate);
@@ -22,13 +23,21 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
 	);
 
 	if (!timeSlots) {
-		return <div>Error: timeSlots</div>;
+		return (
+			<div>
+				<p className="font-bold text-muted-foreground">Time</p>
+				<p className="">No time slots available</p>
+			</div>
+		);
 	}
 
 	const machines = timeSlots[selectedTimeSlot]?.machineList;
 
 	if (!machines) {
-		return <div>Error: machines</div>;
+		<div>
+			<p className="font-bold text-muted-foreground">PC</p>
+			<p className="">No PCs available</p>
+		</div>;
 	}
 
 	return (
@@ -64,6 +73,7 @@ export default function TimeSelect({ centerInfo }: { centerInfo: CenterInfo }) {
 					))}
 				</div>
 			</div>
+			<Button className="w-full cursor-pointer">Confirm Booking</Button>
 		</>
 	);
 }
