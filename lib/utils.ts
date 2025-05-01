@@ -19,19 +19,22 @@ export function calculateTimeSlots(
   const dateString = format(selectedDate, "yyyy-MM-dd");
 
   // ensure center is open on selected date
-  if (!hours.Regular[dayOfWeek][0]?.Open) {
-    return null;
-  }
+  // if (!hours.Regular[dayOfWeek][0]?.Open) {
+  //   return null;
+  // }
 
   // set regular hours
-  const regularOpen = new Date(
-    `${dateString} ${hours.Regular[dayOfWeek][0].Open}`
-  );
+  // const regularOpen = new Date(
+  //   `${dateString} ${hours.Regular[dayOfWeek][0].Open}`
+  // );
 
-  const regularClose = subMinutes(
-    new Date(`${dateString} ${hours.Regular[dayOfWeek][0].Close}`),
-    60
-  ); // subtract shortest duration from regular closing time
+  // const regularClose = subMinutes(
+  //   new Date(`${dateString} ${hours.Regular[dayOfWeek][0].Close}`),
+  //   60
+  // ); // subtract shortest duration from regular closing time
+
+  const regularOpen = new Date(`${dateString} 10:00`);
+  const regularClose = subMinutes(new Date(`${dateString} 16:00`), 60); // subtract shortest duration from regular closing time
 
   // set special hours if available
   let specialOpen = regularOpen;
