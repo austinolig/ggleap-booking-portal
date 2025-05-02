@@ -1,23 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
-import OptionButton from "./option-button";
 import { Machine } from "@/types";
+import { useSelectionStore } from "@/stores";
+import { Button } from "./ui/button";
 
 export default function MachineSelect({ machines }: { machines: Machine[] }) {
-	const [selectedMachine, setSelectedMachine] = useState<Machine>(machines[0]);
-
+	const selectedMachine = useSelectionStore((state) => state.selectedMachine);
+	const setSelectedMachine = useSelectionStore(
+		(state) => state.setSelectedMachine
+	);
 	return (
 		<div>
-			{machines.map((machine) => (
-				<OptionButton
-					key={machine.Uuid}
-					onClick={() => setSelectedMachine(machine)}
-					selected={machine === selectedMachine}
-				>
-					{machine.Name} ({machine.Available ? "Available" : "Unavailable"})
-				</OptionButton>
-			))}
+			<p>PC ({selectedMachine?.Name})</p>
+			<div>
+				{machines.map((machine) => (
+					<Button
+						key={machine.Uuid}
+						onClick={() => setSelectedMachine(machine)}
+						variant={
+							machine.Uuid === selectedMachine?.Uuid
+								? "outlineSelected"
+								: "outline"
+						}
+						disabled={!machine.Available}
+					>
+						{machine.Name}
+					</Button>
+				))}
+			</div>
 		</div>
 	);
 }

@@ -1,37 +1,68 @@
-import { createBooking } from "@/lib/ggLeap";
-import { set as setDateFns } from "date-fns";
 import { create } from "zustand";
+import { Machine } from "@/types";
 
 type SelectionStore = {
-	selectedDate: string;
-	selectedTimeSlot: string;
+	selectedDate: Date;
 	selectedDuration: number;
-	setSelectedDate: (date: string) => void;
-	setSelectedTimeSlot: (time: string) => void;
+	selectedTime: Date;
+	selectedMachine: Machine | undefined;
+	setSelectedDate: (date: Date) => void;
 	setSelectedDuration: (duration: number) => void;
-	bookMachine: (machineUuid: string) => void;
+	setSelectedTime: (time: Date) => void;
+	setSelectedMachine: (machine: Machine) => void;
 };
 
-const initialDate = setDateFns(new Date("April 10 2025"), {
-	hours: 10,
-	minutes: 0,
-	seconds: 0,
-	milliseconds: 0,
-}).toISOString();
+const initialDate = new Date("April 10 2025");
 
-export const useSelectionStore = create<SelectionStore>()((set, get) => ({
+export const useSelectionStore = create<SelectionStore>()((set) => ({
 	selectedDate: initialDate,
-	selectedTimeSlot: initialDate,
 	selectedDuration: 90,
-	setSelectedDate: (date) =>
-		set({ selectedDate: date, selectedTimeSlot: date }),
-	setSelectedTimeSlot: (time) => set({ selectedTimeSlot: time }),
+	selectedTime: initialDate,
+	selectedMachine: undefined,
+	setSelectedDate: (date) => set({ selectedDate: date }),
 	setSelectedDuration: (duration) => set({ selectedDuration: duration }),
-	bookMachine: async (machineUuid) => {
-		await createBooking(
-			get().selectedTimeSlot,
-			get().selectedDuration,
-			machineUuid
-		);
-	},
+	setSelectedTime: (time) => set({ selectedTime: time }),
+	setSelectedMachine: (machine) => set({ selectedMachine: machine }),
 }));
+
+// Initializ state with props
+
+// Store creator with createStore
+import { createStore } from "zustand";
+
+interface DateProps {
+	selectedDate: Date;
+}
+
+interface DateState extends DateProps {
+	setSelectedDate: (date: Date) => void;
+}
+
+type DateStore = ReturnType<typeof createDateStore>;
+
+const createDateStore = (initProps?: Partial<DateProps>) => {
+	const DEFAULT_PROPS: DateProps = {
+		selectedDate: new Date("April 10 2025"),
+	};
+	return createStore<DateState>()((set) => ({
+		...DEFAULT_PROPS,
+		...initProps,
+		setSelectedDate: (date) => set({ selectedDate: date }),
+	}));
+};
+
+// Creating a context with React.createContext
+import { createContext } from "react";
+
+export const DateContext = createContext<DateStore | null>(null);
+
+// Extracting context logic into a custom hook
+// Mimic the hook returned by 'create'
+import { useContext } from "react";
+import { useStore } from "zustand";
+
+export function useDateContext<T>(selector: (state: DateState) => T): T {
+	const dateStore = useContext(DateContext);
+	if (!dateStore) throw new Error("Missing DateContext.Provider in the tree");
+	return useStore(dateStore, selector);
+}

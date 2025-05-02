@@ -1,17 +1,21 @@
 "use client";
 
 import { CenterInfo, Machine } from "@/types";
-import { use, useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { getAvailableMachines, getAvailableTimeSlots } from "@/lib/utils";
-import OptionButton from "./option-button";
 import { Button } from "@/components/ui/button";
-import { format, isEqual } from "date-fns";
+import DateSelect from "./date-select";
+import DurationSelect from "./duration-select";
+import TimeSlotSelect from "./time-select";
+import MachineSelect from "./machine-select";
 
 export default function BookingForm({
 	centerInfo,
 }: {
 	centerInfo: CenterInfo;
 }) {
+	// add provider for date store
+
 	const dates = [new Date("April 10 2025"), new Date("April 11 2025")];
 	const durations = [90, 60];
 
@@ -34,10 +38,6 @@ export default function BookingForm({
 
 	const [selectedTime, setSelectedTime] = useState<Date>(timeSlots[0].time);
 
-	useEffect(() => {
-		setSelectedTime(timeSlots[0].time);
-	}, [timeSlots]);
-
 	const machines = useMemo(() => {
 		return getAvailableMachines(centerInfo, selectedTime, selectedDuration);
 	}, [centerInfo, selectedTime, selectedDuration]);
@@ -54,62 +54,14 @@ export default function BookingForm({
 		machines.find((machine) => machine.Available)
 	);
 
-	useEffect(() => {
-		setSelectedMachine(machines.find((machine) => machine.Available));
-	}, [machines]);
-
 	return (
 		<div>
-			<p>Date ({format(selectedDate, "MMMM d")})</p>
-			<div>
-				{dates.map((date) => (
-					<OptionButton
-						key={date.toISOString()}
-						onClick={() => setSelectedDate(date)}
-						selected={isEqual(date, selectedDate)}
-					>
-						{format(date, "MMMM d")}
-					</OptionButton>
-				))}
-			</div>
-			<p>Duration ({selectedDuration})</p>
-			<div>
-				{durations.map((duration) => (
-					<OptionButton
-						key={duration}
-						onClick={() => setSelectedDuration(duration)}
-						selected={duration === selectedDuration}
-					>
-						{duration} minutes
-					</OptionButton>
-				))}
-			</div>
-			<p>Time ({format(selectedTime, "h:mm a")})</p>
-			<div>
-				{timeSlots.map((timeSlot) => (
-					<OptionButton
-						key={timeSlot.time.toISOString()}
-						onClick={() => setSelectedTime(timeSlot.time)}
-						selected={isEqual(timeSlot.time, selectedTime)}
-					>
-						{format(timeSlot.time, "h:mm a")} ({timeSlot.availablePCs}{" "}
-						available)
-					</OptionButton>
-				))}
-			</div>
-			<p>PC ({selectedMachine?.Name})</p>
-			<div>
-				{machines.map((machine) => (
-					<OptionButton
-						key={machine.Uuid}
-						onClick={() => setSelectedMachine(machine)}
-						selected={machine.Uuid === selectedMachine?.Uuid}
-						disabled={!machine.Available}
-					>
-						{machine.Name}
-					</OptionButton>
-				))}
-			</div>
+			<DateContext.Provider value={dateStore}>
+				<DateSelect dates={dates} />
+			</DateContext.Provider>
+			<DurationSelect durations={durations} />
+			<TimeSlotSelect timeSlots={timeSlots} />
+			<MachineSelect machines={machines} />
 			<Button>Book</Button>
 		</div>
 	);

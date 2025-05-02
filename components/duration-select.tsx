@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import OptionButton from "./option-button";
+import { useSelectionStore } from "@/stores";
+import { Button } from "./ui/button";
 
 export default function DurationSelect({ durations }: { durations: number[] }) {
-	const [selectedDuration, setSelectedDuration] = useState<number>(
-		durations[0]
+	const selectedDuration = useSelectionStore((state) => state.selectedDuration);
+	const setSelectedDuration = useSelectionStore(
+		(state) => state.setSelectedDuration
 	);
-
 	return (
 		<div>
-			{durations.map((duration) => (
-				<OptionButton
-					key={duration}
-					onClick={() => setSelectedDuration(duration)}
-					selected={duration === selectedDuration}
-				>
-					{duration} minutes
-				</OptionButton>
-			))}
+			<p>Duration ({selectedDuration})</p>
+			<div>
+				{durations.map((duration) => (
+					<Button
+						key={duration}
+						onClick={() => setSelectedDuration(duration)}
+						variant={
+							duration === selectedDuration ? "outlineSelected" : "outline"
+						}
+					>
+						{duration} minutes
+					</Button>
+				))}
+			</div>
 		</div>
 	);
 }
