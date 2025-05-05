@@ -84,7 +84,7 @@ export default function BookingForm({
 				selectedMachine={selectedMachine}
 				setSelectedMachine={setSelectedMachine}
 			/>
-			<Button>Book</Button>
+			<Button className="w-full">Book</Button>
 		</div>
 	);
 }
