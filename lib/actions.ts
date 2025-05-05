@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut as authSignOut } from "@/auth";
 import { SignupData } from "@/types";
 import { CredentialsSignin } from "next-auth";
 import { redirect } from "next/navigation";
@@ -20,7 +20,7 @@ export async function signInWithCredentials(
 }
 
 export async function signOut(): Promise<void> {
-	await signOut();
+	await authSignOut();
 }
 
 export async function signUp(formData: FormData): Promise<string | void> {

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import Image from "next/image";
-// import Script from "next/script";
+import Script from "next/script";
 
 const teko = Teko({
 	variable: "--font-teko",
@@ -29,12 +29,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			{/* <head>
+			<head>
 				<Script
 					crossOrigin="anonymous"
 					src="//unpkg.com/react-scan/dist/auto.global.js"
 				/>
-			</head> */}
+			</head>
 			<body className={`${teko.variable} ${rubik.variable} antialiased`}>
 				<div className="relative px-6 py-12 w-full max-w-lg mx-auto space-y-12">
 					<header className="flex flex-col items-center gap-6">

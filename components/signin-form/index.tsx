@@ -5,7 +5,7 @@ import { signInWithCredentials } from "@/lib/actions";
 import { useState } from "react";
 import { KeyRound, LoaderCircle, User } from "lucide-react";
 import { useFormStatus } from "react-dom";
-import FormInput from "./form-input";
+import FormInput from "../ui/form-input";
 
 export default function SigninForm() {
 	const [error, setError] = useState("");
