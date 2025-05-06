@@ -1,9 +1,9 @@
 import BookingForm from "@/components/booking-form";
 import { Suspense } from "react";
 import Loading from "./loading";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import UserMenu from "@/components/user-menu";
+// import { auth } from "@/auth";
+// import { redirect } from "next/navigation";
+// import UserMenu from "@/components/user-menu";
 import { getCenterInfo } from "@/lib/ggLeap";
 
 export default async function Home() {
