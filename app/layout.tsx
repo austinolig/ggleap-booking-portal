@@ -4,7 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import Image from "next/image";
-import Script from "next/script";
+// import Script from "next/script";
 
 const teko = Teko({
     variable: "--font-teko",
