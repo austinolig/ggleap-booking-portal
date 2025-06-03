@@ -49,12 +49,8 @@ export default function BookingForm({
 		const firstAvailableMachine =
 			machines.find((machine) => machine.Available) ?? null;
 		setSelectedMachine(firstAvailableMachine);
+		setSelectedMachine(null);
 	}, [machines]);
-
-	const isDisabled = !selectedDate
-		|| !selectedDuration
-		|| !selectedMachine
-		|| !selectedTime;
 
 	return (
 		<div className="space-y-6">
@@ -78,13 +74,11 @@ export default function BookingForm({
 				selectedMachine={selectedMachine}
 				setSelectedMachine={setSelectedMachine}
 			/>
-			{/* NEED TO FIX AND MAKE SURE NON-NULL ASSERTION IS SAFE */}
 			<ConfirmationDrawer
 				selectedDate={selectedDate}
 				selectedDuration={selectedDuration}
-				selectedTime={selectedTime!}
-				selectedMachine={selectedMachine!}
-				isDisabled={isDisabled}
+				selectedTime={selectedTime}
+				selectedMachine={selectedMachine}
 			/>
 		</div>
 	);

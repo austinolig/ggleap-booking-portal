@@ -17,14 +17,16 @@ export default function ConfirmationDrawer({
 	selectedDuration,
 	selectedTime,
 	selectedMachine,
-	isDisabled,
 }: {
 	selectedDate: Date;
 	selectedDuration: number;
-	selectedTime: Date;
-	selectedMachine: Machine;
-	isDisabled: boolean;
+	selectedTime: Date | null;
+	selectedMachine: Machine | null;
 }) {
+	const isDisabled = !selectedDate
+		|| !selectedDuration
+		|| !selectedMachine
+		|| !selectedTime;
 	return (
 		<Drawer>
 			<DrawerTrigger asChild>
@@ -50,7 +52,7 @@ export default function ConfirmationDrawer({
 						<p className="font-bold text-muted-foreground">
 							Time
 						</p>
-						<p>{format(selectedTime, "h:mm a")}</p>
+						<p>{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}</p>
 					</div>
 					<div>
 						<p className="font-bold text-muted-foreground">
@@ -62,7 +64,7 @@ export default function ConfirmationDrawer({
 						<p className="font-bold text-muted-foreground">
 							Machine
 						</p>
-						<p>{selectedMachine.Name}</p>
+						<p>{selectedMachine ? selectedMachine.Name : "---"}</p>
 					</div>
 				</div>
 				<div className="space-y-3">
