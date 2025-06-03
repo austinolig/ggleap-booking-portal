@@ -7,7 +7,7 @@ import DateSelect from "./date-select";
 import DurationSelect from "./duration-select";
 import TimeSlotSelect from "./time-select";
 import MachineSelect from "./machine-select";
-import ConfirmationDrawer from "../confirmation-drawer";
+import ConfirmationDrawer from "./confirmation-drawer";
 
 const dates = [new Date("April 10 2025"), new Date("April 11 2025")];
 const durations = [90, 60];
@@ -49,7 +49,6 @@ export default function BookingForm({
 		const firstAvailableMachine =
 			machines.find((machine) => machine.Available) ?? null;
 		setSelectedMachine(firstAvailableMachine);
-		setSelectedMachine(null);
 	}, [machines]);
 
 	return (
