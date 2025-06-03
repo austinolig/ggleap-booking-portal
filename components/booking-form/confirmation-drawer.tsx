@@ -11,6 +11,7 @@ import {
 import { Button } from "../ui/button"
 import { Machine } from "@/types/index"
 import { ScrollArea } from "../ui/scroll-area";
+import { useState } from "react";
 
 export default function ConfirmationDrawer({
 	selectedDate,
@@ -23,12 +24,23 @@ export default function ConfirmationDrawer({
 	selectedTime: Date | null;
 	selectedMachine: Machine | null;
 }) {
+	const [scrolledToBottom, setScrolledToBottom] = useState(false);
+
+	function handleScroll(e: React.UIEvent<HTMLDivElement>) {
+		const distanceFromBottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop;
+		const atBottom = distanceFromBottom === e.currentTarget.clientHeight;
+		if (!scrolledToBottom) {
+			setScrolledToBottom(atBottom);
+		}
+	}
+
 	const isDisabled = !selectedDate
 		|| !selectedDuration
 		|| !selectedMachine
 		|| !selectedTime;
+
 	return (
-		<Drawer>
+		<Drawer onOpenChange={() => setScrolledToBottom(false)}>
 			<DrawerTrigger asChild>
 				<Button
 					className="w-full"
@@ -71,7 +83,10 @@ export default function ConfirmationDrawer({
 					<h3 className="font-bold text-muted-foreground">
 						Terms of Service
 					</h3>
-					<ScrollArea className="h-30 border rounded-xs">
+					<ScrollArea
+						className="h-30 border rounded-xs"
+						onScroll={handleScroll}
+					>
 						<p className="p-2">
 							{`
 								Lorem ipsum dolor sit amet, consectetur adipiscing
@@ -87,11 +102,18 @@ export default function ConfirmationDrawer({
 						</p>
 					</ScrollArea>
 					<p className="text-sm text-muted-foreground">
-						By confirming, you agree to our terms of service.
+						{`
+							To complete your booking, please review the terms
+							of service. By confirming, you agree to these terms.
+						`}
 					</p>
 				</div>
 				<DrawerFooter className="flex-grow-1">
-					<Button>Confirm</Button>
+					<Button
+						disabled={!scrolledToBottom}
+					>
+						Confirm
+					</Button>
 					<DrawerClose asChild>
 						<Button
 							className="w-full"
