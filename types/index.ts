@@ -24,6 +24,7 @@ export type Booking = {
 	Start: string;
 	Duration: number;
 	Machines: string[];
+	Name: string;
 };
 
 export type Machine = {

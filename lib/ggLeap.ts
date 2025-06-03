@@ -9,7 +9,7 @@ import {
 	UserUuid,
 } from "@/types";
 import { User } from "next-auth";
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { auth } from "@/auth";
 
 const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
@@ -126,6 +126,7 @@ export async function getBookings(): Promise<Booking[] | null> {
 			Start: booking.Start,
 			Duration: booking.Duration,
 			Machines: booking.Machines,
+			Name: booking.Name,
 		}));
 		console.log("Bookings (post-processing):", bookings);
 		return bookings;
@@ -236,81 +237,97 @@ export async function getCenterInfo(): Promise<CenterInfo | null> {
 		},
 		bookings: [
 			{
+				Name: "soSic",
 				Start: "2025-04-10T16:00:00Z",
 				Duration: 90,
 				Machines: ["32e486b1-4dc1-4462-940f-79415750eeb8"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T16:00:00Z",
 				Duration: 90,
 				Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T18:15:00Z",
 				Duration: 15,
 				Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T14:45:00Z",
 				Duration: 75,
 				Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T16:30:00Z",
 				Duration: 90,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T17:30:00Z",
 				Duration: 15,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 90,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 75,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 15,
 				Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
 			},
 			{
+				Name: "soSic",
 				Start: "2025-04-11T18:45:00Z",
 				Duration: 75,
 				Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
@@ -497,7 +514,27 @@ export async function createBooking(
 		return null;
 	}
 
+
 	try {
+		console.log("Checking if user has existing booking...");
+
+		const bookings = await getBookings();
+		if (bookings) {
+			const hasExistingBooking = bookings.findLast(
+				(booking) => {
+					const isCurrentUser = booking.Name === session.user?.Username
+					const bookingEnd = addMinutes(booking.Start, booking.Duration);
+					const hasPassed = bookingEnd.getTime() < new Date().getTime();
+					return isCurrentUser && !hasPassed;
+				}
+			);
+
+			if (hasExistingBooking) {
+				console.log("hasExistingBooking:", hasExistingBooking);
+				throw new Error("User already has an ongoing/upcoming booking.");
+			}
+		}
+
 		console.log("Creating booking...");
 
 		const response = await fetch(
@@ -534,49 +571,3 @@ export async function createBooking(
 		return null;
 	}
 }
-
-// UNUSED
-// export async function getAvailableMachines(
-// 	bookingStart: string,
-// 	duration: number
-// ): Promise<Machine[] | null> {
-// 	console.log("__getAvailableMachines()__");
-
-// 	const jwt = await getJWT();
-// 	if (!jwt) {
-// 		return null;
-// 	}
-
-// 	try {
-// 		console.log("Fetching available machines...");
-
-// 		const response = await fetch(
-// 			"https://api.ggleap.com/production/bookings/get-available-machines",
-// 			{
-// 				method: "POST",
-// 				headers: {
-// 					"Content-Type": "application/json",
-// 					Authorization: jwt,
-// 				},
-// 				body: JSON.stringify({
-// 					Start: bookingStart,
-// 					Duration: duration,
-// 				}),
-// 			}
-// 		);
-
-// 		const data = await response.json();
-// 		if (!data.Machines || !response.ok) {
-// 			console.log("data:", data);
-// 			throw new Error(
-// 				`(${response.status}) Failed to fetch available machines`
-// 			);
-// 		}
-
-// 		console.log("Machines:", data.Machines);
-// 		return data.Machines;
-// 	} catch (error) {
-// 		console.error(error);
-// 		return null;
-// 	}
-// }
