@@ -613,8 +613,7 @@ export async function updateBookingDuration(
 		const currentBooking = bookings.findLast(
 			(booking) => {
 				const isCurrentUser = booking.Name === session.user?.Username;
-				const bookingStart = new Date(booking.Start);
-				const bookingEnd = addMinutes(bookingStart, booking.Duration);
+				const bookingEnd = addMinutes(booking.Start, booking.Duration);
 				const currentDate = new Date();
 				const withinFinal15 = currentDate.getTime() >= new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() && currentDate.getTime() < bookingEnd.getTime();
 				return isCurrentUser && withinFinal15;
@@ -626,7 +625,7 @@ export async function updateBookingDuration(
 			return null;
 		}
 
-		const response = await fetch("https://api.ggleap.com/beta/bookings/update", {
+		const response = await fetch("https://api.ggleap.com/production/bookings/update", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -654,3 +653,60 @@ export async function updateBookingDuration(
 		return null;
 	}
 }
+
+export async function deleteBooking(
+	bookingUuid: BookingUuid
+): Promise<boolean> {
+	console.log("__deleteBooking()__");
+
+	const jwt = await getJWT();
+	if (!jwt) {
+		return false;
+	}
+
+	try {
+		console.log(`Deleting booking "${bookingUuid}"...`);
+
+		const response = await fetch(
+			"https://api.ggleap.com/production/bookings/delete",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: jwt,
+				},
+				body: JSON.stringify({ BookingUuid: bookingUuid }),
+			}
+		);
+
+		if (!response.ok) {
+			console.log("Response status:", response.status);
+			throw new Error(`(${response.status}) Failed to delete booking`);
+		}
+
+		console.log("Booking deleted successfully.");
+		return true;
+	} catch (error) {
+		console.error(error);
+		return false;
+	}
+}
+
+export async function getUserBooking(): Promise<Booking | undefined> {
+	const session = await auth();
+	if (!session?.user) {
+		return undefined;
+	}
+
+	const bookings = await getBookings();
+	if (!bookings) {
+		return undefined;
+	}
+
+	return bookings.findLast((booking) => {
+		const isCurrentUser = booking.Name === session.user?.Username;
+		const bookingEnd = addMinutes(booking.Start, booking.Duration);
+		return isCurrentUser && bookingEnd.getTime() > new Date().getTime();
+	});
+}
+
