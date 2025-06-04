@@ -123,6 +123,7 @@ export async function getBookings(): Promise<Booking[] | null> {
 
 		console.log("Bookings (pre-processing):", data.Bookings);
 		const bookings = data.Bookings.map((booking: Booking) => ({
+			BookingUuid: booking.BookingUuid,
 			Start: booking.Start,
 			Duration: booking.Duration,
 			Machines: booking.Machines,
@@ -200,9 +201,9 @@ export async function getCenterInfo(): Promise<CenterInfo | null> {
 				"2024-11-09": [],
 				"2024-11-10": [],
 				"2024-11-11": [],
-				"2024-11-12": [],
 				"2024-11-13": [],
 				"2024-11-14": [],
+				"2024-11-12": [],
 				"2024-11-15": [],
 				"2024-11-16": [],
 				"2024-11-17": [],
@@ -237,96 +238,112 @@ export async function getCenterInfo(): Promise<CenterInfo | null> {
 		},
 		bookings: [
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T16:00:00Z",
 				Duration: 90,
 				Machines: ["32e486b1-4dc1-4462-940f-79415750eeb8"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T16:00:00Z",
 				Duration: 90,
 				Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T18:00:00Z",
 				Duration: 90,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T18:15:00Z",
 				Duration: 15,
 				Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-10T19:30:00Z",
 				Duration: 30,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T14:45:00Z",
 				Duration: 75,
 				Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T16:30:00Z",
 				Duration: 90,
 				Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T17:30:00Z",
 				Duration: 15,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 90,
 				Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 75,
 				Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T18:30:00Z",
 				Duration: 15,
 				Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
 			},
 			{
+				BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
 				Name: "soSic",
 				Start: "2025-04-11T18:45:00Z",
 				Duration: 75,
@@ -566,6 +583,72 @@ export async function createBooking(
 
 		console.log("BookingUuid:", data.BookingUuid);
 		return data.BookingUuid;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+}
+
+export async function updateBookingDuration(
+	duration: number
+): Promise<BookingUuid | null> {
+	console.log("__updateBookingDuration()__");
+
+	const jwt = await getJWT();
+	if (!jwt) {
+		return null;
+	}
+
+	const session = await auth();
+	if (!session?.user) {
+		return null;
+	}
+
+	try {
+		const bookings = await getBookings();
+		if (!bookings) {
+			return null;
+		}
+
+		const currentBooking = bookings.findLast(
+			(booking) => {
+				const isCurrentUser = booking.Name === session.user?.Username;
+				const bookingStart = new Date(booking.Start);
+				const bookingEnd = addMinutes(bookingStart, booking.Duration);
+				const currentDate = new Date();
+				const withinFinal15 = currentDate.getTime() >= new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() && currentDate.getTime() < bookingEnd.getTime();
+				return isCurrentUser && withinFinal15;
+			}
+		);
+
+		if (!currentBooking) {
+			console.log("No current booking within final 15 minutes.");
+			return null;
+		}
+
+		const response = await fetch("https://api.ggleap.com/beta/bookings/update", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: jwt,
+			},
+			body: JSON.stringify({
+				BookingUuid: currentBooking.BookingUuid,
+				Duration: duration,
+			}),
+		});
+
+		const data = await response.json();
+		if (!data.BookingUuid || !response.ok) {
+			console.log("data:", data);
+			throw new Error(`(${response.status}) Failed to update booking`);
+		}
+
+		console.log("Updated BookingUuid:", data.BookingUuid);
+		//return data.BookingUuid;
+
+		console.log("data:", data);
+		return null;
 	} catch (error) {
 		console.error(error);
 		return null;

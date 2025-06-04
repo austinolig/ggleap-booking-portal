@@ -21,10 +21,11 @@ export type CenterHours = {
 export type BookingUuid = string;
 
 export type Booking = {
+	BookingUuid: BookingUuid;
+	Name: string;
 	Start: string;
 	Duration: number;
 	Machines: string[];
-	Name: string;
 };
 
 export type Machine = {
