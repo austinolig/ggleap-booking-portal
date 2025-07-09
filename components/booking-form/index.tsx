@@ -8,8 +8,11 @@ import DurationSelect from "./duration-select";
 import TimeSlotSelect from "./time-select";
 import MachineSelect from "./machine-select";
 import ConfirmationDrawer from "./confirmation-drawer";
+import { addDays } from "date-fns";
 
-const dates = [new Date("April 10 2025"), new Date("April 11 2025")];
+const today = new Date();
+const tomorrow = addDays(today, 1);
+const dates = [today, tomorrow];
 const durations = [90, 60];
 
 export default function BookingForm({
