@@ -22,9 +22,10 @@ export default memo(function TimeSlotSelect({
 				<div className="grid grid-cols-2 gap-3">
 					{timeSlots.map((timeSlot) => {
 						const isSelected =
-							timeSlot.time?.getHours() === selectedTime?.getHours() &&
-							timeSlot.time?.getMinutes() === selectedTime?.getMinutes();
-						const isDisabled = timeSlot.availablePCs === 0;
+							timeSlot.time.getHours() === selectedTime?.getHours() &&
+							timeSlot.time.getMinutes() === selectedTime?.getMinutes();
+						const hasNoPCs = timeSlot.availablePCs === 0;
+						const isDisabled = hasNoPCs;
 						return (
 							<Button
 								key={timeSlot.time.toISOString()}
@@ -32,14 +33,14 @@ export default memo(function TimeSlotSelect({
 								variant={isSelected ? "outlineSelected" : "outline"}
 								disabled={isDisabled}
 							>
-								{format(timeSlot.time, "h:mm a")} ({timeSlot.availablePCs}{" "}
+								{format(timeSlot.time, "h:mm a")} ({!isDisabled ? timeSlot.availablePCs : "0"}{" "}
 								available)
 							</Button>
 						);
 					})}
 				</div>
 			) : (
-				<p>No time slots available</p>
+				<p>No times available.</p>
 			)}
 		</div>
 	);

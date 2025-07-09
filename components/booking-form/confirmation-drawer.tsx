@@ -12,6 +12,7 @@ import { Button } from "../ui/button"
 import { Machine } from "@/types/index"
 import { ScrollArea } from "../ui/scroll-area";
 import { useState } from "react";
+import { confirmBooking } from "@/lib/actions";
 
 export default function ConfirmationDrawer({
 	selectedDate,
@@ -26,7 +27,11 @@ export default function ConfirmationDrawer({
 }) {
 	const [scrolledToBottom, setScrolledToBottom] = useState(false);
 
-	function handleScroll(e: React.UIEvent<HTMLDivElement>) {
+	const isDisabled = !selectedDate
+		|| !selectedDuration
+		|| !selectedMachine || !selectedTime;
+
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
 		const distanceFromBottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop;
 		const atBottom = distanceFromBottom === e.currentTarget.clientHeight;
 		if (!scrolledToBottom) {
@@ -34,10 +39,14 @@ export default function ConfirmationDrawer({
 		}
 	}
 
-	const isDisabled = !selectedDate
-		|| !selectedDuration
-		|| !selectedMachine
-		|| !selectedTime;
+	const handleBooking = async () => {
+		const error = await confirmBooking(selectedTime!, selectedDuration, selectedMachine!.Uuid);
+		if (error) {
+			alert(error);
+		} else {
+			alert("Booking confirmed!");
+		}
+	}
 
 	return (
 		<Drawer onOpenChange={() => setScrolledToBottom(false)}>
@@ -111,6 +120,7 @@ export default function ConfirmationDrawer({
 				<DrawerFooter className="flex-grow-1">
 					<Button
 						disabled={!scrolledToBottom}
+						onClick={handleBooking}
 					>
 						Confirm
 					</Button>

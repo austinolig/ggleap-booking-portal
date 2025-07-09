@@ -35,8 +35,7 @@ export default function BookingForm({
 	);
 
 	useEffect(() => {
-		const firstAvailableTime =
-			timeSlots.find((timeSlot) => timeSlot.availablePCs > 0)?.time ?? null;
+		const firstAvailableTime = timeSlots.find((timeSlot) => timeSlot.availablePCs > 0)?.time ?? null;
 		setSelectedTime(firstAvailableTime);
 	}, [timeSlots]);
 
@@ -49,8 +48,7 @@ export default function BookingForm({
 	);
 
 	useEffect(() => {
-		const firstAvailableMachine =
-			machines.find((machine) => machine.Available) ?? null;
+		const firstAvailableMachine = machines.find((machine) => machine.Available) ?? null;
 		setSelectedMachine(firstAvailableMachine);
 	}, [machines]);
 

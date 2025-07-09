@@ -35,7 +35,7 @@ export default memo(function MachineSelect({
 					})}
 				</div>
 			) : (
-				<p>No machines available</p>
+				<p>No PCs available.</p>
 			)}
 		</div>
 	);
