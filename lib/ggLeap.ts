@@ -194,203 +194,7 @@ export async function getCenterInfo(): Promise<CenterInfo | null> {
 		return null;
 	}
 
-	// UNCOMMENT THIS TO TEST MOCK DATA
-	// return {
-	// 	hours: {
-	// 		Regular: {
-	// 			Sunday: [],
-	// 			Monday: [],
-	// 			Tuesday: [],
-	// 			Wednesday: [],
-	// 			Thursday: [],
-	// 			Friday: [],
-	// 			Saturday: [],
-	// 		},
-	// 		Special: {
-	// 			"2024-08-07": [],
-	// 			"2024-08-11": [],
-	// 			"2024-08-19": [],
-	// 			"2024-08-27": [],
-	// 			"2024-09-01": [],
-	// 			"2024-09-12": [],
-	// 			"2024-09-16": [],
-	// 			"2024-09-19": [],
-	// 			"2024-09-18": [],
-	// 			"2024-10-11": [],
-	// 			"2024-10-19": [],
-	// 			"2024-11-02": [],
-	// 			"2024-11-03": [],
-	// 			"2024-11-04": [],
-	// 			"2024-11-05": [],
-	// 			"2024-11-06": [],
-	// 			"2024-11-07": [],
-	// 			"2024-11-08": [],
-	// 			"2024-11-09": [],
-	// 			"2024-11-10": [],
-	// 			"2024-11-11": [],
-	// 			"2024-11-13": [],
-	// 			"2024-11-14": [],
-	// 			"2024-11-12": [],
-	// 			"2024-11-15": [],
-	// 			"2024-11-16": [],
-	// 			"2024-11-17": [],
-	// 			"2024-11-18": [],
-	// 			"2024-11-19": [],
-	// 			"2024-11-20": [],
-	// 			"2024-11-21": [],
-	// 			"2024-11-22": [],
-	// 			"2024-11-23": [],
-	// 			"2024-11-24": [],
-	// 			"2024-11-25": [],
-	// 			"2024-11-26": [],
-	// 			"2024-11-27": [],
-	// 			"2024-11-28": [],
-	// 			"2024-11-29": [],
-	// 			"2024-11-30": [],
-	// 			"2024-12-01": [],
-	// 			"2024-12-02": [],
-	// 			"2024-12-03": [],
-	// 			"2024-12-04": [],
-	// 			"2024-12-26": [],
-	// 			"2025-01-17": [],
-	// 			"2025-01-19": [],
-	// 			"2025-02-15": [],
-	// 			"2025-02-23": [],
-	// 			"2025-03-02": [],
-	// 			"2025-03-04": [],
-	// 			"2025-03-12": [],
-	// 			"2025-03-20": [],
-	// 			"2025-03-28": [],
-	// 		},
-	// 	},
-	// 	bookings: [
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T16:00:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["32e486b1-4dc1-4462-940f-79415750eeb8"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T16:00:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T18:00:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T18:00:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T18:00:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T18:15:00Z",
-	// 			Duration: 15,
-	// 			Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T19:30:00Z",
-	// 			Duration: 30,
-	// 			Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T19:30:00Z",
-	// 			Duration: 30,
-	// 			Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-10T19:30:00Z",
-	// 			Duration: 30,
-	// 			Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T14:45:00Z",
-	// 			Duration: 75,
-	// 			Machines: ["dfcd4bdc-7c57-475d-b486-b842dcf0a9ba"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T16:30:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["68bc1314-17d4-4039-ac63-a5b4b198de7c"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T17:30:00Z",
-	// 			Duration: 15,
-	// 			Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T18:30:00Z",
-	// 			Duration: 90,
-	// 			Machines: ["21116719-3c0b-45f9-bc6c-12f70a245851"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T18:30:00Z",
-	// 			Duration: 75,
-	// 			Machines: ["931e35e4-e28a-4ca3-b5b6-fc87625d346e"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T18:30:00Z",
-	// 			Duration: 15,
-	// 			Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
-	// 		},
-	// 		{
-	// 			BookingUuid: "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
-	// 			Name: "soSic",
-	// 			Start: "2025-04-11T18:45:00Z",
-	// 			Duration: 75,
-	// 			Machines: ["e0833473-359f-4c65-9b6a-1f7f22375a71"],
-	// 		},
-	// 	],
-	// 	machines: [
-	// 		{ Uuid: "012965ab-3e68-461d-83a9-625ccd636369", Name: "PC2" },
-	// 		{ Uuid: "2047347d-f2c6-4307-9881-1de6f32527ec", Name: "PC7" },
-	// 		{ Uuid: "21116719-3c0b-45f9-bc6c-12f70a245851", Name: "PC9" },
-	// 		{ Uuid: "32e486b1-4dc1-4462-940f-79415750eeb8", Name: "PC6" },
-	// 		{ Uuid: "535126d8-8cce-4cb4-a4bd-37055f2fbd4b", Name: "PC4" },
-	// 		{ Uuid: "53ae2066-0e22-467f-a9fe-38c7d6aa3a74", Name: "PC5" },
-	// 		{ Uuid: "68bc1314-17d4-4039-ac63-a5b4b198de7c", Name: "PC8" },
-	// 		{ Uuid: "931e35e4-e28a-4ca3-b5b6-fc87625d346e", Name: "PC10" },
-	// 		{ Uuid: "dfcd4bdc-7c57-475d-b486-b842dcf0a9ba", Name: "PC3" },
-	// 		{ Uuid: "e0833473-359f-4c65-9b6a-1f7f22375a71", Name: "PC1" },
-	// 	],
-	// };
-}
+	}
 
 export async function login(
 	username: string,
@@ -517,7 +321,7 @@ export async function createUser(
 }
 
 export async function createBooking(
-	selectedTimeSlot: string,
+	selectedTimeSlot: Date,
 	duration: number,
 	machineUuid: string
 ): Promise<BookingUuid | null> {
@@ -532,7 +336,6 @@ export async function createBooking(
 	if (!session?.user) {
 		return null;
 	}
-
 
 	try {
 		console.log("Checking if user has existing booking...");
@@ -566,7 +369,7 @@ export async function createBooking(
 				},
 				body: JSON.stringify({
 					Booking: {
-						Start: selectedTimeSlot,
+						Start: selectedTimeSlot.toISOString(),
 						Duration: duration,
 						Machines: [machineUuid],
 						Name: session.user.Username,
