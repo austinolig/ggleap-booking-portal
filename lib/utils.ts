@@ -13,25 +13,23 @@ export function getAvailableTimeSlots(
 	selectedDuration: number
 ): TimeSlot[] {
 	// keys for accessing regular and special hours
-	// const dayOfWeek = format(selectedDate, "EEEE");
+	const dayOfWeek = format(selectedDate, "EEEE");
 	const dateString = format(selectedDate, "yyyy-MM-dd");
 
 	// ensure center is open on selected date
-	// if (!hours.Regular[dayOfWeek][0]?.Open) {
-	//   return null;
-	// }
+	if (!centerInfo.hours.Regular[dayOfWeek][0]?.Open) {
+		return [];
+	}
 
 	// initialize regular hours
-	// const regularOpen = new Date(
-	//   `${dateString} ${hours.Regular[dayOfWeek][0].Open}`
-	// );
+	const regularOpen = new Date(
+		`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Open}`
+	);
 
-	// const regularClose = subMinutes(
-	//   new Date(`${dateString} ${hours.Regular[dayOfWeek][0].Close}`),
-	//   60
-	// ); // subtract shortest duration from regular closing time
-	const regularOpen = new Date(`${dateString} 10:00`);
-	const regularClose = subMinutes(new Date(`${dateString} 16:00`), 60); // subtract shortest duration from regular closing time
+	const regularClose = subMinutes(
+		new Date(`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Close}`),
+		60
+	); // subtract shortest duration from regular closing time
 
 	// initialize special hours if available
 	let specialOpen = regularOpen;
@@ -54,21 +52,20 @@ export function getAvailableTimeSlots(
 		const timeSlotEnd = addMinutes(timeSlotStart, selectedDuration);
 
 		let availablePCs = 0;
-		// let machineList: Machine[] = machines;
-		const occupiedMachines = new Set<string>();
-
-		// if time slot is not outside of special hours
+		// if time slot is not outside of special hours or in the past
 		if (
 			!(
 				isBefore(timeSlotStart, specialOpen) ||
-				isAfter(timeSlotStart, specialClose)
+				isAfter(timeSlotStart, specialClose) ||
+				isBefore(timeSlotStart, new Date())
 			)
 		) {
+			const occupiedMachines = new Set<string>();
 			for (const booking of centerInfo.bookings) {
 				const bookingStart = new Date(booking.Start);
 				const bookingEnd = addMinutes(bookingStart, booking.Duration);
 
-				// if time slot overlaps with booking time
+				// if time slot overlaps with booking time, add machine to occupied set
 				if (
 					isBefore(timeSlotStart, bookingEnd) &&
 					isAfter(timeSlotEnd, bookingStart)
@@ -76,7 +73,6 @@ export function getAvailableTimeSlots(
 					occupiedMachines.add(booking.Machines[0]);
 				}
 			}
-
 			availablePCs = centerInfo.machines.length - occupiedMachines.size;
 		}
 
