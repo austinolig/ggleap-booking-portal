@@ -21,8 +21,7 @@ export default async function Home() {
 	return (
 		<>
 			<UserMenu session={session} />
-			<main className="space-y-6">
-				<p className="font-bold text-lg">Book a PC</p>
+			<main>
 				<Suspense fallback={<Loading />}>
 					<BookingForm centerInfo={centerInfo} />
 				</Suspense>

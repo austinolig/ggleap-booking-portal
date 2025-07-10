@@ -13,6 +13,7 @@ import { Machine } from "@/types/index"
 import { ScrollArea } from "../ui/scroll-area";
 import { useState } from "react";
 import { confirmBooking } from "@/lib/actions";
+import { Calendar, Clock, PcCase, Timer } from "lucide-react";
 
 export default function ConfirmationDrawer({
 	selectedDate,
@@ -58,38 +59,38 @@ export default function ConfirmationDrawer({
 					Confirm Booking
 				</Button>
 			</DrawerTrigger>
-			<DrawerContent className="max-w-lg m-auto border-1 px-6 space-y-6">
+			<DrawerContent className="max-w-lg m-auto border-1 px-6 space-y-8">
 				<DrawerHeader>
-					<DrawerTitle>Confirm Booking</DrawerTitle>
+					<DrawerTitle className="text-center">Confirm Booking</DrawerTitle>
 				</DrawerHeader>
-				<div className="grid grid-cols-2 gap-3">
-					<div>
-						<p className="font-bold text-muted-foreground">
-							Date
+				<div className="grid grid-cols-2 gap-4">
+					<div className="flex items-center justify-center gap-2">
+						<Calendar className="text-muted-foreground" width={16} height={16} />
+						<p className="font-bold">
+							{format(selectedDate, "MMMM d")}
 						</p>
-						<p>{format(selectedDate, "MMMM d")}</p>
 					</div>
-					<div>
-						<p className="font-bold text-muted-foreground">
-							Time
+					<div className="flex items-center justify-center gap-2">
+						<Clock className="text-muted-foreground" width={16} height={16} />
+						<p className="font-bold">
+							{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}
 						</p>
-						<p>{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}</p>
 					</div>
-					<div>
-						<p className="font-bold text-muted-foreground">
-							Duration
+					<div className="flex items-center justify-center gap-2">
+						<Timer className="text-muted-foreground" width={16} height={16} />
+						<p className="font-bold">
+							{selectedDuration} minutes
 						</p>
-						<p>{selectedDuration} minutes</p>
 					</div>
-					<div>
-						<p className="font-bold text-muted-foreground">
-							Machine
+					<div className="flex items-center justify-center gap-2">
+						<PcCase className="text-muted-foreground" width={16} height={16} />
+						<p className="font-bold">
+							{selectedMachine ? selectedMachine.Name : "---"}
 						</p>
-						<p>{selectedMachine ? selectedMachine.Name : "---"}</p>
 					</div>
 				</div>
 				<div className="space-y-3">
-					<h3 className="font-bold text-muted-foreground">
+					<h3 className="font-bold text-muted-foreground text-center">
 						Terms of Service
 					</h3>
 					<ScrollArea
@@ -110,7 +111,7 @@ export default function ConfirmationDrawer({
 							`}
 						</p>
 					</ScrollArea>
-					<p className="text-sm text-muted-foreground">
+					<p className="text-sm text-muted-foreground text-center">
 						{`
 							To complete your booking, please review the terms
 							of service. By confirming, you agree to these terms.

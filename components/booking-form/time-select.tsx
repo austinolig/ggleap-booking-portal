@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { TimeSlot } from "@/types";
 import { Button } from "../ui/button";
 import { memo } from "react";
+import { Clock } from "lucide-react";
 
 export default memo(function TimeSlotSelect({
 	timeSlots,
@@ -14,9 +15,15 @@ export default memo(function TimeSlotSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			{/* display number of available timeslots instead? */}
-			<p className="font-bold text-muted-foreground">
-				Time ({selectedTime ? format(selectedTime, "h:mm a") : "X:XX XX"})
+			<p className="font-bold justify-center text-muted-foreground flex items-center gap-2">
+				<Clock />
+				<span>
+					Time (
+					<span className="text-foreground">
+						{selectedTime ? format(selectedTime, "h:mm a") : "X:XX XX"}
+					</span>
+					)
+				</span>
 			</p>
 			{timeSlots.length > 0 ? (
 				<div className="grid grid-cols-2 gap-3">
@@ -33,9 +40,12 @@ export default memo(function TimeSlotSelect({
 								variant={isSelected ? "outlineSelected" : "outline"}
 								disabled={isDisabled}
 							>
-								{format(timeSlot.time, "h:mm a")}<br />
-								<span className="text-sm text-muted-foreground">
-									({!isDisabled ? timeSlot.availablePCs : "0"} available)</span>
+								<span>
+									{format(timeSlot.time, "h:mm a")}<br />
+									<span className="text-xs text-muted-foreground">
+										{!isDisabled ? timeSlot.availablePCs : "0"} available
+									</span>
+								</span>
 							</Button>
 						);
 					})}

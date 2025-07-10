@@ -53,7 +53,8 @@ export default function BookingForm({
 	}, [machines]);
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-8">
+			<p className="font-bold text-lg text-center">Book a PC</p>
 			<DateSelect
 				dates={dates}
 				selectedDate={selectedDate}

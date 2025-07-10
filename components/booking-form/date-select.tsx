@@ -1,6 +1,7 @@
 import { format, isEqual } from "date-fns";
 import { Button } from "../ui/button";
 import { memo } from "react";
+import { Calendar } from "lucide-react";
 
 export default memo(function DateSelect({
 	dates,
@@ -13,8 +14,15 @@ export default memo(function DateSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold text-muted-foreground">
-				Date ({format(selectedDate, "MMMM d")})
+			<p className="font-bold justify-center text-muted-foreground flex items-center gap-2">
+				<Calendar />
+				<span>
+					Date (
+					<span className="text-foreground">
+						{format(selectedDate, "MMMM d")}
+					</span>
+					)
+				</span>
 			</p>
 			<div className="grid grid-cols-2 gap-3">
 				{dates.map((date) => (
