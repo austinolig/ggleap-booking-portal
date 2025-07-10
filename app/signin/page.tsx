@@ -21,7 +21,7 @@ export default async function Signin() {
 
 	return (
 		<main className="flex flex-col gap-6">
-			<p className="font-bold text-lg">Sign in with your ggLeap account</p>
+			<p className="font-bold text-lg text-center">Sign in with your ggLeap account</p>
 			<SigninForm />
 			<div className="flex flex-col items-center gap-1">
 				<p className="text-center text-sm text-muted-foreground">
