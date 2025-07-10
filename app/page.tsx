@@ -18,7 +18,6 @@ export default async function Home() {
 		return <div>Error fetching center information</div>;
 	}
 
-
 	return (
 		<>
 			<UserMenu session={session} />
