@@ -33,8 +33,9 @@ export default memo(function TimeSlotSelect({
 								variant={isSelected ? "outlineSelected" : "outline"}
 								disabled={isDisabled}
 							>
-								{format(timeSlot.time, "h:mm a")} ({!isDisabled ? timeSlot.availablePCs : "0"}{" "}
-								available)
+								{format(timeSlot.time, "h:mm a")}<br />
+								<span className="text-sm text-muted-foreground">
+									({!isDisabled ? timeSlot.availablePCs : "0"} available)</span>
 							</Button>
 						);
 					})}
