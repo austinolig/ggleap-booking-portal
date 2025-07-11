@@ -48,7 +48,7 @@ function SignInButton() {
 	const { pending } = useFormStatus();
 
 	return (
-		<Button type="submit" className="w-full cursor-pointer" disabled={pending}>
+		<Button type="submit" variant="default" className="w-full cursor-pointer" disabled={pending}>
 			{pending && <LoaderCircle className="animate-spin" />}
 			<span>Sign In</span>
 		</Button>

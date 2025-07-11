@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
 	{
 		variants: {
 			variant: {
@@ -13,10 +13,14 @@ const buttonVariants = cva(
 					"bg-esports-gradient text-primary-foreground shadow-xs hover:brightness-120",
 				destructive:
 					"text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/40 bg-destructive/60",
+				// outline:
+				// 	"border shadow-xs bg-input/30 hover:bg-input/50 hover:text-accent-foreground border-input",
+				// outlineSelected:
+				// 	"border shadow-xs bg-input/30 hover:bg-input/50 border-primary text-primary",
 				outline:
-					"border shadow-xs bg-input/30 hover:bg-input/50 hover:text-accent-foreground border-input",
+					"hover:bg-white/30",
 				outlineSelected:
-					"border shadow-xs bg-input/30 hover:bg-input/50 border-primary text-primary",
+					"shadow-xs bg-esports-gradient text-primary",
 				secondary:
 					"bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
 				ghost:
@@ -25,9 +29,9 @@ const buttonVariants = cva(
 					"text-primary underline-offset-4 hover:underline",
 			},
 			size: {
-				default: "px-4 py-2 has-[>svg]:px-3",
+				default: "h-[38px] px-4 py-2 has-[>svg]:px-3",
 				sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-				lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+				lg: "h-[58px] rounded-md px-6 has-[>svg]:px-4",
 				icon: "size-9",
 			},
 		},
@@ -43,6 +47,7 @@ function Button({
 	variant,
 	size,
 	asChild = false,
+	children,
 	...props
 }: React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants> & {
@@ -50,12 +55,34 @@ function Button({
 	}) {
 	const Comp = asChild ? Slot : "button";
 
+	if (variant === "default") {
+		return (
+			<Comp
+				data-slot="button"
+				className={cn(buttonVariants({ variant, size, className }))}
+				{...props}
+			>
+				{children}
+			</Comp>
+		);
+	}
+
 	return (
-		<Comp
-			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className }))}
-			{...props}
-		/>
+		<div
+			className={cn(
+				"relative rounded-md overflow-hidden bg-input pointer-events-none",
+				buttonVariants({ variant, size, className }),
+				props.disabled && "opacity-30"
+			)}
+		>
+			<Comp
+				data-slot="button"
+				className="absolute inset-[1px] rounded-md bg-background/90 pointer-events-auto cursor-pointer disabled:pointer-events-none"
+				{...props}
+			>
+				{children}
+			</Comp>
+		</div>
 	);
 }
 

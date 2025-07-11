@@ -53,6 +53,7 @@ export default function ConfirmationDrawer({
 		<Drawer onOpenChange={() => setScrolledToBottom(false)}>
 			<DrawerTrigger asChild>
 				<Button
+					variant="default"
 					className="w-full"
 					disabled={isDisabled}
 				>
@@ -122,6 +123,7 @@ export default function ConfirmationDrawer({
 					<Button
 						disabled={!scrolledToBottom}
 						onClick={handleBooking}
+						variant="default"
 					>
 						Confirm
 					</Button>

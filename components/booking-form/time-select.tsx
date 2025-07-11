@@ -16,8 +16,8 @@ export default memo(function TimeSlotSelect({
 	return (
 		<div className="flex flex-col gap-3">
 			<p className="font-bold text-muted-foreground flex items-center gap-2">
-				<Clock />
-				<span>Time</span>
+				<Clock width={16} />
+				<span className="text-foreground">Time</span>
 			</p>
 			{timeSlots.length > 0 ? (
 				<div className="grid grid-cols-2 gap-3">
@@ -32,6 +32,7 @@ export default memo(function TimeSlotSelect({
 								key={timeSlot.time.toISOString()}
 								onClick={() => setSelectedTime(timeSlot.time)}
 								variant={isSelected ? "outlineSelected" : "outline"}
+								size="lg"
 								disabled={isDisabled}
 							>
 								<span>

@@ -15,8 +15,8 @@ export default memo(function MachineSelect({
 	return (
 		<div className="flex flex-col gap-3">
 			<p className="font-bold text-muted-foreground flex items-center gap-2">
-				<PcCase />
-				<span>PC</span>
+				<PcCase width={16} />
+				<span className="text-foreground">PC</span>
 			</p>
 			{machines.length > 0 ? (
 				<div className="grid grid-cols-3 gap-3">

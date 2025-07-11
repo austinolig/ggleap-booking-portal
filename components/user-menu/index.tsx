@@ -17,14 +17,13 @@ export default async function UserMenu({ session }: { session: Session }) {
 		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<Avatar className="absolute top-4 right-4 cursor-pointer data-[state=open]:border-primary data-[state=open]:text-primary">
+					<Avatar className="absolute top-4 left-4 cursor-pointer">
 						<AvatarFallback>
 							<User width={20} height={20} />
-
 						</AvatarFallback>
 					</Avatar>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
+				<DropdownMenuContent align="start">
 					<DropdownMenuLabel>{session.user?.Username}</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem className="cursor-pointer">

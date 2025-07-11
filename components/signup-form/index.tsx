@@ -121,7 +121,7 @@ export default function SignupForm() {
 									name="dateOfBirth"
 									type="text"
 									value={dateOfBirth ? format(dateOfBirth, "MMM dd, yyyy") : ""}
-									onChange={() => {}}
+									onChange={() => { }}
 									tabIndex={-1}
 									required
 								/>
@@ -165,7 +165,7 @@ function CreateAccountButton() {
 	const { pending } = useFormStatus();
 
 	return (
-		<Button type="submit" className="w-full cursor-pointer" disabled={pending}>
+		<Button type="submit" variant="default" className="w-full cursor-pointer" disabled={pending}>
 			{pending && <LoaderCircle className="animate-spin" />}
 			<span>Create Account</span>
 		</Button>
