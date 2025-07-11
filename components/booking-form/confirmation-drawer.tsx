@@ -72,15 +72,15 @@ export default function ConfirmationDrawer({
 						</p>
 					</div>
 					<div className="flex items-center gap-2">
-						<Clock className="text-muted-foreground" width={16} height={16} />
-						<p className="font-bold">
-							{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}
-						</p>
-					</div>
-					<div className="flex items-center gap-2">
 						<Timer className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
 							{selectedDuration} minutes
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
+						<Clock className="text-muted-foreground" width={16} height={16} />
+						<p className="font-bold">
+							{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}
 						</p>
 					</div>
 					<div className="flex items-center gap-2">
@@ -91,14 +91,14 @@ export default function ConfirmationDrawer({
 					</div>
 				</div>
 				<div className="space-y-3">
-					<h3 className="font-bold text-muted-foreground">
+					<h3 className="font-bold text-foreground">
 						Terms of Service
 					</h3>
 					<ScrollArea
 						className="h-30 border rounded-xs"
 						onScroll={handleScroll}
 					>
-						<p className="p-2">
+						<p className="p-2 text-sm">
 							{`
 								Lorem ipsum dolor sit amet, consectetur adipiscing
 								elit, sed do eiusmod tempor incididunt ut labore
