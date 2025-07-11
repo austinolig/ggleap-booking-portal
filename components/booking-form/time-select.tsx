@@ -38,7 +38,7 @@ export default memo(function TimeSlotSelect({
 								<span>
 									{format(timeSlot.time, "h:mm a")}<br />
 									<span className="text-xs text-muted-foreground">
-										{!isDisabled ? timeSlot.availablePCs : "0"} available
+										{!isDisabled ? timeSlot.availablePCs : "0"} PCs available
 									</span>
 								</span>
 							</Button>
