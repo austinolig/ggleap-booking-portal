@@ -14,7 +14,8 @@ function Avatar({
 			data-slot="avatar"
 			className={cn(
 				"relative flex size-12 font-bold shrink-0 overflow-hidden rounded-full",
-				"bg-input hover:bg-white/30 data-[state=open]:bg-esports-gradient data-[state=open]:text-primary",
+				"bg-input shadow-lg hover:shadow-white/3 hover:bg-white/30",
+				"data-[state=open]:bg-esports-gradient data-[state=open]:text-primary data-[state=open]:shadow-secondary/20",
 				className
 			)}
 			{...props}
