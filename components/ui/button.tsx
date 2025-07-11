@@ -10,21 +10,19 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"bg-esports-gradient text-primary-foreground shadow-xs hover:brightness-120",
+					"bg-esports-gradient text-primary-foreground shadow-lg shadow-secondary/30 hover:brightness-120",
 				destructive:
 					"text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/40 bg-destructive/60",
-				// outline:
-				// 	"border shadow-xs bg-input/30 hover:bg-input/50 hover:text-accent-foreground border-input",
-				// outlineSelected:
-				// 	"border shadow-xs bg-input/30 hover:bg-input/50 border-primary text-primary",
+				dropdown:
+					"border border-input bg-input/30 text-foreground hover:bg-input/50",
 				outline:
-					"hover:bg-white/30",
+					"hover:bg-white/30 hover:shadow-lg hover:shadow-white/3",
 				outlineSelected:
-					"shadow-xs bg-esports-gradient text-primary",
+					"shadow-lg shadow-secondary/20 bg-esports-gradient text-primary",
 				secondary:
 					"bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
 				ghost:
-					"hover:bg-accent hover:text-accent-foreground hover:bg-accent/50",
+					"hover:bg-input/50",
 				link:
 					"text-primary underline-offset-4 hover:underline",
 			},
