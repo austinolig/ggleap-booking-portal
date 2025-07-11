@@ -4,8 +4,8 @@
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
+	--font-rubik: var(--font-rubik);
+	--font-teko: var(--font-teko);
 	--color-sidebar-ring: var(--sidebar-ring);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -27,6 +27,8 @@
 	--color-accent: var(--accent);
 	--color-muted-foreground: var(--muted-foreground);
 	--color-muted: var(--muted);
+	--color-tertiary-foreground: var(--tertiary-foreground);
+	--color-tertiary: var(--tertiary);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-secondary: var(--secondary);
 	--color-primary-foreground: var(--primary-foreground);
@@ -52,8 +54,10 @@
 		--popover-foreground: oklch(0.985 0 0);
 		--primary: oklch(68.69% 0.176 245.81);
 		--primary-foreground: oklch(0.21 0.006 285.885);
-		--secondary: oklch(0.274 0.006 286.033);
+		--secondary: oklch(0.4031 0.2289 283.09);
 		--secondary-foreground: oklch(0.985 0 0);
+		--tertiary: oklch(0.1452 0.0935 272.1);
+		--tertiary-foreground: oklch(0.985 0 0);
 		--muted: oklch(0.274 0.006 286.033);
 		--muted-foreground: oklch(0.705 0.015 286.067);
 		--accent: oklch(0.274 0.006 286.033);
@@ -82,27 +86,34 @@
 	}
 
 	body {
-		@apply bg-background text-foreground;
-		font-family: var(--font-rubik);
+		@apply text-foreground bg-background font-rubik;
 	}
 
 	h1 {
-		font-family: var(--font-teko);
+		@apply font-teko;
 	}
 
 	option {
 		@apply bg-background text-foreground;
 	}
+}
 
-	.rdp {
-		@apply bg-background rounded-lg;
-	}
+@utility bg-esports-gradient {
+	@apply bg-linear-to-br/oklch from-primary from-20% to-secondary to-120%;
+}
 
-	.rdp [aria-hidden="true"] {
-		@apply hidden;
-	}
+.text-gradient {
+	@apply bg-esports-gradient inline-block text-transparent bg-clip-text;
+}
 
-	.rdp-vhidden {
-		@apply hidden;
-	}
+.rdp {
+	@apply bg-background rounded-lg;
+}
+
+.rdp [aria-hidden="true"] {
+	@apply hidden;
+}
+
+.rdp-vhidden {
+	@apply hidden;
 }
