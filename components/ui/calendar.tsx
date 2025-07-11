@@ -16,9 +16,9 @@ function Calendar({
 	return (
 		<DayPicker
 			showOutsideDays={showOutsideDays}
-			className={cn("p-3", className)}
+			className={cn("p-2", className)}
 			classNames={{
-				dropdown: buttonVariants({ variant: "outline" }), // fix button outline styles
+				dropdown: buttonVariants({ variant: "dropdown" }),
 				caption_dropdowns: "flex gap-4 font-medium",
 				months: "flex flex-col sm:flex-row gap-2",
 				month: "flex flex-col gap-4",
@@ -35,7 +35,7 @@ function Calendar({
 					"text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
 				row: "flex w-full mt-2",
 				cell: cn(
-					"relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md",
+					"relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:border-primary [&:has([aria-selected].day-range-end)]:rounded-r-md",
 					props.mode === "range"
 						? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
 						: "[&:has([aria-selected])]:rounded-md"
@@ -49,8 +49,7 @@ function Calendar({
 				day_range_end:
 					"day-range-end aria-selected:bg-primary aria-selected:text-primary-foreground",
 				day_selected:
-					"bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-				day_today: "bg-accent text-accent-foreground",
+					"border border-primary text-primary focus:text-primary",
 				day_outside:
 					"day-outside text-muted-foreground aria-selected:text-muted-foreground",
 				day_disabled: "text-muted-foreground opacity-50",
