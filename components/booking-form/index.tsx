@@ -54,7 +54,6 @@ export default function BookingForm({
 
 	return (
 		<div className="space-y-8">
-			<p className="font-bold text-lg text-center">Book a PC</p>
 			<DateSelect
 				dates={dates}
 				selectedDate={selectedDate}

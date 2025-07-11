@@ -15,15 +15,9 @@ export default memo(function TimeSlotSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold justify-center text-muted-foreground flex items-center gap-2">
+			<p className="font-bold text-muted-foreground flex items-center gap-2">
 				<Clock />
-				<span>
-					Time (
-					<span className="text-foreground">
-						{selectedTime ? format(selectedTime, "h:mm a") : "X:XX XX"}
-					</span>
-					)
-				</span>
+				<span>Time</span>
 			</p>
 			{timeSlots.length > 0 ? (
 				<div className="grid grid-cols-2 gap-3">

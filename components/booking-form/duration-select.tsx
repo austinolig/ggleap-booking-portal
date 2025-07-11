@@ -13,15 +13,9 @@ export default memo(function DurationSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold justify-center text-muted-foreground flex items-center gap-2">
+			<p className="font-bold text-muted-foreground flex items-center gap-2">
 				<Timer />
-				<span>
-					Duration (
-					<span className="text-foreground">
-						{selectedDuration} minutes
-					</span>
-					)
-				</span>
+				<span>Duration</span>
 			</p>
 			<div className="grid grid-cols-2 gap-3">
 				{durations.map((duration) => (

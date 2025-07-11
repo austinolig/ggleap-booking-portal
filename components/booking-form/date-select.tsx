@@ -14,15 +14,9 @@ export default memo(function DateSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold justify-center text-muted-foreground flex items-center gap-2">
+			<p className="font-bold text-muted-foreground flex items-center gap-2">
 				<Calendar />
-				<span>
-					Date (
-					<span className="text-foreground">
-						{format(selectedDate, "MMMM d")}
-					</span>
-					)
-				</span>
+				<span>Date</span>
 			</p>
 			<div className="grid grid-cols-2 gap-3">
 				{dates.map((date) => (
@@ -36,6 +30,9 @@ export default memo(function DateSelect({
 						{format(date, "MMMM d")}
 					</Button>
 				))}
+				<div className="relative w-full h-9 rounded-md overflow-hidden bg-esports-gradient">
+					<div className="absolute inset-[1px] rounded-md bg-background/90" />
+				</div>
 			</div>
 		</div>
 	);

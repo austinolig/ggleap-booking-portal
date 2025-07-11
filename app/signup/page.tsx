@@ -13,7 +13,7 @@ export default async function Signup() {
 
 	return (
 		<main className="flex flex-col gap-6">
-			<p className="font-bold text-lg text-center">Create a ggLeap account</p>
+			<p className="font-bold text-lg">Create a ggLeap account</p>
 			<SignupForm />
 			<p className="text-center text-sm text-muted-foreground">
 				{"Already have an account? "}
