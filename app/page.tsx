@@ -4,11 +4,13 @@ import Loading from "./loading";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import UserMenu from "@/components/user-menu";
-import { getCenterInfo } from "@/lib/ggLeap";
+import { getCenterInfo, getUserBooking } from "@/lib/ggLeap";
+import ExistingBooking from "@/components/existing-booking";
 
 export default async function Home() {
 	const session = await auth();
 	const centerInfo = await getCenterInfo();
+	const userBooking = await getUserBooking();
 
 	if (!session?.user) {
 		redirect("/signin");
@@ -23,7 +25,10 @@ export default async function Home() {
 			<UserMenu session={session} />
 			<main>
 				<Suspense fallback={<Loading />}>
-					<BookingForm centerInfo={centerInfo} />
+					{userBooking
+						? <ExistingBooking booking={userBooking} />
+						: <BookingForm centerInfo={centerInfo} />
+					}
 				</Suspense>
 			</main>
 		</>

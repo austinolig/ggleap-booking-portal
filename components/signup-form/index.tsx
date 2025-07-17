@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { signUp } from "@/lib/actions";
+import { signUpAction } from "@/lib/actions";
 import { useState } from "react";
 import {
 	CalendarIcon,
@@ -23,7 +23,7 @@ export default function SignupForm() {
 	const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>();
 	const [error, setError] = useState("");
 	const handleSubmit = async (formData: FormData) => {
-		const error = await signUp(formData);
+		const error = await signUpAction(formData);
 		if (error) {
 			setError(error); // TODO: display error from api response
 			setDateOfBirth(undefined);

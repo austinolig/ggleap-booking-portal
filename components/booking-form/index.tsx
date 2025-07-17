@@ -13,7 +13,7 @@ import { addDays } from "date-fns";
 const today = new Date();
 const tomorrow = addDays(today, 1);
 const dates = [today, tomorrow];
-const durations = [90, 60];
+const durations = [60, 90];
 
 export default function BookingForm({
 	centerInfo,
@@ -53,7 +53,8 @@ export default function BookingForm({
 	}, [machines]);
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
+			<p className="font-bold text-lg">Create a booking</p>
 			<DateSelect
 				dates={dates}
 				selectedDate={selectedDate}

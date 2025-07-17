@@ -12,7 +12,7 @@ const buttonVariants = cva(
 				default:
 					"bg-esports-gradient text-primary-foreground shadow-lg shadow-secondary/30 hover:brightness-120",
 				destructive:
-					"text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/40 bg-destructive/60",
+					"text-destructive shadow-xs focus-visible:ring-destructive/40 border-1 border-destructive/40 bg-destructive/5 hover:bg-destructive/10 hover:brightness-110 hover:shadow-lg hover:shadow-destructive/5",
 				dropdown:
 					"border border-input bg-input/30 text-foreground hover:bg-input/50",
 				outline:
@@ -30,7 +30,9 @@ const buttonVariants = cva(
 				default: "h-[38px] px-4 py-2 has-[>svg]:px-3",
 				sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
 				lg: "h-[58px] rounded-md px-6 has-[>svg]:px-4",
-				icon: "size-9",
+				icon: "size-12 rounded-full",
+				// "absolute inset-[1px] bg-background/90",
+				// "flex items-center justify-center rounded-full",
 			},
 		},
 		defaultVariants: {
@@ -53,7 +55,7 @@ function Button({
 	}) {
 	const Comp = asChild ? Slot : "button";
 
-	if (variant === "default") {
+	if (variant === "default" || variant === "destructive") {
 		return (
 			<Comp
 				data-slot="button"
@@ -75,7 +77,10 @@ function Button({
 		>
 			<Comp
 				data-slot="button"
-				className="absolute inset-[1px] rounded-md bg-background/90 pointer-events-auto cursor-pointer disabled:pointer-events-none"
+				className={cn(
+					"absolute flex items-center justify-center inset-[1px] rounded-md bg-background/90 pointer-events-auto cursor-pointer disabled:pointer-events-none",
+					size === "icon" && "rounded-full"
+				)}
 				{...props}
 			>
 				{children}

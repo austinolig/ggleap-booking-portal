@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
 import SigninForm from "@/components/signin-form";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
@@ -44,6 +46,11 @@ export default async function Signin() {
 								To reset your password, please visit our front desk at the OTSU
 								office (SHA 115).
 							</DialogDescription>
+							<DialogClose asChild>
+								<Button variant="default">
+									Ok
+								</Button>
+							</DialogClose>
 						</DialogHeader>
 					</DialogContent>
 				</Dialog>

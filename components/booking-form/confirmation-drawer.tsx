@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import {
 	Drawer,
@@ -8,12 +10,21 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer"
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "../ui/button"
 import { Machine } from "@/types/index"
 import { ScrollArea } from "../ui/scroll-area";
-import { useState } from "react";
-import { confirmBooking } from "@/lib/actions";
-import { Calendar, Clock, PcCase, Timer } from "lucide-react";
+import { Suspense, useState } from "react";
+import { createBookingAction, revalidateHomePath } from "@/lib/actions";
+import { Calendar, Clock, LoaderCircle, PcCase, Timer } from "lucide-react";
 
 export default function ConfirmationDrawer({
 	selectedDate,
@@ -27,6 +38,9 @@ export default function ConfirmationDrawer({
 	selectedMachine: Machine | null;
 }) {
 	const [scrolledToBottom, setScrolledToBottom] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogContent, setDialogContent] = useState("");
+	const [isConfirming, setIsConfirming] = useState(false);
 
 	const isDisabled = !selectedDate
 		|| !selectedDuration
@@ -40,12 +54,24 @@ export default function ConfirmationDrawer({
 		}
 	}
 
-	const handleBooking = async () => {
-		const error = await confirmBooking(selectedTime!, selectedDuration, selectedMachine!.Uuid);
+	const handleConfirm = async () => {
+		setIsConfirming(true);
+		const error = await createBookingAction(selectedTime!, selectedDuration, selectedMachine!.Uuid);
+		setIsConfirming(false);
 		if (error) {
-			alert(error);
+			setDialogContent(error);
 		} else {
-			alert("Booking confirmed!");
+			setDialogContent("Booking confirmed successfully!");
+		}
+	}
+
+	const handleDialog = async (open: boolean) => {
+		if (open) {
+			await handleConfirm();
+			setDialogOpen(true);
+		} else {
+			await revalidateHomePath();
+			setDialogOpen(false);
 		}
 	}
 
@@ -60,11 +86,11 @@ export default function ConfirmationDrawer({
 					Confirm Booking
 				</Button>
 			</DrawerTrigger>
-			<DrawerContent className="max-w-lg m-auto border-1 px-6 space-y-8">
+			<DrawerContent className="max-w-lg m-auto border-1 px-3 space-y-6">
 				<DrawerHeader>
 					<DrawerTitle>Confirm Booking</DrawerTitle>
 				</DrawerHeader>
-				<div className="grid grid-cols-2 gap-4">
+				<div className="grid grid-cols-2 gap-3">
 					<div className="flex items-center gap-2">
 						<Calendar className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
@@ -120,13 +146,35 @@ export default function ConfirmationDrawer({
 					</p>
 				</div>
 				<DrawerFooter className="flex-grow-1">
-					<Button
-						disabled={!scrolledToBottom}
-						onClick={handleBooking}
-						variant="default"
-					>
-						Confirm
-					</Button>
+					<Dialog open={dialogOpen} onOpenChange={handleDialog}>
+						<DialogTrigger asChild>
+							<Button
+								disabled={!scrolledToBottom}
+								variant="default"
+							>
+								{isConfirming && <LoaderCircle className="animate-spin" />}
+								<span>Confirm</span>
+							</Button>
+						</DialogTrigger>
+						<DialogContent>
+							<DialogHeader className="flex flex-col gap-6">
+								<DialogTitle>Confirmation Status</DialogTitle>
+								<DialogDescription>
+									<Suspense fallback={<LoaderCircle className="animate-spin" />}>
+										{dialogContent}
+									</Suspense>
+								</DialogDescription>
+								<DialogClose asChild>
+									<Button
+										variant="default"
+										onClick={() => handleDialog(false)}
+									>
+										Ok
+									</Button>
+								</DialogClose>
+							</DialogHeader>
+						</DialogContent>
+					</Dialog>
 					<DrawerClose asChild>
 						<Button
 							className="w-full"

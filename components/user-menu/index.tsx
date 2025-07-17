@@ -1,5 +1,7 @@
-import React from "react";
-import { signOut } from "@/lib/actions";
+"use client";
+
+import React, { useState } from "react";
+import { signOutAction } from "@/lib/actions";
 import { LogOut, User } from "lucide-react";
 import {
 	DropdownMenu,
@@ -10,28 +12,29 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Session } from "next-auth";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "../ui/button";
 
-export default async function UserMenu({ session }: { session: Session }) {
+export default function UserMenu({ session }: { session: Session }) {
+	const [open, setOpen] = useState(false);
+	const handleSignOut = async () => await signOutAction();
 	return (
 		<>
-			<DropdownMenu>
+			<DropdownMenu open={open} onOpenChange={setOpen}>
 				<DropdownMenuTrigger asChild>
-					<Avatar className="absolute top-4 left-4 cursor-pointer">
-						<AvatarFallback>
-							<User width={20} height={20} />
-						</AvatarFallback>
-					</Avatar>
+					<Button
+						variant={open ? "outlineSelected" : "outline"}
+						size="icon"
+						className="absolute top-4 left-4"
+					>
+						<User width={20} height={20} />
+					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
 					<DropdownMenuLabel>{session.user?.Username}</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem className="cursor-pointer">
 						<form
-							action={async () => {
-								"use server";
-								await signOut();
-							}}
+							action={handleSignOut}
 							className="w-full"
 						>
 							<button

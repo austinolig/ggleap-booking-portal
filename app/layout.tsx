@@ -36,7 +36,7 @@ export default function RootLayout({
 				/>*/}
 			</head>
 			<body className={`${teko.variable} ${rubik.variable} antialiased`}>
-				<div className="relative px-4 py-12 w-full max-w-lg mx-auto space-y-12">
+				<div className="relative px-3 py-12 w-full max-w-lg mx-auto space-y-12">
 					<header className="flex flex-col items-center gap-6">
 						<Image
 							src="/esports-logo-colour.png"
