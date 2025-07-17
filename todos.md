@@ -8,9 +8,9 @@
 
 - [ ] wipe hours from account upon new booking
 - [x] prompt for confirmation (Date/Time, Terms of Service)
-- [ ] show existing booking
-- [ ] extend existing booking
-- [ ] delete existing booking
+- [x] show existing booking
+- [x] extend existing booking
+- [x] delete existing booking
 - [ ] display past bookings
 
 
