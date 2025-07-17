@@ -21,6 +21,8 @@ export function getAvailableTimeSlots(
 		return [];
 	}
 
+	const gracePeriod = 60;
+
 	// initialize regular hours
 	const regularOpen = new Date(
 		`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Open}`
@@ -28,8 +30,8 @@ export function getAvailableTimeSlots(
 
 	const regularClose = subMinutes(
 		new Date(`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Close}`),
-		60
-	); // subtract shortest duration from regular closing time
+		gracePeriod
+	); // subtract grace period from regular closing time
 
 	// initialize special hours if available
 	let specialOpen = regularOpen;
@@ -42,9 +44,10 @@ export function getAvailableTimeSlots(
 			new Date(
 				`${dateString} ${centerInfo.hours.Special[dateString][0].Close}`
 			),
-			selectedDuration
+			gracePeriod
 		); // subtract selected duration from special closing time
 	}
+	const graceClose = addMinutes(specialClose, gracePeriod);
 
 	const timeSlots: TimeSlot[] = [];
 	let timeSlotStart = regularOpen;
@@ -52,11 +55,14 @@ export function getAvailableTimeSlots(
 		const timeSlotEnd = addMinutes(timeSlotStart, selectedDuration);
 
 		let availablePCs = 0;
-		// if time slot is not outside of special hours or in the past
+		// if time slot is not outside of special hours
+		// or in the past
+		// or timeslot does not exceed grace period
 		if (
 			!(
 				isBefore(timeSlotStart, specialOpen) ||
 				isAfter(timeSlotStart, specialClose) ||
+				isAfter(timeSlotEnd, graceClose) ||
 				isBefore(timeSlotStart, new Date())
 			)
 		) {

@@ -1,12 +1,18 @@
 "use server";
 
-import { signIn, signOut as authSignOut } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { SignupData } from "@/types";
 import { CredentialsSignin } from "next-auth";
 import { redirect } from "next/navigation";
-import { createBooking, createUser } from "./ggLeap";
+import {
+	createBooking,
+	createUser,
+	deleteBooking,
+	updateBookingDuration
+} from "./ggLeap";
+import { revalidatePath } from "next/cache";
 
-export async function signInWithCredentials(
+export async function signInAction(
 	formData: FormData
 ): Promise<string | void> {
 	try {
@@ -19,11 +25,11 @@ export async function signInWithCredentials(
 	}
 }
 
-export async function signOut(): Promise<void> {
-	await authSignOut();
+export async function signOutAction(): Promise<void> {
+	await signOut();
 }
 
-export async function signUp(formData: FormData): Promise<string | void> {
+export async function signUpAction(formData: FormData): Promise<string | void> {
 	const vals = Object.fromEntries(formData.entries()) as SignupData;
 	const userUuid = await createUser(vals);
 	if (!userUuid) {
@@ -32,7 +38,7 @@ export async function signUp(formData: FormData): Promise<string | void> {
 	redirect("/signin");
 }
 
-export async function confirmBooking(
+export async function createBookingAction(
 	selectedTime: Date,
 	selectedDuration: number,
 	selectedMachineId: string
@@ -41,4 +47,22 @@ export async function confirmBooking(
 	if (!bookingUuid) {
 		return "Failed to create booking. Please try again.";
 	}
+}
+
+export async function deleteBookingAction(
+	bookingUuid: string
+): Promise<boolean> {
+	return await deleteBooking(bookingUuid);
+}
+
+export async function extendBookingAction(): Promise<string | void> {
+	const bookingUuid = await updateBookingDuration();
+	if (!bookingUuid) {
+		return "Failed to extend booking. Please try again.";
+	}
+}
+
+export async function revalidateHomePath(): Promise<void> {
+	console.log("Revalidating home path...");
+	revalidatePath("/");
 }

@@ -400,9 +400,7 @@ export async function createBooking(
 	}
 }
 
-export async function updateBookingDuration(
-	duration: number
-): Promise<BookingUuid | null> {
+export async function updateBookingDuration(): Promise<BookingUuid | null> {
 	console.log("__updateBookingDuration()__");
 
 	const jwt = await getJWT();
@@ -436,6 +434,12 @@ export async function updateBookingDuration(
 			return null;
 		}
 
+		if (currentBooking.Duration >= 105) {
+			console.log("Booking duration is already at maximum (105 minutes).");
+			return null;
+		}
+
+		const extensionTime = 15; // minutes
 		const response = await fetch("https://api.ggleap.com/production/bookings/update", {
 			method: "POST",
 			headers: {
@@ -444,7 +448,7 @@ export async function updateBookingDuration(
 			},
 			body: JSON.stringify({
 				BookingUuid: currentBooking.BookingUuid,
-				Duration: duration,
+				Duration: currentBooking.Duration + extensionTime,
 			}),
 		});
 
@@ -454,11 +458,8 @@ export async function updateBookingDuration(
 			throw new Error(`(${response.status}) Failed to update booking`);
 		}
 
-		console.log("Updated BookingUuid:", data.BookingUuid);
-		//return data.BookingUuid;
-
-		console.log("data:", data);
-		return null;
+		console.log("Booking updated successfully.");
+		return data.BookingUuid;
 	} catch (error) {
 		console.error(error);
 		return null;
@@ -517,7 +518,8 @@ export async function getUserBooking(): Promise<Booking | undefined> {
 	return bookings.findLast((booking) => {
 		const isCurrentUser = booking.Name === session.user?.Username;
 		const bookingEnd = addMinutes(booking.Start, booking.Duration);
-		return isCurrentUser && bookingEnd.getTime() > new Date().getTime();
+		const hasPassed = bookingEnd.getTime() < new Date().getTime();
+		return isCurrentUser && !hasPassed;
 	});
 }
 
