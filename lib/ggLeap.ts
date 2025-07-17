@@ -67,6 +67,8 @@ export async function getAllMachines(): Promise<Machine[] | null> {
 					"Content-Type": "application/json",
 					Authorization: jwt,
 				},
+				cache: "force-cache",
+				next: { revalidate: 60 },
 			}
 		);
 
@@ -112,6 +114,8 @@ export async function getBookings(): Promise<Booking[] | null> {
 					"Content-Type": "application/json",
 					Authorization: jwt,
 				},
+				cache: "force-cache",
+				next: { revalidate: 30 },
 			}
 		);
 
@@ -194,7 +198,7 @@ export async function getCenterInfo(): Promise<CenterInfo | null> {
 		return null;
 	}
 
-	}
+}
 
 export async function login(
 	username: string,
