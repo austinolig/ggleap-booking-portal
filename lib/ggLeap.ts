@@ -153,6 +153,8 @@ export async function getCenterHours(): Promise<CenterHours | null> {
 				headers: {
 					"Content-Type": "application/json",
 				},
+				cache: "force-cache",
+				next: { revalidate: 60 },
 			}
 		);
 
