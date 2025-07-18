@@ -20,7 +20,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button"
-import { Machine } from "@/types/index"
+import { Machine, ConfirmationMessage } from "@/types/index"
 import { ScrollArea } from "../ui/scroll-area";
 import { Suspense, useState } from "react";
 import { createBookingAction, revalidateHomePath } from "@/lib/actions";
@@ -39,7 +39,7 @@ export default function ConfirmationDrawer({
 }) {
 	const [scrolledToBottom, setScrolledToBottom] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogContent, setDialogContent] = useState("");
+	const [confirmationMessage, setConfirmationMessage] = useState<ConfirmationMessage | undefined>();
 	const [isConfirming, setIsConfirming] = useState(false);
 
 	const isDisabled = !selectedDate
@@ -59,9 +59,15 @@ export default function ConfirmationDrawer({
 		const error = await createBookingAction(selectedTime!, selectedDuration, selectedMachine!.Uuid);
 		setIsConfirming(false);
 		if (error) {
-			setDialogContent(error);
+			setConfirmationMessage({
+				heading: error,
+				body: "Please try again or visit our front desk if the issue persists."
+			});
 		} else {
-			setDialogContent("Booking confirmed successfully!");
+			setConfirmationMessage({
+				heading: "Booking Confirmed",
+				body: "Please check your email confirmation and show our front desk staff upon arrival."
+			});
 		}
 	}
 
@@ -158,10 +164,10 @@ export default function ConfirmationDrawer({
 						</DialogTrigger>
 						<DialogContent>
 							<DialogHeader className="flex flex-col gap-6">
-								<DialogTitle>Confirmation Status</DialogTitle>
+								<DialogTitle>{confirmationMessage?.heading}</DialogTitle>
 								<DialogDescription>
 									<Suspense fallback={<LoaderCircle className="animate-spin" />}>
-										{dialogContent}
+										{confirmationMessage?.body || "Please wait while we process your booking."}
 									</Suspense>
 								</DialogDescription>
 								<DialogClose asChild>

@@ -45,7 +45,7 @@ export async function createBookingAction(
 ): Promise<string | void> {
 	const bookingUuid = await createBooking(selectedTime, selectedDuration, selectedMachineId);
 	if (!bookingUuid) {
-		return "Failed to create booking. Please try again.";
+		return "Booking Unsuccessful";
 	}
 }
 

@@ -17,7 +17,7 @@ export default async function Home() {
 	}
 
 	if (!centerInfo) {
-		return <div>Error fetching center information</div>;
+		return <div>Error: Too many requests. Please try again in 1 minute.</div>;
 	}
 
 	return (

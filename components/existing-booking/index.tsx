@@ -69,7 +69,8 @@ export default function ExistingBooking({ booking }: ExistingBookingProps) {
 				<div className="flex items-center gap-3">
 					<PcCase className="text-muted-foreground" width={16} height={16} />
 					<p className="font-bold">
-						{booking.Machines[0] || "No machine assigned"}
+						PC
+						{/* {booking.Machines[0] || "No machine assigned"} */}
 					</p>
 				</div>
 			</div>

@@ -57,3 +57,8 @@ export type SignupData = {
 	dateOfBirth: string;
 	discordId: string;
 };
+
+export interface ConfirmationMessage {
+	heading: string;
+	body: string;
+}
