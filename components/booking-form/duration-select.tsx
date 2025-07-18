@@ -13,7 +13,7 @@ export default memo(function DurationSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold text-muted-foreground flex items-center gap-2">
+			<p className="font-bold text-muted-foreground flex items-center gap-3">
 				<Timer width={16} />
 				<span className="text-foreground">Duration</span>
 			</p>

@@ -14,7 +14,7 @@ export default memo(function DateSelect({
 }) {
 	return (
 		<div className="flex flex-col gap-3">
-			<p className="font-bold text-muted-foreground flex items-center gap-2">
+			<p className="font-bold text-muted-foreground flex items-center gap-3">
 				<Calendar width={16} />
 				<span className="text-foreground">Date</span>
 			</p>

@@ -21,23 +21,21 @@ export default function SigninForm() {
 			<div className="flex flex-col gap-6">
 				{error && <p className="text-red-500 text-sm">{error}</p>}
 				<FormInput
-					icon={<User />}
+					icon={<User width={16} />}
 					id="username"
 					name="username"
 					type="text"
 					placeholder="Username"
 					required
 				/>
-				<div className="flex flex-col gap-1">
-					<FormInput
-						icon={<KeyRound />}
-						id="password"
-						name="password"
-						type="password"
-						placeholder="Password"
-						required
-					/>
-				</div>
+				<FormInput
+					icon={<KeyRound width={16} />}
+					id="password"
+					name="password"
+					type="password"
+					placeholder="Password"
+					required
+				/>
 				<SignInButton />
 			</div>
 		</form>

@@ -35,7 +35,7 @@ export default function SignupForm() {
 			<div className="flex flex-col gap-6">
 				{error && <p className="text-red-500 text-sm">{error}</p>}
 				<FormInput
-					icon={<User />}
+					icon={<User width={16} />}
 					id="username"
 					name="username"
 					type="text"
@@ -44,7 +44,7 @@ export default function SignupForm() {
 					required
 				/>
 				<FormInput
-					icon={<KeyRound />}
+					icon={<KeyRound width={16} />}
 					id="password"
 					name="password"
 					type="password"
@@ -53,7 +53,7 @@ export default function SignupForm() {
 					required
 				/>
 				<FormInput
-					icon={<User />}
+					icon={<User width={16} />}
 					id="firstName"
 					name="firstName"
 					type="text"
@@ -62,7 +62,7 @@ export default function SignupForm() {
 					required
 				/>
 				<FormInput
-					icon={<User />}
+					icon={<User width={16} />}
 					id="lastName"
 					name="lastName"
 					type="text"
@@ -71,7 +71,7 @@ export default function SignupForm() {
 					required
 				/>
 				<FormInput
-					icon={<Hash />}
+					icon={<Hash width={16} />}
 					id="studentNumber"
 					name="studentNumber"
 					type="text"
@@ -83,7 +83,7 @@ export default function SignupForm() {
 					required
 				/>
 				<FormInput
-					icon={<Mail />}
+					icon={<Mail width={16} />}
 					id="studentEmail"
 					name="studentEmail"
 					type="email"
@@ -100,11 +100,11 @@ export default function SignupForm() {
 								"focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
 								"aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
 								"relative flex items-center cursor-pointer",
-								"pl-11"
+								"pl-9"
 							)}
 						>
 							<div className="absolute left-3 text-muted-foreground">
-								<CalendarIcon />
+								<CalendarIcon width={16} />
 							</div>
 							{dateOfBirth ? (
 								format(dateOfBirth, "MMM dd, yyyy")
@@ -148,7 +148,7 @@ export default function SignupForm() {
 					</PopoverContent>
 				</Popover>
 				<FormInput
-					icon={<Gamepad2 />}
+					icon={<Gamepad2 width={16} />}
 					id="discordId"
 					name="discordId"
 					type="text"

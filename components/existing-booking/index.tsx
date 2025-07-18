@@ -48,25 +48,25 @@ export default function ExistingBooking({ booking }: ExistingBookingProps) {
 		<div className="flex flex-col gap-6">
 			<p className="font-bold text-lg">Your {isActive ? "active booking" : "upcoming booking"}</p>
 			<div className="grid grid-cols-2 gap-3">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-3">
 					<Calendar className="text-muted-foreground" width={16} height={16} />
 					<p className="font-bold">
 						{format(bookingStart, "MMMM d")}
 					</p>
 				</div>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-3">
 					<Timer className="text-muted-foreground" width={16} height={16} />
 					<p className="font-bold">
 						{booking.Duration} minutes
 					</p>
 				</div>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-3">
 					<Clock className="text-muted-foreground" width={16} height={16} />
 					<p className="font-bold">
 						{format(bookingStart, "h:mm a")} - {format(bookingEnd, "h:mm a")}
 					</p>
 				</div>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-3">
 					<PcCase className="text-muted-foreground" width={16} height={16} />
 					<p className="font-bold">
 						{booking.Machines[0] || "No machine assigned"}

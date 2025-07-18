@@ -91,25 +91,25 @@ export default function ConfirmationDrawer({
 					<DrawerTitle>Confirm Booking</DrawerTitle>
 				</DrawerHeader>
 				<div className="grid grid-cols-2 gap-3">
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-3">
 						<Calendar className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
 							{format(selectedDate, "MMMM d")}
 						</p>
 					</div>
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-3">
 						<Timer className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
 							{selectedDuration} minutes
 						</p>
 					</div>
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-3">
 						<Clock className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
 							{selectedTime ? format(selectedTime, "h:mm a") : "-:-- --"}
 						</p>
 					</div>
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-3">
 						<PcCase className="text-muted-foreground" width={16} height={16} />
 						<p className="font-bold">
 							{selectedMachine ? selectedMachine.Name : "---"}

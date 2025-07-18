@@ -14,7 +14,7 @@ export default function FormInput({
 			</Label>
 			<div className="relative flex items-center">
 				<div className="absolute left-3 text-muted-foreground">{icon}</div>
-				<Input className="pl-11" {...props} />
+				<Input className="pl-9" {...props} />
 			</div>
 		</>
 	);

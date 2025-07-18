@@ -45,9 +45,8 @@ export default function RootLayout({
 							height={188}
 							priority
 						/>
-						<h1 className="font-bold text-center w-full py-2">
+						<h1 className="font-bold text-center w-full py-3 flex flex-col items-center">
 							<span className="text-6xl text-gradient">OTSU Esports</span>
-							<br />
 							<span className="text-4xl">Arena Booking Portal</span>
 						</h1>
 					</header>
