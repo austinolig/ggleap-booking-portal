@@ -86,7 +86,7 @@
 	}
 
 	body {
-		@apply font-rubik text-foreground bg-background bg-linear-to-br/oklch from-secondary/5 to-background to-50%;
+		@apply font-rubik min-h-dvh text-foreground bg-background bg-linear-to-br/oklch from-secondary/5 to-background to-50%;
 	}
 
 	h1 {
