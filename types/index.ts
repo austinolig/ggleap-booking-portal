@@ -4,61 +4,65 @@
 export type JWT = string;
 
 export type CenterHours = {
-	Regular: {
-		[DayOfWeek: string]: {
-			Open: string;
-			Close: string;
-		}[];
-	};
-	Special: {
-		[Date: string]: {
-			Open: string;
-			Close: string;
-		}[];
-	};
+  Regular: {
+    [DayOfWeek: string]: {
+      Open: string;
+      Close: string;
+    }[];
+  };
+  Special: {
+    [Date: string]: {
+      Open: string;
+      Close: string;
+    }[];
+  };
 };
 
 export type BookingUuid = string;
 
 export type Booking = {
-	BookingUuid: BookingUuid;
-	Name: string;
-	Start: string;
-	Duration: number;
-	Machines: string[];
+  BookingUuid: BookingUuid;
+  Name: string;
+  Start: string;
+  Duration: number;
+  Machines: string[];
 };
 
 export type Machine = {
-	Uuid: string;
-	Name: string;
-	Available?: boolean;
+  Uuid: string;
+  Name: string;
+  Available?: boolean;
 };
 
 export type CenterInfo = {
-	hours: CenterHours;
-	bookings: Booking[];
-	machines: Machine[];
+  hours: CenterHours;
+  bookings: Booking[];
+  machines: Machine[];
 };
 
 export type TimeSlot = {
-	time: Date;
-	availablePCs: number;
+  time: Date;
+  availablePCs: number;
 };
 
 export type UserUuid = string;
 
 export type SignupData = {
-	username: string;
-	password: string;
-	firstName: string;
-	lastName: string;
-	studentNumber: string;
-	studentEmail: string;
-	dateOfBirth: string;
-	discordId: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  studentNumber: string;
+  studentEmail: string;
+  dateOfBirth: string;
+  discordId: string;
+};
+
+export type GamePass = {
+  Uuid: string;
 };
 
 export interface ConfirmationMessage {
-	heading: string;
-	body: string;
+  heading: string;
+  body: string;
 }
