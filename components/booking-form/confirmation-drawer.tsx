@@ -22,8 +22,8 @@ import {
 import { Button } from "../ui/button";
 import { Machine, ConfirmationMessage } from "@/types/index";
 import { ScrollArea } from "../ui/scroll-area";
-import { Suspense, useState } from "react";
-import { createBookingAction, revalidateHomePath } from "@/lib/actions";
+import { useState } from "react";
+import { createBookingAction, revalidateBookings } from "@/lib/actions";
 import { Calendar, Clock, LoaderCircle, PcCase, Timer } from "lucide-react";
 
 export default function ConfirmationDrawer({
@@ -72,7 +72,7 @@ export default function ConfirmationDrawer({
       await handleConfirm();
       setDialogOpen(true);
     } else {
-      await revalidateHomePath();
+      await revalidateBookings();
       setDialogOpen(false);
     }
   };
@@ -150,17 +150,11 @@ export default function ConfirmationDrawer({
               <DialogHeader className="flex flex-col gap-6">
                 <DialogTitle>{confirmationMessage?.heading}</DialogTitle>
                 <DialogDescription>
-                  <Suspense
-                    fallback={<LoaderCircle className="animate-spin" />}
-                  >
-                    {confirmationMessage?.body ||
-                      "Please wait while we process your booking."}
-                  </Suspense>
+                  {confirmationMessage?.body ||
+                    "Please wait while we process your booking."}
                 </DialogDescription>
                 <DialogClose asChild>
-                  <Button variant="default" onClick={() => handleDialog(false)}>
-                    Ok
-                  </Button>
+                  <Button variant="default">Ok</Button>
                 </DialogClose>
               </DialogHeader>
             </DialogContent>

@@ -14,6 +14,12 @@ import { addMinutes, format } from "date-fns";
 import { auth } from "@/auth";
 
 const centerUuid = "50dd0be4-13eb-4db3-94b3-09e3062fa2d9";
+const offers: Record<number, string> = {
+  90: "15d8ebbd-8ab7-4b4b-ab4f-47495b2f3fb6",
+  60: "914e1ff7-ffa1-4b3d-8eae-2e9f91697997",
+  15: "78d20d0c-6725-415e-a22e-e1e8d93a3af7",
+};
+const extensionTime = 15;
 
 export async function getJWT(): Promise<JWT | null> {
   console.log("__getJWT()__");
@@ -105,9 +111,6 @@ export async function getBookings(): Promise<Booking[] | null> {
 
     const dateQuery = format(new Date(), "yyyy-MM-dd");
 
-    console.log("Current date:", new Date());
-    console.log("dateQuery:", dateQuery);
-
     const response = await fetch(
       `https://api.ggleap.com/production/bookings/get-bookings?Date=${dateQuery}&Days=2`,
       {
@@ -116,7 +119,7 @@ export async function getBookings(): Promise<Booking[] | null> {
           Authorization: jwt,
         },
         cache: "force-cache",
-        next: { revalidate: 30 },
+        next: { revalidate: 30, tags: ["bookings"] },
       },
     );
 
@@ -126,16 +129,8 @@ export async function getBookings(): Promise<Booking[] | null> {
       throw new Error(`(${response.status}) Failed to fetch bookings`);
     }
 
-    console.log("Bookings (pre-processing):", data.Bookings);
-    const bookings = data.Bookings.map((booking: Booking) => ({
-      BookingUuid: booking.BookingUuid,
-      Start: booking.Start,
-      Duration: booking.Duration,
-      Machines: booking.Machines,
-      Name: booking.Name,
-    }));
-    console.log("Bookings (post-processing):", bookings);
-    return bookings;
+    console.log("bookings:", data.Bookings);
+    return data.Bookings;
   } catch (error) {
     console.error(error);
     return null;
@@ -419,13 +414,14 @@ export async function updateBookingDuration(): Promise<BookingUuid | null> {
 
     const currentBooking = bookings.findLast((booking) => {
       const isCurrentUser = booking.Name === session.user?.Username;
-      const bookingEnd = addMinutes(booking.Start, booking.Duration);
-      const currentDate = new Date();
-      const withinFinal15 =
-        currentDate.getTime() >=
-          new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() &&
-        currentDate.getTime() < bookingEnd.getTime();
-      return isCurrentUser && withinFinal15;
+      // const bookingEnd = addMinutes(booking.Start, booking.Duration);
+      // const currentDate = new Date();
+      // const withinFinal15 =
+      //   currentDate.getTime() >=
+      //     new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() &&
+      //   currentDate.getTime() < bookingEnd.getTime();
+      // return isCurrentUser && withinFinal15;
+      return isCurrentUser;
     });
 
     if (!currentBooking) {
@@ -433,12 +429,11 @@ export async function updateBookingDuration(): Promise<BookingUuid | null> {
       return null;
     }
 
-    if (currentBooking.Duration >= 105) {
+    if (currentBooking.Duration + extensionTime > 105) {
       console.log("Booking duration is already at maximum (105 minutes).");
       return null;
     }
 
-    const extensionTime = 15; // minutes
     const response = await fetch(
       "https://api.ggleap.com/production/bookings/update",
       {
@@ -454,14 +449,13 @@ export async function updateBookingDuration(): Promise<BookingUuid | null> {
       },
     );
 
-    const data = await response.json();
-    if (!data.BookingUuid || !response.ok) {
-      console.log("data:", data);
+    if (!response.ok) {
+      console.log("response:", response);
       throw new Error(`(${response.status}) Failed to update booking`);
     }
 
     console.log("Booking updated successfully.");
-    return data.BookingUuid;
+    return currentBooking.BookingUuid;
   } catch (error) {
     console.error(error);
     return null;
@@ -506,7 +500,10 @@ export async function deleteBooking(
   }
 }
 
-export async function getUserBooking(): Promise<Booking | null> {
+export async function getUserBooking(): Promise<{
+  booking: Booking;
+  machine: Machine;
+} | null> {
   const session = await auth();
   if (!session?.user) {
     return null;
@@ -517,6 +514,11 @@ export async function getUserBooking(): Promise<Booking | null> {
     return null;
   }
 
+  const machines = await getAllMachines();
+  if (!machines) {
+    return null;
+  }
+
   const currentBooking = bookings.findLast((booking) => {
     const isCurrentUser = booking.Name === session.user?.Username;
     const bookingEnd = addMinutes(booking.Start, booking.Duration);
@@ -524,7 +526,19 @@ export async function getUserBooking(): Promise<Booking | null> {
     return isCurrentUser && !hasPassed;
   });
 
-  return currentBooking ?? null;
+  if (!currentBooking) {
+    return null;
+  }
+
+  const currentMachine = machines.find((machine) => {
+    return machine.Uuid === currentBooking.Machines[0];
+  });
+
+  if (!currentMachine) {
+    return null;
+  }
+
+  return { booking: currentBooking, machine: currentMachine };
 }
 
 export async function getUserGamePasses(): Promise<GamePass[] | null> {
@@ -568,7 +582,9 @@ export async function getUserGamePasses(): Promise<GamePass[] | null> {
   }
 }
 
-export async function addUserGamePass(): Promise<boolean | null> {
+export async function addUserGamePass(
+  duration: number,
+): Promise<boolean | null> {
   console.log("__addUserGamePasses()__");
 
   const jwt = await getJWT();
@@ -595,7 +611,7 @@ export async function addUserGamePass(): Promise<boolean | null> {
         },
         body: JSON.stringify({
           Cart: {
-            "e18244d1-9cbc-453f-81d3-88f9b2504507": 1,
+            [offers[duration]]: 1,
           },
           UserUuid: session.user.Uuid,
         }),

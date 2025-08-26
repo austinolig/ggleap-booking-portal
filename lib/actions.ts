@@ -13,7 +13,7 @@ import {
   getUserGamePasses,
   updateBookingDuration,
 } from "./ggLeap";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function signInAction(formData: FormData): Promise<string | void> {
   try {
@@ -60,7 +60,7 @@ export async function createBookingAction(
     return "Booking Unsuccessful";
   }
 
-  await addUserGamePass();
+  await addUserGamePass(selectedDuration);
 }
 
 export async function deleteBookingAction(
@@ -74,9 +74,11 @@ export async function extendBookingAction(): Promise<string | void> {
   if (!bookingUuid) {
     return "Failed to extend booking. Please try again.";
   }
+
+  await addUserGamePass(15);
 }
 
-export async function revalidateHomePath(): Promise<void> {
-  console.log("Revalidating home path...");
-  revalidatePath("/");
+export async function revalidateBookings(): Promise<void> {
+  console.log("Revalidating bookings...");
+  revalidateTag("bookings");
 }
