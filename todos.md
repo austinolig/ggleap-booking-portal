@@ -4,6 +4,7 @@
 
 - [ ] return consistent response object for api calls (success, error?, data?)
 - [ ] review server action returns
+- [ ] update `ggLeap.ts` to have all awaits in try/catch and handle errors properly
 
 ## user
 
@@ -18,7 +19,7 @@
 - [x] delete existing booking
 - [x] wipe hours from account upon new booking
 - [x] add session time
-- [ ] create different game pass offers depending on booking duration
+- [x] create different game pass offers depending on booking duration
 - [ ] display past bookings
 
 ## login/register form

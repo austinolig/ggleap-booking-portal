@@ -61,8 +61,3 @@ export type SignupData = {
 export type GamePass = {
   Uuid: string;
 };
-
-export interface ConfirmationMessage {
-  heading: string;
-  body: string;
-}
