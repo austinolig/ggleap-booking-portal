@@ -393,45 +393,53 @@ export async function createBooking(
   }
 }
 
-export async function updateBookingDuration(): Promise<BookingUuid | null> {
+export async function updateBookingDuration(): Promise<{
+  success: boolean;
+  message: string;
+}> {
   console.log("__updateBookingDuration()__");
 
   const jwt = await getJWT();
   if (!jwt) {
-    return null;
+    throw new Error("Failed to get JWT");
   }
 
   const session = await auth();
   if (!session?.user) {
-    return null;
+    throw new Error("User not authenticated");
   }
 
   try {
     const bookings = await getBookings();
     if (!bookings) {
-      return null;
+      throw new Error("Failed to fetch bookings");
     }
 
     const currentBooking = bookings.findLast((booking) => {
       const isCurrentUser = booking.Name === session.user?.Username;
-      // const bookingEnd = addMinutes(booking.Start, booking.Duration);
-      // const currentDate = new Date();
-      // const withinFinal15 =
-      //   currentDate.getTime() >=
-      //     new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() &&
-      //   currentDate.getTime() < bookingEnd.getTime();
-      // return isCurrentUser && withinFinal15;
-      return isCurrentUser;
+      const bookingEnd = addMinutes(booking.Start, booking.Duration);
+      const currentDate = new Date();
+      const withinFinal15 =
+        currentDate.getTime() >=
+          new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() &&
+        currentDate.getTime() < bookingEnd.getTime();
+      return isCurrentUser && withinFinal15;
     });
 
     if (!currentBooking) {
       console.log("No current booking within final 15 minutes.");
-      return null;
+      return {
+        success: false,
+        message: "You may only extend your booking within the last 15 minutes.",
+      };
     }
 
     if (currentBooking.Duration + extensionTime > 105) {
       console.log("Booking duration is already at maximum (105 minutes).");
-      return null;
+      return {
+        success: false,
+        message: "Booking is already at maximum duration.",
+      };
     }
 
     const response = await fetch(
@@ -450,15 +458,24 @@ export async function updateBookingDuration(): Promise<BookingUuid | null> {
     );
 
     if (!response.ok) {
+      console.log("current booking:", currentBooking);
       console.log("response:", response);
-      throw new Error(`(${response.status}) Failed to update booking`);
+      const data = await response.json();
+      if (data) {
+        console.log("data:", data);
+        throw new Error(`${data.ValidationFailures[0].Message}`);
+      }
+      throw new Error(`Failed to update booking`);
     }
 
     console.log("Booking updated successfully.");
-    return currentBooking.BookingUuid;
+    return { success: true, message: "Booking extended successfully." };
   } catch (error) {
     console.error(error);
-    return null;
+    return {
+      success: false,
+      message: (error as Error).message || "Failed to extend booking.",
+    };
   }
 }
 

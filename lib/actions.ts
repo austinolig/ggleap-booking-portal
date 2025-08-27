@@ -70,12 +70,14 @@ export async function deleteBookingAction(
 }
 
 export async function extendBookingAction(): Promise<string | void> {
-  const bookingUuid = await updateBookingDuration();
-  if (!bookingUuid) {
-    return "Failed to extend booking. Please try again.";
-  }
+  const { success, message } = await updateBookingDuration();
 
-  await addUserGamePass(15);
+  if (success) {
+    await addUserGamePass(15);
+    return;
+  } else {
+    return message;
+  }
 }
 
 export async function revalidateBookings(): Promise<void> {
