@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { signUpAction } from "@/lib/actions";
 import { useState } from "react";
 import {
-	CalendarIcon,
-	Gamepad2,
-	Hash,
-	KeyRound,
-	LoaderCircle,
-	Mail,
-	User,
+  CalendarIcon,
+  Gamepad2,
+  Hash,
+  KeyRound,
+  LoaderCircle,
+  Mail,
+  User,
 } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import FormInput from "../ui/form-input";
@@ -20,154 +20,168 @@ import { Calendar } from "../ui/calendar";
 import { format, getYear, subYears } from "date-fns";
 
 export default function SignupForm() {
-	const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>();
-	const [error, setError] = useState("");
-	const handleSubmit = async (formData: FormData) => {
-		const error = await signUpAction(formData);
-		if (error) {
-			setError(error); // TODO: display error from api response
-			setDateOfBirth(undefined);
-		}
-	};
+  const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>();
+  const [error, setError] = useState("");
+  const handleSubmit = async (formData: FormData) => {
+    const error = await signUpAction(formData);
+    if (error) {
+      setError(error); // TODO: display error from api response
+      setDateOfBirth(undefined);
+    }
+  };
 
-	return (
-		<form action={handleSubmit}>
-			<div className="flex flex-col gap-6">
-				{error && <p className="text-red-500 text-sm">{error}</p>}
-				<FormInput
-					icon={<User width={16} />}
-					id="username"
-					name="username"
-					type="text"
-					placeholder="Username*"
-					maxLength={30}
-					required
-				/>
-				<FormInput
-					icon={<KeyRound width={16} />}
-					id="password"
-					name="password"
-					type="password"
-					placeholder="Password*"
-					maxLength={30}
-					required
-				/>
-				<FormInput
-					icon={<User width={16} />}
-					id="firstName"
-					name="firstName"
-					type="text"
-					placeholder="First Name*"
-					maxLength={30}
-					required
-				/>
-				<FormInput
-					icon={<User width={16} />}
-					id="lastName"
-					name="lastName"
-					type="text"
-					placeholder="Last Name*"
-					maxLength={30}
-					required
-				/>
-				<FormInput
-					icon={<Hash width={16} />}
-					id="studentNumber"
-					name="studentNumber"
-					type="text"
-					placeholder="Student Number*"
-					maxLength={9}
-					inputMode="numeric"
-					pattern="[0-9]*"
-					title="Must only contain numbers."
-					required
-				/>
-				<FormInput
-					icon={<Mail width={16} />}
-					id="studentEmail"
-					name="studentEmail"
-					type="email"
-					placeholder="Student Email*"
-					pattern=".+@ontariotechu\.net"
-					title="Must use a valid @ontariotechu.net email address."
-					required
-				/>
-				<Popover>
-					<PopoverTrigger asChild>
-						<button
-							className={cn(
-								"file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-[5px] text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-								"focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-								"aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-								"relative flex items-center cursor-pointer",
-								"pl-9"
-							)}
-						>
-							<div className="absolute left-3 text-muted-foreground">
-								<CalendarIcon width={16} />
-							</div>
-							{dateOfBirth ? (
-								format(dateOfBirth, "MMM dd, yyyy")
-							) : (
-								<span className="text-muted-foreground">Date of Birth*</span>
-							)}
-							<div>
-								<label htmlFor={"dateOfBirth"} className="sr-only">
-									Date of Birth
-								</label>
-								<input
-									className="absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none"
-									id="dateOfBirth"
-									name="dateOfBirth"
-									type="text"
-									value={dateOfBirth ? format(dateOfBirth, "MMM dd, yyyy") : ""}
-									onChange={() => { }}
-									tabIndex={-1}
-									required
-								/>
-							</div>
-						</button>
-					</PopoverTrigger>
-					<PopoverContent
-						onOpenAutoFocus={(e) => {
-							e.preventDefault();
-						}}
-						className="w-auto p-0"
-						align="start"
-					>
-						<Calendar
-							captionLayout="dropdown"
-							fromYear={getYear(subYears(new Date(), 100))}
-							toYear={getYear(new Date())}
-							mode="single"
-							initialFocus
-							selected={dateOfBirth}
-							onSelect={setDateOfBirth}
-							disabled={(date: Date) => date > new Date()}
-						/>
-					</PopoverContent>
-				</Popover>
-				<FormInput
-					icon={<Gamepad2 width={16} />}
-					id="discordId"
-					name="discordId"
-					type="text"
-					placeholder="Discord ID"
-					maxLength={30}
-				/>
-				<CreateAccountButton />
-			</div>
-		</form>
-	);
+  return (
+    <form action={handleSubmit}>
+      <div className="flex flex-col gap-6">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <FormInput
+          icon={<User width={16} />}
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Username*"
+          minLength={3}
+          maxLength={30}
+          title="Username must be between 3 and 30 characters long."
+          required
+        />
+        <FormInput
+          icon={<KeyRound width={16} />}
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Password*"
+          minLength={6}
+          maxLength={30}
+          title="Password must be between 6 and 30 characters long."
+          required
+        />
+        <FormInput
+          icon={<User width={16} />}
+          id="firstName"
+          name="firstName"
+          type="text"
+          placeholder="First Name*"
+          minLength={1}
+          maxLength={30}
+          title="First name must be between 1 and 30 characters long."
+          required
+        />
+        <FormInput
+          icon={<User width={16} />}
+          id="lastName"
+          name="lastName"
+          type="text"
+          placeholder="Last Name*"
+          minLength={1}
+          maxLength={30}
+          title="Last name must be between 1 and 30 characters long."
+          required
+        />
+        <FormInput
+          icon={<Hash width={16} />}
+          id="studentNumber"
+          name="studentNumber"
+          type="text"
+          placeholder="Student Number*"
+          minLength={9}
+          maxLength={9}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          title="Student number must be exactly 9 digits long."
+          required
+        />
+        <FormInput
+          icon={<Mail width={16} />}
+          id="studentEmail"
+          name="studentEmail"
+          type="email"
+          placeholder="Student Email*"
+          pattern=".+@ontariotechu\.net"
+          title="Must use a valid @ontariotechu.net email address."
+          required
+        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              className={cn(
+                "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border px-3 py-[5px] text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                "aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+                "relative flex items-center cursor-pointer",
+                "pl-9",
+              )}
+            >
+              <div className="absolute left-3 text-muted-foreground">
+                <CalendarIcon width={16} />
+              </div>
+              {dateOfBirth ? (
+                format(dateOfBirth, "MMM dd, yyyy")
+              ) : (
+                <span className="text-muted-foreground">Date of Birth*</span>
+              )}
+              <div>
+                <label htmlFor={"dateOfBirth"} className="sr-only">
+                  Date of Birth
+                </label>
+                <input
+                  className="absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none"
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  type="text"
+                  value={dateOfBirth ? format(dateOfBirth, "MMM dd, yyyy") : ""}
+                  onChange={() => {}}
+                  tabIndex={-1}
+                  required
+                />
+              </div>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            onOpenAutoFocus={(e) => {
+              e.preventDefault();
+            }}
+            className="w-auto p-0"
+            align="start"
+          >
+            <Calendar
+              captionLayout="dropdown"
+              fromYear={getYear(subYears(new Date(), 100))}
+              toYear={getYear(new Date())}
+              mode="single"
+              initialFocus
+              selected={dateOfBirth}
+              onSelect={setDateOfBirth}
+              disabled={(date: Date) => date > new Date()}
+            />
+          </PopoverContent>
+        </Popover>
+        <FormInput
+          icon={<Gamepad2 width={16} />}
+          id="discordId"
+          name="discordId"
+          type="text"
+          placeholder="Discord ID"
+          maxLength={30}
+        />
+        <CreateAccountButton />
+      </div>
+    </form>
+  );
 }
 
 function CreateAccountButton() {
-	const { pending } = useFormStatus();
+  const { pending } = useFormStatus();
 
-	return (
-		<Button type="submit" variant="default" className="w-full cursor-pointer" disabled={pending}>
-			{pending && <LoaderCircle className="animate-spin" />}
-			<span>Create Account</span>
-		</Button>
-	);
+  return (
+    <Button
+      type="submit"
+      variant="default"
+      className="w-full cursor-pointer"
+      disabled={pending}
+    >
+      {pending && <LoaderCircle className="animate-spin" />}
+      <span>Create Account</span>
+    </Button>
+  );
 }
