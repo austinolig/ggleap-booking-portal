@@ -20,23 +20,30 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Machine, ConfirmationMessage } from "@/types/index";
+import { Machine } from "@/types/index";
 import { ScrollArea } from "../ui/scroll-area";
 import { useState } from "react";
 import { createBookingAction, revalidateBookings } from "@/lib/actions";
 import { Calendar, Clock, LoaderCircle, PcCase, Timer } from "lucide-react";
+
+interface ConfirmationMessage {
+  heading: string;
+  body: string;
+}
+
+interface ConfirmationDrawerProps {
+  selectedDate: Date;
+  selectedDuration: number;
+  selectedTime: Date | null;
+  selectedMachine: Machine | null;
+}
 
 export default function ConfirmationDrawer({
   selectedDate,
   selectedDuration,
   selectedTime,
   selectedMachine,
-}: {
-  selectedDate: Date;
-  selectedDuration: number;
-  selectedTime: Date | null;
-  selectedMachine: Machine | null;
-}) {
+}: ConfirmationDrawerProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState<
     ConfirmationMessage | undefined

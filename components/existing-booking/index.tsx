@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Booking, Machine } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +19,11 @@ import {
 import { format, addMinutes } from "date-fns";
 import { useState } from "react";
 import { Calendar, Clock, LoaderCircle, PcCase, Timer } from "lucide-react";
+
+interface ConfirmationMessage {
+  heading: string;
+  body: string;
+}
 
 interface ExistingBookingProps {
   booking: Booking;
@@ -23,36 +37,75 @@ export default function ExistingBooking({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExtending, setIsExtending] = useState(false);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen2, setDialogOpen2] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState<
+    ConfirmationMessage | undefined
+  >();
+
   const bookingStart = new Date(booking.Start);
   const bookingEnd = addMinutes(bookingStart, booking.Duration);
   const currentTime = new Date();
-  const isActive = currentTime >= bookingStart && currentTime <= bookingEnd;
-  // const withinExtendWindow =
-  //   currentTime >= new Date(bookingEnd.getTime() - 15 * 60 * 1000) &&
-  //   currentTime < bookingEnd;
-  const isMaxExtended = booking.Duration === 105;
+  const isActive =
+    currentTime.getTime() >= bookingStart.getTime() &&
+    currentTime.getTime() < bookingEnd.getTime();
+  const withinExtendWindow =
+    currentTime.getTime() >=
+      new Date(bookingEnd.getTime() - 15 * 60 * 1000).getTime() &&
+    currentTime.getTime() < bookingEnd.getTime();
 
   const handleDeleteBooking = async () => {
     setIsDeleting(true);
-    try {
-      await deleteBookingAction(booking.BookingUuid);
-    } finally {
+    const result = await deleteBookingAction(booking.BookingUuid);
+
+    setIsDeleting(false);
+    if (result) {
       await revalidateBookings();
+      setConfirmationMessage({
+        heading: "Booking Deleted",
+        body: "Your booking has successfully been deleted.",
+      });
+    } else {
+      setConfirmationMessage({
+        heading: "Deletion Failed",
+        body: "There was an error deleting your booking. Please try again.",
+      });
     }
   };
 
   const handleExtendBooking = async () => {
     setIsExtending(true);
-    try {
-      const error = await extendBookingAction();
-      if (error) {
-        alert(error);
-      } else {
-        alert("Booking extended successfully!");
-        await revalidateBookings();
-      }
-    } finally {
-      setIsExtending(false);
+    const error = await extendBookingAction();
+    setIsExtending(false);
+    if (error) {
+      setConfirmationMessage({
+        heading: "Extension Failed",
+        body: error,
+      });
+    } else {
+      setConfirmationMessage({
+        heading: "Extension Successful",
+        body: "Your booking has been extended by 15 minutes.",
+      });
+      await revalidateBookings();
+    }
+  };
+
+  const handleDialog = async (open: boolean) => {
+    if (open) {
+      await handleExtendBooking();
+      setDialogOpen(true);
+    } else {
+      setDialogOpen(false);
+    }
+  };
+
+  const handleDialog2 = async (open: boolean) => {
+    if (open) {
+      await handleDeleteBooking();
+      setDialogOpen2(true);
+    } else {
+      setDialogOpen2(false);
     }
   };
 
@@ -86,24 +139,49 @@ export default function ExistingBooking({
         booking, up to a maximum of 105 minutes total.
       </p>
       <div className="grid gap-3">
-        <Button
-          variant="default"
-          onClick={handleExtendBooking}
-          // disabled={isExtending || !withinExtendWindow}
-          disabled={isExtending || isMaxExtended}
-          className="w-full"
-        >
-          {isExtending && <LoaderCircle className="animate-spin" />}
-          <span>Extend (+15 mins)</span>
-        </Button>
-        <Button
-          variant="destructive"
-          onClick={handleDeleteBooking}
-          disabled={isDeleting}
-        >
-          {isDeleting && <LoaderCircle className="animate-spin" />}
-          <span>Delete</span>
-        </Button>
+        <Dialog open={dialogOpen} onOpenChange={handleDialog}>
+          <DialogTrigger asChild>
+            <Button
+              variant="default"
+              // onClick={handleExtendBooking}
+              disabled={isExtending || !withinExtendWindow}
+              className="w-full"
+            >
+              {isExtending && <LoaderCircle className="animate-spin" />}
+              <span>Extend (+15 mins)</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader className="flex flex-col gap-6">
+              <DialogTitle>{confirmationMessage?.heading}</DialogTitle>
+              <DialogDescription>{confirmationMessage?.body}</DialogDescription>
+              <DialogClose asChild>
+                <Button variant="default">Ok</Button>
+              </DialogClose>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={dialogOpen2} onOpenChange={handleDialog2}>
+          <DialogTrigger asChild>
+            <Button
+              variant="destructive"
+              // onClick={handleDeleteBooking}
+              disabled={isDeleting}
+            >
+              {isDeleting && <LoaderCircle className="animate-spin" />}
+              <span>Delete</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader className="flex flex-col gap-6">
+              <DialogTitle>{confirmationMessage?.heading}</DialogTitle>
+              <DialogDescription>{confirmationMessage?.body}</DialogDescription>
+              <DialogClose asChild>
+                <Button variant="default">Ok</Button>
+              </DialogClose>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
