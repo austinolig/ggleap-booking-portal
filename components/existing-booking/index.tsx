@@ -60,7 +60,6 @@ export default function ExistingBooking({
 
     setIsDeleting(false);
     if (result) {
-      await revalidateBookings();
       setConfirmationMessage({
         heading: "Booking Deleted",
         body: "Your booking has successfully been deleted.",
@@ -87,7 +86,6 @@ export default function ExistingBooking({
         heading: "Extension Successful",
         body: "Your booking has been extended by 15 minutes.",
       });
-      await revalidateBookings();
     }
   };
 
@@ -96,6 +94,7 @@ export default function ExistingBooking({
       await handleExtendBooking();
       setDialogOpen(true);
     } else {
+      await revalidateBookings();
       setDialogOpen(false);
     }
   };
@@ -105,6 +104,7 @@ export default function ExistingBooking({
       await handleDeleteBooking();
       setDialogOpen2(true);
     } else {
+      await revalidateBookings();
       setDialogOpen2(false);
     }
   };
