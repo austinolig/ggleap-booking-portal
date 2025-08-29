@@ -1,9 +1,5 @@
-import { LoaderCircle } from "lucide-react";
+import BookingFormSkeleton from "@/components/booking-form/skeleton";
 
 export default function Loading() {
-  return (
-    <div className="flex justify-center items-center">
-      <LoaderCircle className="animate-spin" />
-    </div>
-  );
+  return <BookingFormSkeleton />;
 }

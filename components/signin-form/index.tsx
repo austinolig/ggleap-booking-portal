@@ -8,47 +8,52 @@ import { useFormStatus } from "react-dom";
 import FormInput from "../ui/form-input";
 
 export default function SigninForm() {
-	const [error, setError] = useState("");
-	const handleSubmit = async (formData: FormData) => {
-		const error = await signInAction(formData);
-		if (error) {
-			setError(error); // TODO: display error from api response
-		}
-	};
+  const [error, setError] = useState("");
+  const handleSubmit = async (formData: FormData) => {
+    const error = await signInAction(formData);
+    if (error) {
+      setError(error); // TODO: display error from api response
+    }
+  };
 
-	return (
-		<form action={handleSubmit}>
-			<div className="flex flex-col gap-6">
-				{error && <p className="text-red-500 text-sm">{error}</p>}
-				<FormInput
-					icon={<User width={16} />}
-					id="username"
-					name="username"
-					type="text"
-					placeholder="Username"
-					required
-				/>
-				<FormInput
-					icon={<KeyRound width={16} />}
-					id="password"
-					name="password"
-					type="password"
-					placeholder="Password"
-					required
-				/>
-				<SignInButton />
-			</div>
-		</form>
-	);
+  return (
+    <form action={handleSubmit}>
+      <div className="flex flex-col gap-6">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <FormInput
+          icon={<User width={16} />}
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Username*"
+          required
+        />
+        <FormInput
+          icon={<KeyRound width={16} />}
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Password*"
+          required
+        />
+        <SignInButton />
+      </div>
+    </form>
+  );
 }
 
 function SignInButton() {
-	const { pending } = useFormStatus();
+  const { pending } = useFormStatus();
 
-	return (
-		<Button type="submit" variant="default" className="w-full cursor-pointer" disabled={pending}>
-			{pending && <LoaderCircle className="animate-spin" />}
-			<span>Sign In</span>
-		</Button>
-	);
+  return (
+    <Button
+      type="submit"
+      variant="default"
+      className="w-full cursor-pointer"
+      disabled={pending}
+    >
+      {pending && <LoaderCircle className="animate-spin" />}
+      <span>Sign In</span>
+    </Button>
+  );
 }

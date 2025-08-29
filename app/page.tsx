@@ -1,6 +1,4 @@
 import BookingForm from "@/components/booking-form";
-import { Suspense } from "react";
-import Loading from "./loading";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import UserMenu from "@/components/user-menu";
@@ -42,16 +40,14 @@ export default async function Home() {
     <>
       <UserMenu session={session} />
       <main>
-        <Suspense fallback={<Loading />}>
-          {userBooking ? (
-            <ExistingBooking
-              booking={userBooking.booking}
-              machine={userBooking.machine}
-            />
-          ) : (
-            <BookingForm centerInfo={centerInfo} />
-          )}
-        </Suspense>
+        {userBooking ? (
+          <ExistingBooking
+            booking={userBooking.booking}
+            machine={userBooking.machine}
+          />
+        ) : (
+          <BookingForm centerInfo={centerInfo} />
+        )}
       </main>
     </>
   );

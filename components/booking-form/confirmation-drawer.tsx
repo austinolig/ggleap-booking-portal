@@ -124,24 +124,51 @@ export default function ConfirmationDrawer({
         <div className="space-y-3">
           <h3 className="font-bold text-foreground">Terms of Service</h3>
           <ScrollArea className="h-30 border rounded-xs">
-            <p className="p-2 text-sm">
-              {`
-								Lorem ipsum dolor sit amet, consectetur adipiscing
-								elit, sed do eiusmod tempor incididunt ut labore
-								et dolore magna aliqua. Ut enim ad minim veniam,
-								quis nostrud exercitation ullamco laboris nisi ut
-								aliquip ex ea commodo consequat. Duis aute irure
-								dolor in reprehenderit in voluptate velit esse
-								cillum dolore eu fugiat nulla pariatur. Excepteur
-								sint occaecat cupidatat non proident, sunt in culpa
-								qui officia deserunt mollit anim id est laborum.
-							`}
-            </p>
+            <div className="p-2 text-sm space-y-2">
+              <p>
+                This space is for you and we hope you can enjoy it to the
+                fullest!
+              </p>
+
+              <p>
+                Please note that there are rules in place in order to keep this
+                a safe space for you, your fellow students, and the equipment.
+                By using this space, you understand and consent to abiding by
+                the following rules:
+              </p>
+
+              <ul>
+                <li>No food or drink allowed at anytime</li>
+                <li>Bags must be left in shelves at all times</li>
+                <li>
+                  Players consent to being recorded for both security and
+                  promotional purposes
+                </li>
+                <li>
+                  Players will abide by both the university’s student conduct
+                  policy and the OTSU esports code of conduct
+                </li>
+                <li>
+                  Players will be held responsible for any damaged or missing
+                  equipment during their session
+                </li>
+                <li>
+                  Students will not use the back entrance to enter, exit or
+                  allow any other student to enter the esports arena. All
+                  traffic must go through the OTSU office entrance
+                </li>
+              </ul>
+
+              <p>
+                Failure to abide by these rules may result in an immediate
+                termination of your current session and a ban on using the
+                esports arena in the future.
+              </p>
+            </div>
           </ScrollArea>
           <p className="text-sm text-muted-foreground">
             {`
-							To complete your booking, please review the terms
-							of service. By confirming, you agree to these terms.
+							By confirming your booking, you agree to these terms of service.
 						`}
           </p>
         </div>
