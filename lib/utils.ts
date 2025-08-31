@@ -17,52 +17,56 @@ export function getAvailableTimeSlots(
   const dateString = format(selectedDate, "yyyy-MM-dd");
 
   // ensure center is open on selected date
-  if (!centerInfo.hours.Regular[dayOfWeek][0]?.Open) {
+  if (
+    !centerInfo.hours.Regular[dayOfWeek][0]?.Open &&
+    !centerInfo.hours.Special[dateString]
+  ) {
+    console.log("Center is closed on selected date");
     return [];
   }
 
   const gracePeriod = 60;
 
-  // initialize regular hours
-  const regularOpen = new Date(
-    `${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Open}`,
-  );
+  let openDate: Date;
+  let closeDate: Date;
 
-  const regularClose = subMinutes(
-    new Date(`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Close}`),
-    gracePeriod,
-  ); // subtract grace period from regular closing time
-
-  // initialize special hours if available
-  let specialOpen = regularOpen;
-  let specialClose = regularClose;
+  // // initialize hours
   if (centerInfo.hours.Special[dateString]) {
-    specialOpen = new Date(
+    openDate = new Date(
       `${dateString} ${centerInfo.hours.Special[dateString][0].Open}`,
     );
-    specialClose = subMinutes(
+    closeDate = subMinutes(
       new Date(
         `${dateString} ${centerInfo.hours.Special[dateString][0].Close}`,
       ),
       gracePeriod,
-    ); // subtract selected duration from special closing time
+    ); // subtract grace period from special closing time
+  } else {
+    openDate = new Date(
+      `${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Open}`,
+    );
+    closeDate = subMinutes(
+      new Date(`${dateString} ${centerInfo.hours.Regular[dayOfWeek][0].Close}`),
+      gracePeriod,
+    ); // subtract grace period from regular closing time
   }
-  const graceClose = addMinutes(specialClose, gracePeriod);
+
+  const graceClose = addMinutes(closeDate, gracePeriod);
+  let timeSlotStart = openDate;
 
   const timeSlots: TimeSlot[] = [];
-  let timeSlotStart = regularOpen;
-  while (timeSlotStart.getTime() <= regularClose.getTime()) {
+  while (timeSlotStart.getTime() <= closeDate.getTime()) {
     const timeSlotEnd = addMinutes(timeSlotStart, selectedDuration);
 
     let availablePCs = 0;
     // time slot is valid if:
-    //  not outside of special hours
+    //  not outside of operating hours
     //  not exceed grace period
     //  not in the past
     if (
       !(
-        isBefore(timeSlotStart, specialOpen) ||
-        isAfter(timeSlotStart, specialClose) ||
+        isBefore(timeSlotStart, openDate) ||
+        isAfter(timeSlotStart, closeDate) ||
         isAfter(timeSlotEnd, graceClose) ||
         isBefore(timeSlotStart, new Date())
       )
